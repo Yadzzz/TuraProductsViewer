@@ -1,0 +1,146 @@
+﻿@*@layout CorkLayout*@
+@page "/products"
+
+<PageTitle>Products</PageTitle>
+
+@inject DataAccessManager DataAccessManager
+@inject ProductSearchService ProductSearchService
+@inject PDFCreatorService PDFCreatorService
+
+<div class="page-header">
+    <div class="page-title">
+        <h3>Products</h3>
+    </div>
+</div>
+
+<div class="row layout-top-spacing" id="cancel-row">
+    <div class="col-xl-8 col-lg-8 col-sm-8  layout-spacing">
+        <div class="widget-content widget-content-area br-6">
+
+            <div class="col-lg-6 col-md-6 col-sm-6 filtered-list-search mx-auto">
+                @*<form class="form-inline my-2 my-lg-0">*@
+                    <div class="w-100">
+                        <input type="text" @bind-value=@SearchText @bind-value:event="oninput" class="w-100 form-control product-search br-30" id="input-search" placeholder="Search Products">
+                        @*<button class="btn btn-primary" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button>*@
+                    </div>
+                @*</form>*@
+            </div>
+
+            <div class="table-responsive mb-4 mt-4">
+
+                @if (this.products.Count == 0 && this.searchText == string.Empty)
+                {
+                    <div class="spinner-border text-primary align-self-center"> </div>
+                    <b> Loading... </b>
+                }
+                else
+                {
+                    <table id="multi-column-ordering" class="table table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (this.products.Count == 0)
+                            {
+                                <tr>Loading...</tr>
+                            }
+                            else
+                            {
+                                foreach (var product in this.products)
+                                {
+
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex">
+                                                <div class="usr-img-frame mr-2 rounded-circle">
+                                                    <img alt="avatar" class="img-fluid rounded-circle" src="assets/img/90x90.jpg">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>@product.Name</td>
+                                        <td>@product.Description</td>
+                                        <button class="btn btn-primary mb-2" @onclick=@(() => addToPdfCreator(product))>Add</button>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+
+    <PDFCreatorBar @ref="pdfCreatorBar" />
+</div>
+
+@code {
+    private PDFCreatorBar? pdfCreatorBar;
+    private string searchText = string.Empty;
+    private List<DataAccess.Models.Product> products = new List<DataAccess.Models.Product>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() => this.products = ProductSearchService.LoadProducts(10));
+    }
+
+    private void loadProducts()
+    {
+        var productsList = DataAccessManager.DataAccessContext.Products.OrderBy(a => a.Id).Take(10);
+        this.products = productsList.ToList();
+    }
+
+    private void searchProducts()
+    {
+        this.products.Clear();
+
+        List<DataAccess.Models.Product> _products = ProductSearchService.SearchProductByName(this.searchText);
+
+        if(_products != null && _products.Count > 0)
+        {
+            this.products.AddRange(_products);
+        }
+    }
+
+    private string SearchText
+    {
+        get { return this.searchText; }
+        set
+        {
+            this.searchText = value;
+            this.searchProducts();
+        }
+    }
+
+    private void addToPdfCreator(DataAccess.Models.Product product)
+    {
+        if (PDFCreatorService.ContainsProduct(product))
+        {
+            //Notify user
+            return;
+        }
+
+        PDFCreatorService.AddProduct(product);
+
+        if (this.pdfCreatorBar != null)
+        {
+            pdfCreatorBar.RefreshState();
+        }
+        else
+        {
+            //Notify User
+        }
+    }
+}

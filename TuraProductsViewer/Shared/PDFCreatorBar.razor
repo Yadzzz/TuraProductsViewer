@@ -1,0 +1,58 @@
+﻿@inject NavigationManager NavManager
+@inject PDFCreatorService CreatorService
+
+<div class="col-xl-4 col-lg-4 col-sm-4  layout-spacing">
+    <div class="widget-content widget-content-area br-4">
+
+        @if (CreatorService.GetProductsCount() == 0)
+        {
+            <p>Creator Service is empty.</p>
+        }
+        else
+        {
+            <ul class="list-group list-group-media">
+                @foreach (var product in CreatorService.GetProducts())
+                {
+
+                    <li class="list-group-item list-group-item-action">
+                        <div class="media">
+                            <div class="mr-3">
+                                <img alt="avatar" src="assets/img/90x90.jpg" class="img-fluid rounded-circle">
+                            </div>
+                            <div class="media-body">
+                                <h6 class="tx-inverse">@product.Name</h6>
+                                <p class="mg-b-0">@product.Description</p>
+                            </div>
+                            <span class="ml-3 d-block">
+                                <button class="btn btn-outline-danger mb-2" @onclick=@(() => removeProduct(product))>Remove</button>
+                            </span>
+                        </div>
+                    </li>
+                }
+            </ul>
+            <hr />
+
+            <div class="col">Total Products in creator</div>
+            <div class="col text-right">@CreatorService.GetProductsCount()</div>
+            <button class="btn btn-primary mb-2" @onclick=@navigateToCreator>Create PDF</button>
+        }
+
+    </div>
+</div>
+
+@code {
+    private void navigateToCreator()
+    {
+        NavManager.NavigateTo("/creator");
+    }
+
+    private void removeProduct(DataAccess.Models.Product product)
+    {
+        CreatorService.RemoveProduct(product);
+    }
+
+    public void RefreshState()
+    {
+        StateHasChanged();
+    }
+}

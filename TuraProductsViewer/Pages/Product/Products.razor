@@ -1,0 +1,101 @@
+﻿@page "/productss"
+
+<PageTitle>Products</PageTitle>
+
+@inject DataAccessManager DataAccessManager
+@inject ProductSearchService ProductSearchService
+@inject PDFCreatorService PDFCreatorService
+
+@*<h3>Products</h3>*@
+
+@*<input @bind-value="searchText" @bind-value:event="onchange" />*@
+@*<input @bind-value="SearchText" @bind-value:event="oninput" />*@
+
+<div class="row" style="position:sticky">
+    <div class="card" style="width: 65rem;">
+        <div class="col-md-15 cart">
+            <div class="container">
+                <h2 style="text-align: center;">Products</h2>
+                <br />
+                <p>Type the name of the product.</p>
+                <input class="form-control" type="text" placeholder="Search.." @bind-value="SearchText" @bind-value:event="oninput">
+                <br>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    @if (this.products.Count == 0)
+                    {
+                        <tr>Loading...</tr>
+                    }
+                    else
+                    {
+                        foreach (var product in this.products)
+                        {
+                            <tr>
+                                <td>@product.Name</td>
+                                <td>@product.Description</td>
+                                <td><RadzenButton Text="Add" Click=@(() => addToPdfCreator(product)) /></td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <PDFCreatorBar @ref="pdfCreatorBar" />
+</div>
+
+@code {
+    private PDFCreatorBar pdfCreatorBar;
+    private string searchText = string.Empty;
+    private List<DataAccess.Models.Product> products = new List<DataAccess.Models.Product>();
+
+    protected override void OnInitialized()
+    {
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() => this.products = ProductSearchService.LoadProducts(10));
+    }
+
+    private void loadProducts()
+    {
+        var productsList = DataAccessManager.DataAccessContext.Products.OrderBy(a => a.Id).Take(10);
+        this.products = productsList.ToList();
+    }
+
+    private void searchProducts()
+    {
+
+    }
+
+    private string SearchText
+    {
+        get { return this.searchText; }
+        set
+        {
+            this.searchText = value;
+            this.searchProducts();
+        }
+    }
+
+    private void addToPdfCreator(DataAccess.Models.Product product)
+    {
+        if (PDFCreatorService.ContainsProduct(product))
+        {
+            //Notify user
+            return;
+        }
+
+        PDFCreatorService.AddProduct(product);
+        pdfCreatorBar.RefreshState();
+    }
+}

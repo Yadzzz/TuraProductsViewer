@@ -4,18 +4,20 @@ namespace TuraProductsViewer.Services
 {
     public class PDFCreatorService
     {
-        private List<Product> products { get; set; }
+        private List<DataRetriever.Models.ProductsDataModel> products { get; set; }
+        public string CurrencyCode { get; set; } = "sek";
+        public string Language { get; set; } = "Swedish";
 
         public PDFCreatorService()
         {
-            this.products = new List<Product>();
+            this.products = new List<DataRetriever.Models.ProductsDataModel>();
         }
 
         /// <summary>
         /// Adds the given products to the list
         /// </summary>
         /// <param name="product">Instance of the product</param>
-        public void AddProduct(Product product)
+        public void AddProduct(DataRetriever.Models.ProductsDataModel product)
         {
             if(this.products.Contains(product))
             {
@@ -29,7 +31,7 @@ namespace TuraProductsViewer.Services
         /// Removes the given product from the list
         /// </summary>
         /// <param name="product">Instance of the product</param>
-        public void RemoveProduct(Product product)
+        public void RemoveProduct(DataRetriever.Models.ProductsDataModel product)
         {
             if(!this.products.Contains(product))
             {
@@ -44,7 +46,7 @@ namespace TuraProductsViewer.Services
         /// </summary>
         /// <param name="product">Instance of the product</param>
         /// <returns>If product exists</returns>
-        public bool ContainsProduct(Product product)
+        public bool ContainsProduct(DataRetriever.Models.ProductsDataModel product)
         {
             return this.products.Contains(product);
         }
@@ -53,7 +55,7 @@ namespace TuraProductsViewer.Services
         /// Gets all the products
         /// </summary>
         /// <returns>List of products</returns>
-        public List<Product> GetProducts()
+        public List<DataRetriever.Models.ProductsDataModel> GetProducts()
         {
             return this.products;
         }

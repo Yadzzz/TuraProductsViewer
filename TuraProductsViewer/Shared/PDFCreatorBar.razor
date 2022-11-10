@@ -20,8 +20,8 @@
                                 <img alt="avatar" src="assets/img/90x90.jpg" class="img-fluid rounded-circle">
                             </div>
                             <div class="media-body">
-                                <h6 class="tx-inverse">@product.Name</h6>
-                                <p class="mg-b-0">@product.Description</p>
+                                <h6 class="tx-inverse">@product.VariantId</h6>
+                                <p class="mg-b-0">@product.GetItemName(CreatorService.Language)</p>
                             </div>
                             <span class="ml-3 d-block">
                                 <button class="btn btn-outline-danger mb-2" @onclick=@(() => removeProduct(product))>Remove</button>
@@ -41,16 +41,25 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Redirects end-user to Creator page
+    /// </summary>
     private void navigateToCreator()
     {
         NavManager.NavigateTo("/creator");
     }
 
-    private void removeProduct(DataAccess.Models.Product product)
+    /// <summary>
+    /// Removes product from Creator Service
+    /// </summary>
+    private void removeProduct(DataRetriever.Models.ProductsDataModel product)
     {
         CreatorService.RemoveProduct(product);
     }
 
+    /// <summary>
+    /// Refreshes the Component State for the end-user
+    /// </summary>
     public void RefreshState()
     {
         StateHasChanged();

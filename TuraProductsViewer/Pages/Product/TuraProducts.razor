@@ -4,8 +4,9 @@
 <PageTitle>Products</PageTitle>
 
 @inject DataAccessManager DataAccessManager
-@inject ProductSearchService ProductSearchService
 @inject PDFCreatorService PDFCreatorService
+@inject APIService ApiService
+@inject ReadFileService FileService
 
 <div class="page-header">
     <div class="page-title">
@@ -17,21 +18,47 @@
     <div class="col-xl-8 col-lg-8 col-sm-8  layout-spacing">
         <div class="widget-content widget-content-area br-6">
 
-            <div class="col-lg-6 col-md-6 col-sm-6 filtered-list-search mx-auto">
-                @*<form class="form-inline my-2 my-lg-0">*@
-                    <div class="w-100">
-                        <input type="text" @bind-value=@SearchText @bind-value:event="oninput" class="w-100 form-control product-search br-30" id="input-search" placeholder="Search Products">
-                        @*<button class="btn btn-primary" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button>*@
+            <InputFile OnChange="@onFileUpload" class="btn btn-outline-primary mb-2" style="float:right" />
+
+            <div class="col-lg-2 col-md-2 col-sm-2">
+                <p>Language</p>
+                <div class="dropdown filter custom-dropdown-icon">
+                    <a class="dropdown-toggle btn" href="#" role="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text">@PDFCreatorService.Language</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+
+                    <div class="dropdown-menu dropdown-menu-right" style="float:left">
+                        <a class="dropdown-item" data-value="Swedish" @onclick=@(() => this.SetLanguage("Swedish"))>Swedish</a>
+                        <a class="dropdown-item" data-value="Norwegian" @onclick=@(() => this.SetLanguage("Norwegian"))>Norwegian</a>
+                        <a class="dropdown-item" data-value="Finnish" @onclick=@(() => this.SetLanguage("Finnish"))>Finnish</a>
+                        <a class="dropdown-item" data-value="Danish" @onclick=@(() => this.SetLanguage("Danish"))>Danish</a>
+                        <a class="dropdown-item" data-value="English" @onclick=@(() => this.SetLanguage("English"))>English</a>
                     </div>
-                @*</form>*@
+                </div>
+
+                @*<InputFile OnChange="@onFileUpload" class="btn btn-outline-primary mb-2" style="float:right"/>*@
+                @*<input type="text" @bind-value=@searchText class="w-100 form-control product-search br-30" id="input-search" placeholder="Search Products">*@
+                @*<br /><button class="btn btn-primary" @onclick=@searchProductFromAPI>Search</button>*@
             </div>
+            
+            <br /><br />
+
+            <div class="col-lg-6" style="float:left">
+                <input type="text" @bind-value=@searchText class="w-100 form-control product-search br-30" id="input-search" placeholder="Search Products">
+                @*<button class="btn btn-outline-primary btn-rounded mb-2" @onclick=@searchProductFromAPI>Search</button>*@
+            </div>
+
+            <div class="col-lg-4 col-md-2 col-sm-2" style="float:left">
+                <button class="btn btn-outline-primary btn-rounded mb-2" @onclick=@searchProductFromAPI>Search</button>
+            </div>
+
+            <br /><br />
 
             <div class="table-responsive mb-4 mt-4">
 
-                @if (this.products.Count == 0 && this.searchText == string.Empty)
+                @if (this.productData == null && this.searchText == string.Empty)
                 {
-                    <div class="spinner-border text-primary align-self-center"> </div>
-                    <b> Loading... </b>
+                    @*<div class="spinner-border text-primary align-self-center"> </div>*@
+                    <hr />
+                    <b> Use the search box to search for an product. </b>
                 }
                 else
                 {
@@ -45,32 +72,34 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (this.products.Count == 0)
+                            @if (this.productNotFound)
                             {
-                                <tr>Loading...</tr>
+                                <tr>Product not found, please enter a valid product ID.</tr>
+                            }
+                            else if (this.productData == null || this.productData.VariantId == null || this.productData.VariantId.Equals(string.Empty))
+                            {
+                                @*<div class="spinner-border text-primary align-self-center"> </div>*@
+                                <tr> Use the search box to search for an product. </tr>
                             }
                             else
                             {
-                                foreach (var product in this.products)
-                                {
-
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex">
-                                                <div class="usr-img-frame mr-2 rounded-circle">
-                                                    <img alt="avatar" class="img-fluid rounded-circle" src="assets/img/90x90.jpg">
-                                                </div>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <div class="usr-img-frame mr-2 rounded-circle">
+                                                <img alt="avatar" class="img-fluid rounded-circle" src="assets/img/90x90.jpg">
                                             </div>
-                                        </td>
-                                        <td>@product.Name</td>
-                                        <td>@product.Description</td>
-                                        <button class="btn btn-primary mb-2" @onclick=@(() => addToPdfCreator(product))>Add</button>
-                                    </tr>
-                                }
+                                        </div>
+                                    </td>
+                                    <td>@productData.VariantId</td>
+                                    <td>@productData.GetItemName(PDFCreatorService.Language)</td>
+                                    <button class="btn btn-primary mb-2" @onclick=@(() => addToPdfCreator(productData))>Add</button>
+                                </tr>
                             }
                         </tbody>
                         <tfoot>
                             <tr>
+                                <th>Image</th>
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Action</th>
@@ -82,49 +111,84 @@
         </div>
     </div>
 
+    @*<div class="col-xl-4">
+    <InputFile OnChange="@onFileUpload" class="btn btn-outline-primary mb-2" />
+    </div>*@
+
     <PDFCreatorBar @ref="pdfCreatorBar" />
 </div>
 
 @code {
     private PDFCreatorBar? pdfCreatorBar;
     private string searchText = string.Empty;
-    private List<DataAccess.Models.Product> products = new List<DataAccess.Models.Product>();
+    private DataRetriever.Models.ProductsDataModel? productData;
+    private bool productNotFound = false;
 
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    //await Task.Run(() => this.productData = ApiService.GetProductsDataAsync("100001", "DKK"));
+    //}
 
-    protected override async Task OnInitializedAsync()
+    /// <summary>
+    /// Searches for given Product Id from the through the API
+    /// </summary>
+    public void searchProductFromAPI()
     {
-        await Task.Run(() => this.products = ProductSearchService.LoadProducts(10));
-    }
+        //Task.Run(() => this.productData = ApiService.GetProductsDataAsync(this.searchText, this.FinalizeCurrencyCode
+        this.productData = ApiService.GetProductsData(this.searchText, this.FinalizeCurrencyCode());
 
-    private void loadProducts()
-    {
-        var productsList = DataAccessManager.DataAccessContext.Products.OrderBy(a => a.Id).Take(10);
-        this.products = productsList.ToList();
-    }
-
-    private void searchProducts()
-    {
-        this.products.Clear();
-
-        List<DataAccess.Models.Product> _products = ProductSearchService.SearchProductByName(this.searchText);
-
-        if(_products != null && _products.Count > 0)
+        if (this.productData == null || productData.VariantId == null || this.productData.VariantId.Equals(string.Empty))
         {
-            this.products.AddRange(_products);
+            this.productNotFound = true;
+        }
+        else
+        {
+            this.productNotFound = false;
         }
     }
 
-    private string SearchText
+    /// <summary>
+    /// Gets the Currency Code based on selected language from the end-user
+    /// </summary>
+    public string FinalizeCurrencyCode()
     {
-        get { return this.searchText; }
-        set
+        if (PDFCreatorService.Language == string.Empty || PDFCreatorService.Language.ToLower().Contains("swedish"))
         {
-            this.searchText = value;
-            this.searchProducts();
+            return "SEK";
         }
+        else if (PDFCreatorService.Language.ToLower().Contains("norwegian"))
+        {
+            return "NOK";
+        }
+        else if (PDFCreatorService.Language.ToLower().Contains("danish"))
+        {
+            return "DKK";
+        }
+        else if (PDFCreatorService.Language.ToLower().Contains("finnish"))
+        {
+            return "EUR";
+        }
+        else if (PDFCreatorService.Language.ToLower().Contains("english"))
+        {
+            return "EUR";
+        }
+
+        return "SEK";
     }
 
-    private void addToPdfCreator(DataAccess.Models.Product product)
+    /// <summary>
+    /// Sets Layout & Product language in Creator Service.
+    /// </summary>
+    public void SetLanguage(string language)
+    {
+        PDFCreatorService.Language = language;
+        this.pdfCreatorBar?.RefreshState();
+    }
+
+    /// <summary>
+    /// Adds given Product to the Creator Service
+    /// </summary>
+    private void addToPdfCreator(DataRetriever.Models.ProductsDataModel product)
     {
         if (PDFCreatorService.ContainsProduct(product))
         {
@@ -141,6 +205,30 @@
         else
         {
             //Notify User
+        }
+    }
+
+    private async Task onFileUpload(InputFileChangeEventArgs e)
+    {
+        var productIds = await FileService.ReadFromUploadedFile(e);
+
+        if (productIds != null && productIds.Count > 0)
+        {
+            foreach (string productId in productIds)
+            {
+                var productDataFromFile = ApiService.GetProductsData(productId, this.FinalizeCurrencyCode());
+
+                if (productDataFromFile == null || productDataFromFile.VariantId == null || productDataFromFile.VariantId.Equals(string.Empty))
+                {
+
+                }
+                else
+                {
+                    this.addToPdfCreator(productDataFromFile);
+                }
+            }
+
+            this.productData = null;
         }
     }
 }

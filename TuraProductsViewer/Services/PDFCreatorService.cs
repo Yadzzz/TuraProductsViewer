@@ -1,6 +1,4 @@
-﻿using DataAccess.Models;
-
-namespace TuraProductsViewer.Services
+﻿namespace TuraProductsViewer.Services
 {
     public class PDFCreatorService
     {

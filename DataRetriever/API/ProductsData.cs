@@ -17,7 +17,6 @@ namespace DataRetriever.API
     {
         //<<<<<<<<Impelement logging>>>>>>>>>
         private string _apiUrl;
-        public Models.ProductsDataModel ProductsDataModel { get; set; }
 
         public ProductsData()
         {
@@ -27,7 +26,6 @@ namespace DataRetriever.API
                     .Build();
 
             this._apiUrl = configuration["apiurl"];
-            this.ProductsDataModel = new ProductsDataModel();
         }
 
         /// <summary>
@@ -40,13 +38,22 @@ namespace DataRetriever.API
         {
             try
             {
-                //var client = new RestClient("https://localhost:5001/api/ProductsData/" + id + "/" + currencyCode);
-                var client = new RestClient(this._apiUrl + id + "/" + currencyCode);
-                var request = new RestRequest();
-                request.AddHeader("ApiKey", "ba932ec7-3d66-487c-bcd0-4e17c8a2dfb3");
-                RestResponse response = client.Execute(request);
+                ProductsDataModel productsData = null;
 
-                var productsData = JsonConvert.DeserializeObject<ProductsDataModel>(response.Content);
+                //var client = new RestClient("https://localhost:5001/api/ProductsData/" + id + "/" + currencyCode);
+                using (var client = new RestClient(this._apiUrl + id + "/" + currencyCode))
+                {
+                    var request = new RestRequest();
+                    request.AddHeader("ApiKey", "ba932ec7-3d66-487c-bcd0-4e17c8a2dfb3");
+                    RestResponse response = client.Execute(request);
+
+                    productsData = JsonConvert.DeserializeObject<ProductsDataModel>(response.Content);
+
+                    //if (client != null)
+                    //{
+                    //    client.Dispose();
+                    //}
+                }
 
                 return productsData;
             }

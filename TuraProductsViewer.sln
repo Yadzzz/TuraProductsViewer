@@ -5,9 +5,7 @@ VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TuraProductsViewer", "TuraProductsViewer\TuraProductsViewer.csproj", "{AC1D1EED-9501-4BDD-8AF1-5EE94B385279}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{3DBB59DD-BFE7-45FD-8911-A17183309D0E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataRetriever", "DataRetriever\DataRetriever.csproj", "{CD38EA70-AEFB-47E4-971B-4B0BD3CC3692}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataRetriever", "DataRetriever\DataRetriever.csproj", "{CD38EA70-AEFB-47E4-971B-4B0BD3CC3692}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +17,6 @@ Global
 		{AC1D1EED-9501-4BDD-8AF1-5EE94B385279}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC1D1EED-9501-4BDD-8AF1-5EE94B385279}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC1D1EED-9501-4BDD-8AF1-5EE94B385279}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3DBB59DD-BFE7-45FD-8911-A17183309D0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3DBB59DD-BFE7-45FD-8911-A17183309D0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3DBB59DD-BFE7-45FD-8911-A17183309D0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3DBB59DD-BFE7-45FD-8911-A17183309D0E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CD38EA70-AEFB-47E4-971B-4B0BD3CC3692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CD38EA70-AEFB-47E4-971B-4B0BD3CC3692}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD38EA70-AEFB-47E4-971B-4B0BD3CC3692}.Release|Any CPU.ActiveCfg = Release|Any CPU

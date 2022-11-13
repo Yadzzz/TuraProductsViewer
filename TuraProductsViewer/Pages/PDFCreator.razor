@@ -1,5 +1,8 @@
 ﻿@page "/creator"
 
+@using PdfSharp.Drawing
+@using PdfSharp.Pdf
+@using System.Diagnostics
 @inject PDFCreatorService CreatorService
 
 <div class="page-header">
@@ -166,7 +169,7 @@
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="filterDropdown">
                             <a class="dropdown-item" data-value="Standard">Standard</a>
                             <a class="dropdown-item" data-value="Detailed">Detailed</a>
-                            <a class="dropdown-item" data-value="Detailed">Fully Detailed</a>
+                            <a class="dropdown-item" data-value="Fully-Detailed">Fully Detailed</a>
                         </div>
                     </div>
                 </form>
@@ -196,6 +199,23 @@
     /// </summary>
     private void createPDF()
     {
+        string html = string.Empty;
+        html += "<p>Test</p> <br /> <h3>Test H3</h3>";
 
+        MarkupString markupString = new MarkupString(html);
+
+        IronPdf.ChromePdfRenderer Renderer = new IronPdf.ChromePdfRenderer();
+        // add a header to very page easily
+        Renderer.RenderingOptions.FirstPageNumber = 1;
+        Renderer.RenderingOptions.TextHeader.DrawDividerLine = true;
+        Renderer.RenderingOptions.TextHeader.CenterText = "Title";
+        Renderer.RenderingOptions.TextHeader.FontSize = 24;
+        // add a footer too
+        Renderer.RenderingOptions.TextFooter.DrawDividerLine = true;
+        Renderer.RenderingOptions.TextFooter.FontSize = 16;
+        Renderer.RenderingOptions.TextFooter.LeftText = "{date} {time}";
+        Renderer.RenderingOptions.TextFooter.RightText = "{page} of {total-pages}";
+        string htmlText = "<h1> This is Sample Pdf file</h1> <p> This is the demo for Csharp Created Pdf using IronPdf </p> <p> IronPdf is a library which provides build in functions for creating, reading <br> and manuplating pdf files with just few lines of code. </p>";
+        Renderer.RenderHtmlAsPdf(htmlText).SaveAs("../TuraProductsViewer/wwwroot/pdf/test.pdf");
     }
 }

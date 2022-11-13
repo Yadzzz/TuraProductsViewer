@@ -61,7 +61,7 @@ namespace TuraProductsViewer.Services
         public async Task<List<string>> ReadFromUploadedFile(InputFileChangeEventArgs e)
         {
             List<string> productIds = new List<string>();
-
+            
             using (var reader = new StreamReader(e.File.OpenReadStream()))
             {
                 string? line;
@@ -77,6 +77,10 @@ namespace TuraProductsViewer.Services
                         productIds.Add(line);
                     }
                 }
+
+                e.File.OpenReadStream().Close(); //Necessary?
+                //reader.Close();
+                //reader.Dispose();
             }
 
             return productIds;

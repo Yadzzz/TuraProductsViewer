@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using DataAccess;
 using TuraProductsViewer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddTransient<DataAccessManager>();
-builder.Services.AddTransient<ProductSearchService>();
 builder.Services.AddScoped<PDFCreatorService>();
 builder.Services.AddTransient<APIService>();
 builder.Services.AddTransient<ReadFileService>();

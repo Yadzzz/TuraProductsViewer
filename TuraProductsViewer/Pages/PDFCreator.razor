@@ -1,9 +1,11 @@
 ﻿@page "/creator"
 
-@using PdfSharp.Drawing
-@using PdfSharp.Pdf
 @using System.Diagnostics
+@using System.Text
 @inject PDFCreatorService CreatorService
+@inject IJSRuntime JSRuntime
+@inject FileCreatorService FileService
+@inject ImageService ImageService
 
 <div class="page-header">
     <div class="page-title">
@@ -115,6 +117,7 @@
                                 <th>Image</th>
                                 <th>Name</th>
                                 <th>Description</th>
+                                <th>Price</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -125,22 +128,24 @@
                                     <td>
                                         <div class="d-flex">
                                             <div class="usr-img-frame mr-2 rounded-circle">
-                                                <img alt="avatar" class="img-fluid rounded-circle" src="assets/img/90x90.jpg">
+                                                <img alt="product" class="img-fluid rounded-circle" src="@ImageService.GetImagePath(product.VariantId)">
                                             </div>
                                         </div>
                                     </td>
                                     <td>@product.VariantId</td>
                                     <td><input type="text" id="row-1-position" class="form-control" name="row-1-position" value="@product.GetItemName(CreatorService.Language)" @oninput="@((e) => { product.SetItemName(CreatorService.Language, (string)e.Value); })"></td>
+                                    <td><input type="text" id="row-1-position" class="form-control" name="row-1-position" value="@product.UnitPrice" @oninput="@((e) => { product.SetUnitPrice((string)e.Value); })"></td>
                                     <td><button class="btn btn-primary mb-2" @onclick=@(() => removeProduct(product))>Remove</button></td>
                                 </tr>
                             }
                         </tbody>
                         <tfoot>
                             <tr>
+                                <th>Image</th>
                                 <th>Name</th>
-                                <th>Age</th>
-                                <th>Position</th>
-                                <th>Office</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Action</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -174,7 +179,8 @@
                     </div>
                 </form>
                 <br />
-                <button class="btn btn-primary mb-2" @onclick=@createPDF>Create PDF</button>
+
+                <button class="btn btn-primary mb-2" type="button" @onclick=@createHTML>Create HTML</button>
             </div>
         </div>
     </div>
@@ -197,25 +203,38 @@
     /// <summary>
     /// Creates PDF file with given product in the Creator Service
     /// </summary>
-    private void createPDF()
+    private void createHTML()
     {
-        string html = string.Empty;
-        html += "<p>Test</p> <br /> <h3>Test H3</h3>";
+        //string html = string.Empty;
+        //html += "<p>Test</p> <br /> <h3>Test H3</h3>";
 
-        MarkupString markupString = new MarkupString(html);
+        //MarkupString markupString = new MarkupString(html);
 
-        IronPdf.ChromePdfRenderer Renderer = new IronPdf.ChromePdfRenderer();
-        // add a header to very page easily
-        Renderer.RenderingOptions.FirstPageNumber = 1;
-        Renderer.RenderingOptions.TextHeader.DrawDividerLine = true;
-        Renderer.RenderingOptions.TextHeader.CenterText = "Title";
-        Renderer.RenderingOptions.TextHeader.FontSize = 24;
-        // add a footer too
-        Renderer.RenderingOptions.TextFooter.DrawDividerLine = true;
-        Renderer.RenderingOptions.TextFooter.FontSize = 16;
-        Renderer.RenderingOptions.TextFooter.LeftText = "{date} {time}";
-        Renderer.RenderingOptions.TextFooter.RightText = "{page} of {total-pages}";
-        string htmlText = "<h1> This is Sample Pdf file</h1> <p> This is the demo for Csharp Created Pdf using IronPdf </p> <p> IronPdf is a library which provides build in functions for creating, reading <br> and manuplating pdf files with just few lines of code. </p>";
-        Renderer.RenderHtmlAsPdf(htmlText).SaveAs("../TuraProductsViewer/wwwroot/pdf/test.pdf");
+        //var file = FileFactory.FetchFileCollectionObject();
+        //if (file.CreateHTML())
+        //{
+        //    this.filePath = "../html/" + file.Id.ToString() + ".html";
+        //    FileFactory.RetrievePoolObject(file);
+        //}
+
+        //string fileName = "file.html";
+        //string content = "te";
+        //JSRuntime.InvokeAsync<object>("saveFile", fileName, content);
+
+        this.DownloadHTMLFile();
+    }
+
+    void DownloadHTMLFile()
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.GenerateHTML(CreatorService));
+        Task.Run(() => this.SaveAs(JSRuntime, "Offer.html", bytes));
+    }
+
+    public async Task SaveAs(IJSRuntime js, string filename, byte[] data)
+    {
+        await js.InvokeAsync<object>(
+            "saveAsFile",
+            filename,
+            Convert.ToBase64String(data));
     }
 }

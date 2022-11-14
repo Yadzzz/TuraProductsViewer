@@ -6,6 +6,7 @@
 @inject PDFCreatorService PDFCreatorService
 @inject APIService ApiService
 @inject ReadFileService FileService
+@inject ImageService ImageService
 
 <div class="page-header">
     <div class="page-title">
@@ -17,7 +18,7 @@
     <div class="col-xl-8 col-lg-8 col-sm-8  layout-spacing">
         <div class="widget-content widget-content-area br-6">
 
-            <InputFile OnChange="@onFileUpload" class="btn btn-outline-primary mb-2" style="float:right" />
+            <InputFile OnChange="@onFileUploadWithPrices" class="btn btn-outline-primary mb-2" style="float:right" />
 
             <div class="col-lg-2 col-md-2 col-sm-2">
                 <p>Language</p>
@@ -86,7 +87,11 @@
                                     <td>
                                         <div class="d-flex">
                                             <div class="usr-img-frame mr-2 rounded-circle">
-                                                <img alt="avatar" class="img-fluid rounded-circle" src="assets/img/90x90.jpg">
+                                                @*<img alt="avatar" class="img-fluid rounded-circle" src="235204/235204.jpg">
+                                                <img alt="avatar" class="img-fluid rounded-circle" src="/235204/235204.jpg">*@
+                                                @*<img alt="avatar" class="img-fluid rounded-circle" src="Produktbilder/2/235204/235204.jpg">*@
+                                                @*<img alt="avatar" class="img-fluid rounded-circle" src="/Produktbilder/2/235204/235204.jpg">*@
+                                                <img alt="avatar" class="img-fluid rounded-circle" src="@ImageService.GetImagePath(productData.VariantId)">
                                             </div>
                                         </div>
                                     </td>
@@ -204,6 +209,39 @@
         else
         {
             //Notify User
+        }
+    }
+
+    private async Task onFileUploadWithPrices(InputFileChangeEventArgs e)
+    {
+        var products = await FileService.ReadFromUploadedFileWithPrices(e);
+
+        if (products != null && products.Count > 0)
+        {
+            foreach (var product in products)
+            {
+                var productDataFromFile = ApiService.GetProductsData(product.Key, this.FinalizeCurrencyCode());
+
+                if(product.Value != string.Empty && product.Value != null)
+                {
+                    int price;
+                    if(int.TryParse(product.Value, out price))
+                    {
+                        productDataFromFile.UnitPrice = price;
+                    }
+                }
+
+                if (productDataFromFile == null || productDataFromFile.VariantId == null || productDataFromFile.VariantId.Equals(string.Empty))
+                {
+
+                }
+                else
+                {
+                    this.addToPdfCreator(productDataFromFile);
+                }
+            }
+
+            this.productData = null;
         }
     }
 

@@ -36,7 +36,8 @@ namespace DataRetriever.Models
         public string VariantCode { get; set; } = null!;
         public string UnitOfMeasureCode { get; set; } = null!;
         public decimal MinimumQuantity { get; set; }
-        public decimal UnitPrice { get; set; }
+        //public decimal UnitPrice { get; set; }
+        public double UnitPrice { get; set; }
         public byte PriceIncludesVat { get; set; }
         public byte AllowInvoiceDisc { get; set; }
         public string VatBusPostingGrPrice { get; set; } = null!;
@@ -78,7 +79,7 @@ namespace DataRetriever.Models
             this.VariantCode = variantCode;
             this.UnitOfMeasureCode = unitOfMeasureCode;
             this.MinimumQuantity = minimumQuantity;
-            this.UnitPrice = unitPrice;
+            this.UnitPrice = (double)unitPrice;
             this.PriceIncludesVat = priceIncludesVat;
             this.AllowInvoiceDisc = allowInvoiceDisc;
             this.VatBusPostingGrPrice = vatBusPostingGrPrice;
@@ -92,34 +93,6 @@ namespace DataRetriever.Models
         /// <param name="language">Language</param>
         /// <returns>The product name in given language</returns>
         public string GetItemName(string language)
-        {
-            if (language == string.Empty || language.ToLower().Contains("swedish"))
-            {
-                return this.SeItemName;
-            }
-            else if (language.ToLower().Contains("norwegian"))
-            {
-                return this.NoItemName;
-            }
-            else if (language.ToLower().Contains("finnish"))
-            {
-                return this.FiItemName;
-            }
-            else if (language.ToLower().Contains("danish"))
-            {
-                return this.DkItemName;
-            }
-            else if (language.ToLower().Contains("english"))
-            {
-                return this.EnItemName;
-            }
-            else
-            {
-                return this.SeItemName;
-            }
-        }
-
-        public string GetItemNameByRef(string language)
         {
             if (language == string.Empty || language.ToLower().Contains("swedish"))
             {
@@ -175,39 +148,6 @@ namespace DataRetriever.Models
             }
         }
 
-        /// <summary>
-        /// Gets the product text based on given language
-        /// </summary>
-        /// <param name="language">Language</param>
-        /// <returns>The product description in given language</returns>
-        public string GetItemText(string language)
-        {
-            if (language == string.Empty || language.ToLower().Contains("swedish"))
-            {
-                return this.SeItemText;
-            }
-            else if (language.ToLower().Contains("norwegian"))
-            {
-                return this.NoItemText;
-            }
-            else if (language.ToLower().Contains("finnish"))
-            {
-                return this.FiItemText;
-            }
-            else if (language.ToLower().Contains("danish"))
-            {
-                return this.DkItemText;
-            }
-            else if (language.ToLower().Contains("english"))
-            {
-                return this.EnItemText;
-            }
-            else
-            {
-                return this.SeItemText;
-            }
-        }
-
         public void SetItemText(string language, string text)
         {
             if (language == string.Empty || language.ToLower().Contains("swedish"))
@@ -216,23 +156,37 @@ namespace DataRetriever.Models
             }
             else if (language.ToLower().Contains("norwegian"))
             {
-                 this.NoItemText = text;
+                this.NoItemText = text;
             }
             else if (language.ToLower().Contains("finnish"))
             {
-                 this.FiItemText = text;
+                this.FiItemText = text;
             }
             else if (language.ToLower().Contains("danish"))
             {
-                 this.DkItemText = text;
+                this.DkItemText = text;
             }
             else if (language.ToLower().Contains("english"))
             {
-                 this.EnItemText = text;
+                this.EnItemText = text;
             }
             else
             {
-                 this.SeItemText = text;
+                this.SeItemText = text;
+            }
+        }
+
+        public void SetUnitPrice(string price)
+        {
+            if (price == string.Empty || price == null)
+            {
+                return;
+            }
+
+            double decimalPrice;
+            if (double.TryParse(price, out decimalPrice))
+            {
+                this.UnitPrice = decimalPrice;
             }
         }
 
@@ -246,7 +200,7 @@ namespace DataRetriever.Models
             link += this.VariantId[0] + "/";
             link += this.VariantId + "/";
             link += this.VariantId + ".jpg";
-            Console.WriteLine(link);
+
             return link;
         }
     }

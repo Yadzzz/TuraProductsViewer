@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.FileProviders;
+using System.Net;
+using TuraProductsViewer;
 using TuraProductsViewer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +15,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<PDFCreatorService>();
 builder.Services.AddTransient<APIService>();
 builder.Services.AddTransient<ReadFileService>();
+builder.Services.AddScoped<FileCreatorService>();
+builder.Services.AddScoped<ImageService>();
 
 var app = builder.Build();
 
@@ -26,6 +31,19 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+
+string networkPath = @"\\192.168.1.21\Produktbilder";
+NetworkCredential credentials = new NetworkCredential(@"tura\svc-pdf", "1234QWer!");
+
+ConnectToSharedFolder ConnectToSharedFolder = new ConnectToSharedFolder(networkPath, credentials);
+
+//app.UseFileServer(new FileServerOptions()
+//{
+//    FileProvider = new PhysicalFileProvider(
+//        Path.Combine("\\\\192.168.1.21\\Produktbilder")),
+//    RequestPath = new PathString("/Produktbilder"),
+//    EnableDirectoryBrowsing = true
+//});
 
 app.UseRouting();
 

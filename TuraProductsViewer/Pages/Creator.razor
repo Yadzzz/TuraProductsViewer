@@ -2,7 +2,7 @@
 
 @using System.Diagnostics
 @using System.Text
-@inject PDFCreatorService CreatorService
+@inject CreatorService CreatorService
 @inject IJSRuntime JSRuntime
 @inject FileCreatorService FileService
 @inject ImageService ImageService
@@ -181,6 +181,9 @@
                 <br />
 
                 <button class="btn btn-primary mb-2" type="button" @onclick=@createHTML>Create HTML</button>
+                <button class="btn btn-primary mb-2" type="button" @onclick=@createPDF>Create PDF</button>
+                <button onclick="generatePDF()">Generate PDF using jsPDF</button>
+                <button type="button" @onclick="DownloadPdf">Generate</button>
             </div>
         </div>
     </div>
@@ -195,9 +198,28 @@
         CreatorService.RemoveProduct(product);
     }
 
-    private void setUniqueItemName()
+    private void createPDF()
     {
+        PdfCreator.CreateHtml(FileService.HTML(CreatorService, ImageService));
+        //var bytes = System.Text.Encoding.UTF8.GetBytes("test");
+        //Task.Run(() => this.SaveAsPDF(JSRuntime, "Offer.pdf", bytes, FileService.GenerateHTML(CreatorService)));
+    }
 
+    public async Task SaveAsPDF(IJSRuntime js, string filename, byte[] data, string d)
+    {
+        await js.InvokeAsync<object>(
+            "generatePDFFF", d);
+    }
+
+    async Task DownloadPdf()
+    {
+        await using var module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "../HtmlToPdf.js");
+
+        // Generate and download the PDF
+        await module.InvokeVoidAsync("generateAndDownloadPdf", FileService.HTML(CreatorService, ImageService), "sample.pdf");
+
+        // Generate the PDF and get its content as byte[] (need .NET 6 to support Uint8Array)
+        var bytes = await module.InvokeAsync<byte[]>("generatePdf", FileService.HTML(CreatorService, ImageService));
     }
 
     /// <summary>
@@ -226,7 +248,8 @@
 
     void DownloadHTMLFile()
     {
-        var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.GenerateHTML(CreatorService));
+        //var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.GenerateHTML(CreatorService));
+        var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.HTML(CreatorService, ImageService));
         Task.Run(() => this.SaveAs(JSRuntime, "Offer.html", bytes));
     }
 

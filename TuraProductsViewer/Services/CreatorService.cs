@@ -1,12 +1,12 @@
 ﻿namespace TuraProductsViewer.Services
 {
-    public class PDFCreatorService
+    public class CreatorService
     {
         private List<DataRetriever.Models.ProductsDataModel> products { get; set; }
         public string CurrencyCode { get; set; } = "sek";
         public string Language { get; set; } = "Swedish";
 
-        public PDFCreatorService()
+        public CreatorService()
         {
             this.products = new List<DataRetriever.Models.ProductsDataModel>();
         }

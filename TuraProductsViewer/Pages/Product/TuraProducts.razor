@@ -3,7 +3,7 @@
 
 <PageTitle>Products</PageTitle>
 
-@inject PDFCreatorService PDFCreatorService
+@inject CreatorService PDFCreatorService
 @inject APIService ApiService
 @inject ReadFileService FileService
 @inject ImageService ImageService
@@ -119,11 +119,11 @@
     <InputFile OnChange="@onFileUpload" class="btn btn-outline-primary mb-2" />
     </div>*@
 
-    <PDFCreatorBar @ref="pdfCreatorBar" />
+    <CreatorBar @ref="pdfCreatorBar" />
 </div>
 
 @code {
-    private PDFCreatorBar? pdfCreatorBar;
+    private CreatorBar? pdfCreatorBar;
     private string searchText = string.Empty;
     private DataRetriever.Models.ProductsDataModel? productData;
     private bool productNotFound = false;

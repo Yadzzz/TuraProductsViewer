@@ -18,7 +18,8 @@
                     <li class="list-group-item list-group-item-action">
                         <div class="media">
                             <div class="mr-3" style="max-width:50px">
-                                <img alt="product" src="@ImageService.GetImagePath(product.VariantId)" class="img-fluid rounded-circle" >
+                                @*<img alt="product" src="@ImageService.GetImagePath(product.VariantId)" class="img-fluid rounded-circle" >*@
+                                <img alt="product" src="@ImageService.GetWebImagePath(product.VariantId)" class="img-fluid rounded-circle">
                             </div>
                             <div class="media-body">
                                 <h6 class="tx-inverse">@product.VariantId</h6>

@@ -87,11 +87,8 @@
                                     <td>
                                         <div class="d-flex">
                                             <div class="usr-img-frame mr-2 rounded-circle">
-                                                @*<img alt="avatar" class="img-fluid rounded-circle" src="235204/235204.jpg">
-                                                <img alt="avatar" class="img-fluid rounded-circle" src="/235204/235204.jpg">*@
-                                                @*<img alt="avatar" class="img-fluid rounded-circle" src="Produktbilder/2/235204/235204.jpg">*@
-                                                @*<img alt="avatar" class="img-fluid rounded-circle" src="/Produktbilder/2/235204/235204.jpg">*@
-                                                <img alt="avatar" class="img-fluid rounded-circle" src="@ImageService.GetImagePath(productData.VariantId)">
+                                                @*<img alt="avatar" class="img-fluid rounded-circle" src="@ImageService.GetImagePath(productData.VariantId)">*@
+                                                <img alt="avatar" class="img-fluid rounded-circle" src="@ImageService.GetWebImagePath(productData.VariantId)">
                                             </div>
                                         </div>
                                     </td>

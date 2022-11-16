@@ -128,7 +128,8 @@
                                     <td>
                                         <div class="d-flex">
                                             <div class="usr-img-frame mr-2 rounded-circle">
-                                                <img alt="product" class="img-fluid rounded-circle" src="@ImageService.GetImagePath(product.VariantId)">
+                                                @*<img alt="product" class="img-fluid rounded-circle" src="@ImageService.GetImagePath(product.VariantId)">*@
+                                                <img alt="product" class="img-fluid rounded-circle" src="@ImageService.GetWebImagePath(product.VariantId)">
                                             </div>
                                         </div>
                                     </td>

@@ -5,13 +5,41 @@ namespace TuraProductsViewer.Services
 {
     public class ImageService
     {
-        private string rootProductsImageFolderPrimary;
-        private string rootProdcutsImageFolderSecondary;
+        private string rootProductsImageFolder;
+        private string webProductsImagePath;
 
         public ImageService()
         {
-            this.rootProductsImageFolderPrimary = "/Produktbilder/";
-            this.rootProdcutsImageFolderSecondary = "Produktbilder/";
+            this.rootProductsImageFolder = "/Produktbilder/";
+            this.webProductsImagePath = "https://www.turascandinavia.com/image/";
+        }
+
+        /// <summary>
+        /// Web Image Path
+        /// </summary>
+        /// <param name="productId">Product Id</param>
+        /// <returns>Image Path</returns>
+        public string GetWebImagePath(string productId)
+        {
+            string imagePath = this.webProductsImagePath;
+            imagePath += productId;
+            imagePath += ".jpg";
+
+            return imagePath;
+        }
+
+        /// <summary>
+        /// Web Packaging Image Path
+        /// </summary>
+        /// <param name="productId">Product Id</param>
+        /// <returns>Packaging Image Path</returns>
+        public string GetWebPackagingImagePath(string productId)
+        {
+            string imagePath = this.webProductsImagePath;
+            imagePath += productId;
+            imagePath += "ver.jpg";
+
+            return imagePath;
         }
 
         /// <summary>
@@ -22,7 +50,7 @@ namespace TuraProductsViewer.Services
         public string GetImagePath(string productId)
         {
             /// Produktbilder / 2 / 235204 / 235204.jpg
-            string imagePath = this.rootProductsImageFolderPrimary;
+            string imagePath = this.rootProductsImageFolder;
             imagePath += productId.Substring(0, 1);
             imagePath += "/";
             imagePath += productId;
@@ -41,7 +69,7 @@ namespace TuraProductsViewer.Services
         public string GetPackagingImagePath(string productId)
         {
             /// Produktbilder / 2 / 235204 / 235204.jpg
-            string imagePath = this.rootProductsImageFolderPrimary;
+            string imagePath = this.rootProductsImageFolder;
             imagePath += productId.Substring(0, 1);
             imagePath += "/";
             imagePath += productId;

@@ -44,6 +44,13 @@ namespace DataRetriever.Models
         public DateTime EndingDate { get; set; }
         public byte AllowLineDisc { get; set; }
 
+        //TiNavItem data
+        public string PrimaryEANCode { get; set; }
+        public string UnitOfMeasure { get; set; }
+
+        //TiNavQtyTmp
+        public decimal AvailableQty { get; set; }
+
         /// <summary>
         /// Sets all the variables Data
         /// </summary>
@@ -85,6 +92,7 @@ namespace DataRetriever.Models
             this.VatBusPostingGrPrice = vatBusPostingGrPrice;
             this.EndingDate = endingDate;
             this.AllowLineDisc = allowLineDisc;
+            //Set the rest variables
         }
 
         /// <summary>
@@ -196,7 +204,7 @@ namespace DataRetriever.Models
         /// <returns>Returns image link for the product</returns>
         public string GetImageLink()
         {
-            string link = @"file://192.168.1.21/Produktbilder/";
+            string link = "//192.168.1.21/Produktbilder/";
             link += this.VariantId[0] + "/";
             link += this.VariantId + "/";
             link += this.VariantId + ".jpg";

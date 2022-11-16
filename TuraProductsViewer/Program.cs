@@ -35,7 +35,7 @@ app.UseStaticFiles();
 string networkPath = @"\\192.168.1.21\Produktbilder";
 NetworkCredential credentials = new NetworkCredential(@"tura\svc-pdf", "1234QWer!");
 
-ConnectToSharedFolder ConnectToSharedFolder = new ConnectToSharedFolder(networkPath, credentials);
+//ConnectToSharedFolder ConnectToSharedFolder = new ConnectToSharedFolder(networkPath, credentials);
 
 //app.UseFileServer(new FileServerOptions()
 //{

@@ -46,10 +46,4 @@
     <Folder Include="wwwroot\html\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="PdfSharp">
-      <HintPath>..\..\..\..\Desktop\PdfSharp.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

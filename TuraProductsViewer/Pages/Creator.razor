@@ -200,7 +200,7 @@
 
     private void createPDF()
     {
-        PdfCreator.CreateHtml(FileService.HTML(CreatorService, ImageService));
+        PdfCreator.CreateHtml(FileService.HTML(CreatorService, ImageService, false));
         //var bytes = System.Text.Encoding.UTF8.GetBytes("test");
         //Task.Run(() => this.SaveAsPDF(JSRuntime, "Offer.pdf", bytes, FileService.GenerateHTML(CreatorService)));
     }
@@ -216,10 +216,10 @@
         await using var module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "../HtmlToPdf.js");
 
         // Generate and download the PDF
-        await module.InvokeVoidAsync("generateAndDownloadPdf", FileService.HTML(CreatorService, ImageService), "sample.pdf");
+        await module.InvokeVoidAsync("generateAndDownloadPdf", FileService.HTML(CreatorService, ImageService, false), "sample.pdf");
 
         // Generate the PDF and get its content as byte[] (need .NET 6 to support Uint8Array)
-        var bytes = await module.InvokeAsync<byte[]>("generatePdf", FileService.HTML(CreatorService, ImageService));
+        var bytes = await module.InvokeAsync<byte[]>("generatePdf", FileService.HTML(CreatorService, ImageService, false));
     }
 
     /// <summary>
@@ -249,7 +249,7 @@
     void DownloadHTMLFile()
     {
         //var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.GenerateHTML(CreatorService));
-        var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.HTML(CreatorService, ImageService));
+        var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.HTML(CreatorService, ImageService, true));
         Task.Run(() => this.SaveAs(JSRuntime, "Offer.html", bytes));
     }
 

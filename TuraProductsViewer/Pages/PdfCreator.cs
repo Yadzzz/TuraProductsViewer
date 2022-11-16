@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Web;
 using SelectPdf;
@@ -22,6 +23,13 @@ namespace TuraProductsViewer.Pages
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
             converter.Options.WebPageWidth = 1024;
             converter.Options.WebPageHeight = 0;
+
+            //converter.Options.PdfStandard = PdfStandard.PdfA;
+
+            converter.Options.MarginLeft = 20;
+            converter.Options.MarginRight = 0;
+
+            //converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.ShrinkOnly;
 
             // create a new pdf document converting an url
             //PdfDocument doc = converter.ConvertHtmlString(htmlString, baseUrl);

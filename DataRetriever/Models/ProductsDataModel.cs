@@ -51,6 +51,12 @@ namespace DataRetriever.Models
         //TiNavQtyTmp
         public decimal AvailableQty { get; set; }
 
+        //TiNavItemUnitOfMeasure
+        public decimal QtyPerUnitOfMeasure { get; set; }
+
+        //Price withtout vat
+        public decimal UnitPriceWithoutVat { get; set; }
+
         /// <summary>
         /// Sets all the variables Data
         /// </summary>

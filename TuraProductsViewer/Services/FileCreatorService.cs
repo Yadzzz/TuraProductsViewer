@@ -27,10 +27,10 @@ namespace TuraProductsViewer.Services
                 html = html.Replace("{@productname@}", product.GetItemName(creatorService.Language));
                 html = html.Replace("{@artnr@}", product.VariantId);
                 html = html.Replace("{@varumarke@}", product.Brand);
-                html = html.Replace("{@rekpris@}", product.UnitPrice.ToString());
+                html = html.Replace("{@rekpris@}", product.UnitPrice.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
                 html = html.Replace("{@ean@}", product.PrimaryEANCode);
-                html = html.Replace("{@frpstl@}", product.UnitOfMeasure);
-                html = html.Replace("{@ilager@}", product.AvailableQty.ToString());
+                html = html.Replace("{@frpstl@}", product.QtyPerUnitOfMeasure.ToString("F2") + " " + product.UnitOfMeasure);
+                html = html.Replace("{@ilager@}", product.AvailableQty > 0 ? product.AvailableQty.ToString() : "Nej");
                 //html = html.Replace("{@image@}", imageService.GetImagePath(product.VariantId));
                 html = html.Replace("{@image@}", imageService.GetWebImagePath(product.VariantId));
 

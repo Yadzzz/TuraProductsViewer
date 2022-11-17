@@ -166,31 +166,87 @@
                     </div>
                 </div>
                 <hr />
-                <form>
-                    <p>Page Layout</p>
 
-                    <div class="dropdown filter custom-dropdown-icon">
-                        <a class="dropdown-toggle btn" href="#" role="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text">Standard</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+                <div class="col-lg-6">
+                    <form>
+                        <p>Page Layout</p>
 
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="filterDropdown">
-                            <a class="dropdown-item" data-value="Standard">Standard</a>
-                            <a class="dropdown-item" data-value="Detailed">Detailed</a>
-                            <a class="dropdown-item" data-value="Fully-Detailed">Fully Detailed</a>
+                        <div class="dropdown filter custom-dropdown-icon">
+                            <a class="dropdown-toggle btn" href="#" role="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text">Standard</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="filterDropdown">
+                                <a class="dropdown-item" data-value="sixperpage">6 / Sida</a>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
+
                 <br />
+
+                <div class="col-lg-8">
+                    <p>Page Title</p>
+                    <input type="text" @bind-value=@this.title class="w-100 form-control product-search br-30" id="input-search" placeholder="Page Title">
+                </div>
+
+                <hr />
+
+                <div class="col-lg-12">
+                    <div class="col-lg-12">
+                        <input class="form-check-input" type="checkbox" id="gridCheck1" checked="@this.CreatorService.UsePackagingImage" @oninput="@((e) => { this.CreatorService.UsePackagingImage = (bool)e.Value; })">
+                        <label class="form-check-label" for="gridCheck1">
+                            Använd förpackningsbild
+                        </label>
+                    </div>
+                    <div class="col-lg-12">
+                        <input class="form-check-input" type="checkbox" id="gridCheck1" checked="@this.CreatorService.ShowInStock" @oninput="@((e) => { this.CreatorService.ShowInStock = (bool)e.Value; })">
+                        <label class="form-check-label" for="gridCheck1">
+                            Visa lagersaldo
+                        </label>
+                    </div>
+                    @if (this.CreatorService.ShowInStock)
+                    {
+                        <div class="col-lg-12">
+                            <input class="form-check-input" type="checkbox" id="gridCheck1" checked="@this.CreatorService.ShowInStockCount" @oninput="@((e) => { this.CreatorService.ShowInStockCount = (bool)e.Value; })">
+                            <label class="form-check-label" for="gridCheck1">
+                                Visa antal
+                            </label>
+                        </div>
+                    }
+                    <div class="col-lg-12">
+                        <input class="form-check-input" type="checkbox" id="gridCheck1" checked="@this.CreatorService.ShowPackagingMeasurment" @oninput="@((e) => { this.CreatorService.ShowPackagingMeasurment = (bool)e.Value; })">
+                        <label class="form-check-label" for="gridCheck1">
+                            Visa förpackningsstorlek
+                        </label>
+                    </div>
+                </div>
+                <hr />
+
+                <div class="dropdown filter custom-dropdown-icon">
+                    <a class="dropdown-toggle btn" href="#" role="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text">@this.CreatorService.PriceType.ToString()</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="filterDropdown">
+                        <a class="dropdown-item" data-value="Rek" @onclick="(() => this.CreatorService.PriceType = PriceType.Rek)">Rek</a>
+                        <a class="dropdown-item" data-value="Netto"@onclick="(() => this.CreatorService.PriceType = PriceType.Netto)">Netto</a>
+                        <a class="dropdown-item" data-value="Rek & Netto" @onclick="(() => this.CreatorService.PriceType = PriceType.RekNetto)">Rek & Netto</a>
+                        <a class="dropdown-item" data-value="None" @onclick="(() => this.CreatorService.PriceType = PriceType.None)">None</a>
+                    </div>
+                </div>
+
+                <br />
+
+                <hr />
 
                 <button class="btn btn-primary mb-2" type="button" @onclick=@createHTML>Create HTML</button>
                 <button class="btn btn-primary mb-2" type="button" @onclick=@createPDF>Create PDF</button>
-                <button onclick="generatePDF()">Generate PDF using jsPDF</button>
-                <button type="button" @onclick="DownloadPdf">Generate</button>
+                @*<button type="button" @onclick="DownloadPdf">Generate</button>*@
             </div>
         </div>
     </div>
 </div>
 
 @code {
+    private string title { get; set; } = "Tura Scandinavia";
+
     /// <summary>
     /// Removes given product from Creator Service
     /// </summary>
@@ -199,9 +255,21 @@
         CreatorService.RemoveProduct(product);
     }
 
-    private void createPDF()
+    private async Task createPDF()
     {
-        PdfCreator.CreateHtml(FileService.HTML(CreatorService, ImageService, false));
+        //PdfCreator.CreateHtml(FileService.HTML(CreatorService, ImageService, false)); //LATEST
+
+        HtmlDesigner.HtmlBuilder htmlBuilder = new HtmlDesigner.HtmlBuilder(this.title, HtmlDesigner.HtmlLayout.SixPerPage, this.CreatorService, this.ImageService, false);
+        //using (MemoryStream excelStream = PdfCreator.GetHTMLStream(FileService.HTML(CreatorService, ImageService, false)))
+        using (MemoryStream excelStream = PdfCreator.GetPDFStream(htmlBuilder.GenerateHTML()))
+        {
+            await JSRuntime.InvokeAsync<object>(
+                       "saveAsFileee",
+                       "Products.pdf",
+                       Convert.ToBase64String(excelStream.ToArray()));
+        }
+
+
         //var bytes = System.Text.Encoding.UTF8.GetBytes("test");
         //Task.Run(() => this.SaveAsPDF(JSRuntime, "Offer.pdf", bytes, FileService.GenerateHTML(CreatorService)));
     }
@@ -228,29 +296,15 @@
     /// </summary>
     private void createHTML()
     {
-        //string html = string.Empty;
-        //html += "<p>Test</p> <br /> <h3>Test H3</h3>";
-
-        //MarkupString markupString = new MarkupString(html);
-
-        //var file = FileFactory.FetchFileCollectionObject();
-        //if (file.CreateHTML())
-        //{
-        //    this.filePath = "../html/" + file.Id.ToString() + ".html";
-        //    FileFactory.RetrievePoolObject(file);
-        //}
-
-        //string fileName = "file.html";
-        //string content = "te";
-        //JSRuntime.InvokeAsync<object>("saveFile", fileName, content);
-
         this.DownloadHTMLFile();
     }
 
-    void DownloadHTMLFile()
+    private void DownloadHTMLFile()
     {
-        //var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.GenerateHTML(CreatorService));
-        var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.HTML(CreatorService, ImageService, true));
+        HtmlDesigner.HtmlBuilder htmlBuilder = new HtmlDesigner.HtmlBuilder(this.title, HtmlDesigner.HtmlLayout.SixPerPage, this.CreatorService, this.ImageService, true);
+        var bytes = System.Text.Encoding.UTF8.GetBytes(htmlBuilder.GenerateHTML());
+
+        //var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.HTML(CreatorService, ImageService, true));
         Task.Run(() => this.SaveAs(JSRuntime, "Offer.html", bytes));
     }
 

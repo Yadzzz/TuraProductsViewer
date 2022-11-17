@@ -3,6 +3,8 @@
 
 <PageTitle>Products</PageTitle>
 
+@using TuraProductsViewer.Shared;
+
 @inject CreatorService PDFCreatorService
 @inject APIService ApiService
 @inject ReadFileService FileService
@@ -17,12 +19,30 @@
 <div class="row layout-top-spacing" id="cancel-row">
     <div class="col-xl-8 col-lg-8 col-sm-8  layout-spacing">
         <div class="widget-content widget-content-area br-6">
+            <p>
+                Please Note that you need to choose Currency before searching or uploading products to get the right Unit Price.
+                <br />
+                Language is flexible and can be changed even after added products to the Creator.
+            </p>
+
+            <hr />
 
             <InputFile OnChange="@onFileUploadWithPrices" class="btn btn-outline-primary mb-2" style="float:right" />
 
-            <div class="col-lg-2 col-md-2 col-sm-2">
-                <p>Language</p>
-                <div class="dropdown filter custom-dropdown-icon">
+            <div class="col-lg-4 col-md-2 col-sm-2">
+
+                <div class="dropdown filter custom-dropdown-icon" style="float:left">
+                    <a class="dropdown-toggle btn" href="#" role="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text">@PDFCreatorService.CurrencyCode</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+
+                    <div class="dropdown-menu dropdown-menu-right" style="float:left">
+                        <a class="dropdown-item" data-value="SEK" @onclick=@(() => this.SetCurrency("SEK"))>SEK</a>
+                        <a class="dropdown-item" data-value="NOK" @onclick=@(() => this.SetCurrency("NOK"))>NOK</a>
+                        <a class="dropdown-item" data-value="DKK" @onclick=@(() => this.SetCurrency("DKK"))>DKK</a>
+                        <a class="dropdown-item" data-value="EUR" @onclick=@(() => this.SetCurrency("EUR"))>EUR</a>
+                    </div>
+                </div>
+
+                <div class="dropdown filter custom-dropdown-icon" style="float:right">
                     <a class="dropdown-toggle btn" href="#" role="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text">@PDFCreatorService.Language</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
 
                     <div class="dropdown-menu dropdown-menu-right" style="float:left">
@@ -34,12 +54,9 @@
                     </div>
                 </div>
 
-                @*<InputFile OnChange="@onFileUpload" class="btn btn-outline-primary mb-2" style="float:right"/>*@
-                @*<input type="text" @bind-value=@searchText class="w-100 form-control product-search br-30" id="input-search" placeholder="Search Products">*@
-                @*<br /><button class="btn btn-primary" @onclick=@searchProductFromAPI>Search</button>*@
             </div>
-            
-            <br /><br />
+
+            <br /><br /><br /><br />
 
             <div class="col-lg-6" style="float:left">
                 <input type="text" @bind-value=@searchText class="w-100 form-control product-search br-30" id="input-search" placeholder="Search Products">
@@ -116,11 +133,11 @@
     <InputFile OnChange="@onFileUpload" class="btn btn-outline-primary mb-2" />
     </div>*@
 
-    <CreatorBar @ref="pdfCreatorBar" />
+    <PDFCreatorBar @ref="pdfCreatorBar" />
 </div>
 
 @code {
-    private CreatorBar? pdfCreatorBar;
+    private PDFCreatorBar? pdfCreatorBar;
     private string searchText = string.Empty;
     private DataRetriever.Models.ProductsDataModel? productData;
     private bool productNotFound = false;
@@ -136,7 +153,7 @@
     public void searchProductFromAPI()
     {
         //Task.Run(() => this.productData = ApiService.GetProductsDataAsync(this.searchText, this.FinalizeCurrencyCode
-        this.productData = ApiService.GetProductsData(this.searchText, this.FinalizeCurrencyCode());
+        this.productData = ApiService.GetProductsData(this.searchText, this.PDFCreatorService.CurrencyCode);
 
         if (this.productData == null || productData.VariantId == null || this.productData.VariantId.Equals(string.Empty))
         {
@@ -177,12 +194,23 @@
         return "SEK";
     }
 
+    private void SetPriceType()
+    {
+        
+    }
+
     /// <summary>
     /// Sets Layout & Product language in Creator Service.
     /// </summary>
     public void SetLanguage(string language)
     {
         PDFCreatorService.Language = language;
+        this.pdfCreatorBar?.RefreshState();
+    }
+
+    public void SetCurrency(string currency)
+    {
+        PDFCreatorService.CurrencyCode = currency;
         this.pdfCreatorBar?.RefreshState();
     }
 
@@ -217,12 +245,12 @@
         {
             foreach (var product in products)
             {
-                var productDataFromFile = ApiService.GetProductsData(product.Key, this.FinalizeCurrencyCode());
+                var productDataFromFile = ApiService.GetProductsData(product.Key, PDFCreatorService.CurrencyCode);
 
-                if(product.Value != string.Empty && product.Value != null)
+                if (product.Value != string.Empty && product.Value != null)
                 {
                     int price;
-                    if(int.TryParse(product.Value, out price))
+                    if (int.TryParse(product.Value, out price))
                     {
                         productDataFromFile.UnitPrice = price;
                     }
@@ -250,7 +278,7 @@
         {
             foreach (string productId in productIds)
             {
-                var productDataFromFile = ApiService.GetProductsData(productId, this.FinalizeCurrencyCode());
+                var productDataFromFile = ApiService.GetProductsData(productId, this.PDFCreatorService.CurrencyCode);
 
                 if (productDataFromFile == null || productDataFromFile.VariantId == null || productDataFromFile.VariantId.Equals(string.Empty))
                 {

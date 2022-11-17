@@ -3,8 +3,13 @@
     public class CreatorService
     {
         private List<DataRetriever.Models.ProductsDataModel> products { get; set; }
-        public string CurrencyCode { get; set; } = "sek";
+        public string CurrencyCode { get; set; } = "SEK";
         public string Language { get; set; } = "Swedish";
+        public bool UsePackagingImage { get; set; } = false;
+        public bool ShowInStock { get; set; } = true;
+        public bool ShowInStockCount { get; set; } = true;
+        public bool ShowPackagingMeasurment { get; set; } = true;
+        public PriceType PriceType { get; set; } = PriceType.Rek;
 
         public CreatorService()
         {
@@ -66,5 +71,13 @@
         {
             return this.products.Count;
         }
+    }
+
+    public enum PriceType
+    {
+        Rek,
+        Netto,
+        RekNetto,
+        None
     }
 }

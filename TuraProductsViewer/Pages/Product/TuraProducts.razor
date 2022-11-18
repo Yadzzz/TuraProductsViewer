@@ -9,6 +9,7 @@
 @inject APIService ApiService
 @inject ReadFileService FileService
 @inject ImageService ImageService
+@inject IJSRuntime JSRuntime
 
 <div class="page-header">
     <div class="page-title">
@@ -59,7 +60,8 @@
             <br /><br /><br /><br />
 
             <div class="col-lg-6" style="float:left">
-                <input type="text" @bind-value=@searchText class="w-100 form-control product-search br-30" id="input-search" placeholder="Search Products">
+                @*<input type="text" @bind-value=@searchText class="w-100 form-control product-search br-30" id="input-search" placeholder="Search Products" @onkeydown="@Enter">*@
+                <input type="text" value="@this.searchText" @oninput=@((e) => this.searchText = (string)e.Value) class="w-100 form-control product-search br-30" id="input-search" placeholder="Search Products" @onkeydown="@Enter">
                 @*<button class="btn btn-outline-primary btn-rounded mb-2" @onclick=@searchProductFromAPI>Search</button>*@
             </div>
 
@@ -147,6 +149,14 @@
     //    //await Task.Run(() => this.productData = ApiService.GetProductsDataAsync("100001", "DKK"));
     //}
 
+    public void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            this.searchProductFromAPI();
+        }
+    }
+
     /// <summary>
     /// Searches for given Product Id from the through the API
     /// </summary>
@@ -196,7 +206,7 @@
 
     private void SetPriceType()
     {
-        
+
     }
 
     /// <summary>
@@ -235,6 +245,12 @@
         {
             //Notify User
         }
+    }
+
+    private async Task notifyUser(string text)
+    {
+        await JSRuntime.InvokeAsync<object>(
+            "alertUser", text);
     }
 
     private async Task onFileUploadWithPrices(InputFileChangeEventArgs e)

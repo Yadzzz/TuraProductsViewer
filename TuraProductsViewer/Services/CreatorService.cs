@@ -71,6 +71,11 @@
         {
             return this.products.Count;
         }
+
+        public void ClearProducts()
+        {
+            this.products.Clear();
+        }
     }
 
     public enum PriceType

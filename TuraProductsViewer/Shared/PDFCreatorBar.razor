@@ -37,6 +37,8 @@
             <div class="col">Total Products in creator</div>
             <div class="col text-right">@CreatorService.GetProductsCount()</div>
             <button class="btn btn-primary mb-2" @onclick=@navigateToCreator>Create PDF</button>
+            <hr />
+            <button class="btn btn-secondary mb-2 col-12" type="button" @onclick=@this.onClearProducts>Clear Products</button>
         }
 
     </div>
@@ -65,5 +67,10 @@
     public void RefreshState()
     {
         StateHasChanged();
+    }
+
+    private void onClearProducts()
+    {
+        CreatorService.ClearProducts();
     }
 }

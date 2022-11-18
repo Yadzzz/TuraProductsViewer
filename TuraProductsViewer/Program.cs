@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.FileProviders;
 using System.Net;
 using TuraProductsViewer;
+using TuraProductsViewer.Pages;
 using TuraProductsViewer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,7 @@ builder.Services.AddTransient<APIService>();
 builder.Services.AddTransient<ReadFileService>();
 builder.Services.AddScoped<FileCreatorService>();
 builder.Services.AddScoped<ImageService>();
+builder.Services.AddTransient<PdfCreator>();
 
 var app = builder.Build();
 

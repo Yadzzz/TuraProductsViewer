@@ -7,9 +7,9 @@ using SelectPdf;
 
 namespace TuraProductsViewer.Pages
 {
-    public static class PdfCreator
+    public class PdfCreator
     {
-        public static void CreateHtml(string html)
+        public void CreateHtml(string html)
         {
             // read parameters from the webpage
             string htmlString = html;
@@ -42,7 +42,7 @@ namespace TuraProductsViewer.Pages
             doc.Close();
         }
 
-        public static MemoryStream GetHTMLStream(string html)
+        public MemoryStream GetHTMLStream(string html)
         {
             // read parameters from the webpage
             string htmlString = html;
@@ -74,7 +74,7 @@ namespace TuraProductsViewer.Pages
             }
         }
 
-        public static MemoryStream GetPDFStream(string html)
+        public MemoryStream GetPDFStream(string html, string headerTitle)
         {
             // read parameters from the webpage
             string htmlString = html;
@@ -94,15 +94,16 @@ namespace TuraProductsViewer.Pages
             //converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.AutoFit;
             //converter.Options.WebPageWidth = 992;
 
+            //converter.Options.PdfCompressionLevel = PdfCompressionLevel.Best;
 
             //Header settings
             converter.Options.DisplayHeader = true;
             converter.Header.DisplayOnFirstPage = true;
             converter.Header.DisplayOnOddPages = true;
             converter.Header.DisplayOnEvenPages = true;
-            converter.Header.Height = 60;
+            converter.Header.Height = 70;
 
-            PdfHtmlSection headerHtml = new PdfHtmlSection("<style>.header { padding-top:0px; width: 100%; height:150px; text-align: center; background: #3F3F3F;  color: white;  font-size: 40px;}</style><div class=\"header\"><h3>Tura Scaninavia</h3></div>", "");
+            PdfHtmlSection headerHtml = new PdfHtmlSection("<style>.header { padding-top:20px; width: 100%; height:150px; text-align: center; background: #3F3F3F;  color: white;  font-size: 30px;}</style><div class=\"header\"><h3> " + headerTitle + "</h3></div>", "");
             headerHtml.AutoFitHeight = HtmlToPdfPageFitMode.AutoFit;
             converter.Header.Add(headerHtml);
 
@@ -121,7 +122,6 @@ namespace TuraProductsViewer.Pages
             PdfTextSection text2 = new PdfTextSection(0, 0, "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com", new System.Drawing.Font("Arial", 8));
             text2.HorizontalAlign = PdfTextHorizontalAlign.Center;
             converter.Footer.Add(text2);
-
 
             // create a new pdf document converting an url
             PdfDocument doc = converter.ConvertHtmlString(htmlString);

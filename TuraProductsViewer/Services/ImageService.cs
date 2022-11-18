@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+﻿using System.Net;
 
 namespace TuraProductsViewer.Services
 {
@@ -38,6 +37,18 @@ namespace TuraProductsViewer.Services
             string imagePath = this.webProductsImagePath;
             imagePath += productId;
             imagePath += "ver.jpg";
+
+            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(imagePath);
+            request.Method = "HEAD";
+
+            try
+            {
+                request.GetResponse();
+            }
+            catch
+            {
+                return "https://vendev.pro/missing.jpg";
+            }
 
             return imagePath;
         }

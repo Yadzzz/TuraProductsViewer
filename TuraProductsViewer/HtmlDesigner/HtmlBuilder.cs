@@ -36,11 +36,11 @@ namespace TuraProductsViewer.HtmlDesigner
             if (this.creatorService.Language.ToLower() == "swedish")
                 return this.GetSwedishVariables();
             else if (this.creatorService.Language.ToLower() == "norwegian")
-                return this.GetSwedishVariables();
+                return this.GetNorwegianVariables();
             else if (this.creatorService.Language.ToLower() == "finnish")
-                return this.GetSwedishVariables();
+                return this.GetFinnishVariables();
             else if (this.creatorService.Language.ToLower() == "danish")
-                return this.GetSwedishVariables();
+                return this.GetDannishVariables();
             else if (this.creatorService.Language.ToLower() == "english")
                 return this.GetEnglishVariables();
             else 
@@ -64,6 +64,57 @@ namespace TuraProductsViewer.HtmlDesigner
             return variables;
         }
 
+        private Dictionary<string, string> GetNorwegianVariables()
+        {
+            Dictionary<string, string> variables = new Dictionary<string, string>();
+            variables.Add("artnrvariable", "Art.Nr");
+            variables.Add("varumarkevariable", "Varemerke");
+            variables.Add("rekprisvariable", "Veil. pris");
+            variables.Add("eanvariable", "EAN");
+            variables.Add("frpstlvariable", "Antall i krt.");
+            variables.Add("ilagervariable", "På lager");
+            variables.Add("measurment", "pc(s)");
+            variables.Add("no", "Nei");
+            variables.Add("yes", "Ja");
+            variables.Add("prisvariable", "Pris");
+
+            return variables;
+        }
+
+        private Dictionary<string, string> GetDannishVariables()
+        {
+            Dictionary<string, string> variables = new Dictionary<string, string>();
+            variables.Add("artnrvariable", "Art.Nr");
+            variables.Add("varumarkevariable", "Varemærke");
+            variables.Add("rekprisvariable", "Vejl. pris");
+            variables.Add("eanvariable", "EAN");
+            variables.Add("frpstlvariable", "Forpakning");
+            variables.Add("ilagervariable", "På lager");
+            variables.Add("measurment", "Stk.");
+            variables.Add("no", "Nej");
+            variables.Add("yes", "Ja");
+            variables.Add("prisvariable", "Pris");
+
+            return variables;
+        }
+
+        private Dictionary<string, string> GetFinnishVariables()
+        {
+            Dictionary<string, string> variables = new Dictionary<string, string>();
+            variables.Add("artnrvariable", "Tuotenro");
+            variables.Add("varumarkevariable", "Tuotemerkki");
+            variables.Add("rekprisvariable", "Suositushinta");
+            variables.Add("eanvariable", "EAN");
+            variables.Add("frpstlvariable", "Pakkauskoko");
+            variables.Add("ilagervariable", "Varastossar");
+            variables.Add("measurment", "pc(s)");
+            variables.Add("no", "ei");
+            variables.Add("yes", "Kyllä");
+            variables.Add("prisvariable", "Price");
+
+            return variables;
+        }
+
         private Dictionary<string, string> GetEnglishVariables()
         {
             Dictionary<string, string> variables = new Dictionary<string, string>();
@@ -74,11 +125,12 @@ namespace TuraProductsViewer.HtmlDesigner
             variables.Add("frpstlvariable", "Inner Qty");
             variables.Add("ilagervariable", "In Stock");
             variables.Add("measurment", "pc(s)");
-            variables.Add("novariable", "No");
-            variables.Add("Yesvariable", "Yes");
+            variables.Add("no", "No");
+            variables.Add("yes", "Yes");
             variables.Add("prisvariable", "Price");
 
             return variables;
         }
     }
 }
+

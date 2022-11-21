@@ -1,14 +1,15 @@
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
 using System.Net;
+using System.Runtime.CompilerServices;
 using TuraProductsViewer;
 using TuraProductsViewer.Pages;
 using TuraProductsViewer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-//builder.Logging.ClearProviders();
-//builder.Logging.AddConsole();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -22,6 +23,9 @@ builder.Services.AddTransient<PdfCreator>();
 
 var app = builder.Build();
 
+//WebHost.CreateDefaultBuilder(args)
+//.UseStartup<Program>();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -34,8 +38,8 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-string networkPath = @"\\192.168.1.21\Produktbilder";
-NetworkCredential credentials = new NetworkCredential(@"tura\svc-pdf", "1234QWer!");
+//string networkPath = @"\\192.168.1.21\Produktbilder";
+//NetworkCredential credentials = new NetworkCredential(@"tura\svc-pdf", "1234QWer!");
 
 //ConnectToSharedFolder ConnectToSharedFolder = new ConnectToSharedFolder(networkPath, credentials);
 

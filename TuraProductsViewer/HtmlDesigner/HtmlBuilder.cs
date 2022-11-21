@@ -27,6 +27,20 @@ namespace TuraProductsViewer.HtmlDesigner
                                                                                          this.GetLanguageVariables());
                 return sixPerPageLayout.GetHTML();
             }
+            else if(this.Layout == HtmlLayout.OnePerPage)
+            {
+                Layouts.OnePerPageLayout onePerPageLayout = new Layouts.OnePerPageLayout(this.creatorService, this.imageService, this.isHTML, this.Title, this.creatorService.Language, 
+                                                                                         this.GetLanguageVariables());
+
+                return onePerPageLayout.GetHTML();
+            }
+            else if(this.Layout == HtmlLayout.TenPerPage)
+            {
+                Layouts.TenPerPageLayout tenPerPageLayout = new Layouts.TenPerPageLayout(this.creatorService, this.imageService, this.isHTML, this.Title, this.creatorService.Language,
+                                                                                         this.GetLanguageVariables());
+
+                return tenPerPageLayout.GetHTML();
+            }
 
             return string.Empty;
         }
@@ -53,6 +67,7 @@ namespace TuraProductsViewer.HtmlDesigner
             variables.Add("artnrvariable", "Art.Nr");
             variables.Add("varumarkevariable", "Varumärke");
             variables.Add("rekprisvariable", "Rek. pris");
+            variables.Add("rekprisvariabletenperpage", "Rek");
             variables.Add("eanvariable", "EAN");
             variables.Add("frpstlvariable", "Frp Stl");
             variables.Add("ilagervariable", "I Lager");
@@ -70,6 +85,7 @@ namespace TuraProductsViewer.HtmlDesigner
             variables.Add("artnrvariable", "Art.Nr");
             variables.Add("varumarkevariable", "Varemerke");
             variables.Add("rekprisvariable", "Veil. pris");
+            variables.Add("rekprisvariabletenperpage", "Veil");
             variables.Add("eanvariable", "EAN");
             variables.Add("frpstlvariable", "Antall i krt.");
             variables.Add("ilagervariable", "På lager");
@@ -87,6 +103,7 @@ namespace TuraProductsViewer.HtmlDesigner
             variables.Add("artnrvariable", "Art.Nr");
             variables.Add("varumarkevariable", "Varemærke");
             variables.Add("rekprisvariable", "Vejl. pris");
+            variables.Add("rekprisvariabletenperpage", "Vejl");
             variables.Add("eanvariable", "EAN");
             variables.Add("frpstlvariable", "Forpakning");
             variables.Add("ilagervariable", "På lager");
@@ -104,6 +121,7 @@ namespace TuraProductsViewer.HtmlDesigner
             variables.Add("artnrvariable", "Tuotenro");
             variables.Add("varumarkevariable", "Tuotemerkki");
             variables.Add("rekprisvariable", "Suositushinta");
+            variables.Add("rekprisvariabletenperpage", "Rec");
             variables.Add("eanvariable", "EAN");
             variables.Add("frpstlvariable", "Pakkauskoko");
             variables.Add("ilagervariable", "Varastossar");
@@ -121,6 +139,7 @@ namespace TuraProductsViewer.HtmlDesigner
             variables.Add("artnrvariable", "Item No.");
             variables.Add("varumarkevariable", "Brand");
             variables.Add("rekprisvariable", "Rec. price");
+            variables.Add("rekprisvariabletenperpage", "Rec");
             variables.Add("eanvariable", "EAN");
             variables.Add("frpstlvariable", "Inner Qty");
             variables.Add("ilagervariable", "In Stock");

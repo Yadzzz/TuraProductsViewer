@@ -186,10 +186,12 @@
                             <p>Page Layout</p>
 
                             <div class="dropdown filter custom-dropdown-icon">
-                                <a class="dropdown-toggle btn" href="#" role="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text">6 / Sida</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+                                <a class="dropdown-toggle btn" href="#" role="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text">@this.htmlLayout</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="filterDropdown">
-                                    <a class="dropdown-item" data-value="sixperpage">6 / Sida</a>
+                                    <a class="dropdown-item" data-value="sixperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.SixPerPage)>6 / Sida</a>
+                                    <a class="dropdown-item" data-value="oneperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.OnePerPage)>1 / Sida</a>
+                                    <a class="dropdown-item" data-value="tenperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.TenPerPage)>10 / Sida</a>
                                 </div>
                             </div>
                         </form>
@@ -276,6 +278,7 @@
 @code {
     private string title { get; set; } = "Tura Scandinavia";
     private bool inCreationProcess { get; set; } = false;
+    private HtmlDesigner.HtmlLayout htmlLayout { get; set; } = HtmlDesigner.HtmlLayout.SixPerPage;
 
     /// <summary>
     /// Removes given product from Creator Service
@@ -302,7 +305,7 @@
     {
         //PdfCreator.CreateHtml(FileService.HTML(CreatorService, ImageService, false)); //LATEST
 
-        HtmlDesigner.HtmlBuilder htmlBuilder = new HtmlDesigner.HtmlBuilder(this.title, HtmlDesigner.HtmlLayout.SixPerPage, this.CreatorService, this.ImageService, false);
+        HtmlDesigner.HtmlBuilder htmlBuilder = new HtmlDesigner.HtmlBuilder(this.title, this.htmlLayout, this.CreatorService, this.ImageService, false);
 
         //using (MemoryStream excelStream = PdfCreator.GetHTMLStream(FileService.HTML(CreatorService, ImageService, false)))
         using (MemoryStream excelStream = PDFCreatorService.GetPDFStream(htmlBuilder.GenerateHTML(), this.title))
@@ -344,7 +347,7 @@
 
     private void DownloadHTMLFile()
     {
-        HtmlDesigner.HtmlBuilder htmlBuilder = new HtmlDesigner.HtmlBuilder(this.title, HtmlDesigner.HtmlLayout.SixPerPage, this.CreatorService, this.ImageService, true);
+        HtmlDesigner.HtmlBuilder htmlBuilder = new HtmlDesigner.HtmlBuilder(this.title, this.htmlLayout, this.CreatorService, this.ImageService, true);
         var bytes = System.Text.Encoding.UTF8.GetBytes(htmlBuilder.GenerateHTML());
 
         //var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.HTML(CreatorService, ImageService, true));

@@ -47,7 +47,7 @@ namespace TuraProductsViewer.Services
             }
             catch
             {
-                return "https://vendev.pro/missing.jpg";
+                return "https://vendev.pro/pictures/missing.jpg";
             }
 
             return imagePath;

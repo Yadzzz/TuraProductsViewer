@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System.Text;
+﻿using System.Text;
 using TuraProductsViewer.Services;
 
 namespace TuraProductsViewer.HtmlDesigner.Layouts
@@ -11,7 +10,6 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
         private ImageService imageService { get; set; }
         private bool isHTML { get; set; }
         private string title { get; set; }
-        private string language { get; set; }
         private Dictionary<string, string> languageVariables { get; set; }
 
         public TenPerPageLayout(CreatorService crtService, ImageService imgService, bool isHtml, string pageTitle, string language, Dictionary<string, string> languageVariables)
@@ -61,7 +59,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 html += "<div class=\"col-xs-12 col-md-12\" style=\"width:100%\">\r\n\t<!-- First product box start here-->\r\n\t<div class=\"prod-info-main prod-wrap clearfix\">\r\n\t\t\t\t<div class=\"col-md-2 col-sm-12 col-xs-12\">\r\n\t\t\t\t\t<div class=\"product-image\"> \r\n\t\t\t\t\t\t<img src=\"{@image@}\" class=\"img-responsive\"> \r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>";
 
                 html += "<div class=\"col-md-9 col-sm-12 col-xs-12\">";
-                html += "<div class=\"product-detail\">\r\n                    <h5 class=\"name\"  style=\"height:15px; \">\r\n                        <p>{@productname@} </p>\r\n                    </h5>\r\n\t\t\t\t</div>";
+                html += "<div class=\"product-detail\">\r\n                    <h5 class=\"name\"  style=\"height:15px; \">\r\n                        <b>{@productname@}</b>\r\n                    </h5>\r\n\t\t\t\t</div>";
 
                 html = html.Replace("{@productname@}", product.GetItemName(creatorService.Language));
 
@@ -80,8 +78,8 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 {
                     string htmlData = string.Empty;
                     htmlData += "<div class=\"col-md-4 col-sm-12 col-xs-12\">";
-                    htmlData += "<p>" + this.languageVariables["prisvariable"] + ":" + product.UnitPriceWithoutVat.ToString("F2") + ", " +
-                                        this.languageVariables["rekprisvariabletenperpage"] + ":" + product.UnitPrice.ToString("F2") + "</p>";
+                    htmlData += "<p><b>" + this.languageVariables["prisvariable"] + "</b>:" + product.UnitPriceWithoutVat.ToString("F2") + ", <b>" +
+                                        this.languageVariables["rekprisvariabletenperpage"] + "</b>:" + product.UnitPrice.ToString("F2") + "</p>";
                     htmlData += "</div>";
 
                     html += htmlData;
@@ -144,7 +142,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
         {
             string htmlData = string.Empty;
             htmlData += "<div class=\"col-md-4 col-sm-12 col-xs-12\">";
-            htmlData += "<p>" + variable + " : " + data + "</p>";
+            htmlData += "<p><b>" + variable + "</b> : " + data + "</p>";
             htmlData += "</div>";
 
             return htmlData;

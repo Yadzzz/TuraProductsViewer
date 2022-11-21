@@ -10,7 +10,6 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
         private ImageService imageService { get; set; }
         private bool isHTML { get; set; }
         private string title { get; set; }
-        private string language { get; set; }
         private Dictionary<string, string> languageVariables { get; set; }
 
         public OnePerPageLayout(CreatorService crtService, ImageService imgService, bool isHtml, string pageTitle, string language, Dictionary<string, string> languageVariables)
@@ -49,7 +48,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
 
                 //html += "<div style=\"page-break-after: always\">\r\n\".\r\n</div>";
 
-                html += "<div class=\"col-xs-12 col-md-3\" style=\"width:100%\">\r\n\t<!-- First product box start here-->\r\n\t<div class=\"prod-info-main prod-wrap clearfix\">\r\n\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t\t<div class=\"product-image\"> \r\n\t\t\t\t\t\t<img src=\"{@image@}\" class=\"img-responsive\"> \r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t</div>\r\n        <div class=\"row\">\r\n            <div class=\"col-md-12 col-sm-12 col-xs-12\" style=\"margin-left:300px;\">\r\n\t\t\t\t<div class=\"product-detail\">\r\n                    <h3 class=\"name\"  style=\"height:50px; margin-left: 100px; width:280px;\">\r\n                        <p>{@productname@} </p>\r\n                        <small><p>{@artnr@}</p></small>  \r\n                    </h3>\r\n\t\t\t\t</div>\r\n                    <br />";
+                html += "<div class=\"col-xs-12 col-md-3\" style=\"width:100%\">\r\n\t<!-- First product box start here-->\r\n\t<div class=\"prod-info-main prod-wrap clearfix\">\r\n\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t\t<div class=\"product-image\"> \r\n\t\t\t\t\t\t<img src=\"{@image@}\" class=\"img-responsive\"> \r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t</div>\r\n        <div class=\"row\">\r\n            <div class=\"col-md-12 col-sm-12 col-xs-12\" style=\"margin-left:300px;\">\r\n\t\t\t\t<div class=\"product-detail\">\r\n                    <h3 class=\"name\"  style=\"height:50px; margin-left: 100px; width:280px;\">\r\n                        <b>{@productname@} </b>\r\n                        <small><p>{@artnr@}</p></small>  \r\n                    </h3>\r\n\t\t\t\t</div>\r\n                    <br />";
                 
                 if(this.isHTML)
                 {
@@ -131,7 +130,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
         {
             string htmlData = string.Empty;
             htmlData += "<div style='float:left; width:30%;'>";
-            htmlData += variable;
+            htmlData += "<b>" + variable + "</b>: ";
             htmlData += "</div>";
             htmlData += "<div style='float:left; width:40%; margin-left:10px'>";
             htmlData += data;

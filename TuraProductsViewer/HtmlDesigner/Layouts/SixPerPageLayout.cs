@@ -10,10 +10,9 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
         private ImageService imageService { get; set; }
         private bool isHTML { get; set; }
         private string title { get; set; }
-        private string language { get; set; }
         private Dictionary<string, string> languageVariables { get; set; }
 
-        public SixPerPageLayout(CreatorService crtService, ImageService imgService, bool isHtml, string pageTitle, string language, Dictionary<string, string> languageVariables)
+        public SixPerPageLayout(CreatorService crtService, ImageService imgService, bool isHtml, string pageTitle, Dictionary<string, string> languageVariables)
         {
             this.stringBuilder = new();
             this.creatorService = crtService;
@@ -65,11 +64,11 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
 
                 if (this.isHTML)
                 {
-                    html += "<div class=\"col-xs-12 col-md-3\" style=\"width:33.3%\">\r\n\t<!-- First product box start here-->\r\n\t<div class=\"prod-info-main prod-wrap clearfix\">\r\n\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t\t<div class=\"product-image\"> \r\n\t\t\t\t\t\t<img src=\"{@image@}\" class=\"img-responsive\"> \r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t</div>\r\n        <div class=\"row\">\r\n            <div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t<div class=\"product-detail\">\r\n                    <h5 class=\"name\"  style=\"height:35px;\">\r\n                        <p>{@productname@} </p>\r\n                        <small><p>{@artnr@}</p></small>   \r\n                    </h5>\r\n\t\t\t\t</div><br />";
+                    html += "<div class=\"col-xs-12 col-md-3\" style=\"width:33.3%\">\r\n\t<!-- First product box start here-->\r\n\t<div class=\"prod-info-main prod-wrap clearfix\">\r\n\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t\t<div class=\"product-image\"> \r\n\t\t\t\t\t\t<img src=\"{@image@}\" class=\"img-responsive\"> \r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t</div>\r\n        <div class=\"row\">\r\n            <div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t<div class=\"product-detail\">\r\n                    <h5 class=\"name\"  style=\"height:35px;\">\r\n                        <b>{@productname@}</b>\r\n                        <small><p>{@artnr@}</p></small>   \r\n                    </h5>\r\n\t\t\t\t</div><br />";
                 }
                 else
                 {
-                    html += "<div class=\"col-xs-12 col-md-4\">\r\n\t<!-- First product box start here-->\r\n\t<div class=\"prod-info-main prod-wrap clearfix\">\r\n\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t\t<div class=\"product-image\"> \r\n\t\t\t\t\t\t<img src=\"{@image@}\" class=\"img-responsive\"> \r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t</div>\r\n        <div class=\"row\">\r\n            <div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t<div class=\"product-detail\">\r\n                    <h5 class=\"name\"  style=\"height:35px;\">\r\n                        <p>{@productname@} </p>\r\n                        <small><p>{@artnr@}</p></small>   \r\n                    </h5>\r\n\t\t\t\t</div><br />";
+                    html += "<div class=\"col-xs-12 col-md-4\">\r\n\t<!-- First product box start here-->\r\n\t<div class=\"prod-info-main prod-wrap clearfix\">\r\n\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t\t<div class=\"product-image\"> \r\n\t\t\t\t\t\t<img src=\"{@image@}\" class=\"img-responsive\"> \r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t</div>\r\n        <div class=\"row\">\r\n            <div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t<div class=\"product-detail\">\r\n                    <h5 class=\"name\"  style=\"height:35px;\">\r\n                        <b>{@productname@}</b>\r\n                        <small><p>{@artnr@}</p></small>   \r\n                    </h5>\r\n\t\t\t\t</div><br />";
                 }
 
                 html = html.Replace("{@productname@}", product.GetItemName(creatorService.Language));
@@ -119,7 +118,6 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                     }
                 }
 
-
                 if (creatorService.UsePackagingImage)
                 {
                     html = html.Replace("{@image@}", imageService.GetWebPackagingImagePath(product.VariantId));
@@ -149,7 +147,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
         {
             string htmlData = string.Empty;
             htmlData += "<div style='float:left; width:30%; margin-left:0px'>";
-            htmlData += variable;
+            htmlData += "<b>" + variable + "</b>:";
             htmlData += "</div>";
             htmlData += "<div style='float:left; width:40%; margin-left:60px'>";
             htmlData += data;

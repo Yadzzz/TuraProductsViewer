@@ -10,10 +10,13 @@
         public bool ShowInStockCount { get; set; } = true;
         public bool ShowPackagingMeasurment { get; set; } = true;
         public PriceType PriceType { get; set; } = PriceType.Rek;
+        public string CustomerId { get; set; } = string.Empty;
+        public Dictionary<string,string> SpecialCustomerPrices { get; set; }
 
         public CreatorService()
         {
             this.products = new List<DataRetriever.Models.ProductsDataModel>();
+            this.SpecialCustomerPrices = new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -72,6 +75,9 @@
             return this.products.Count;
         }
 
+        /// <summary>
+        /// Clears all products from Creator Service
+        /// </summary>
         public void ClearProducts()
         {
             this.products.Clear();
@@ -83,6 +89,7 @@
         Rek,
         Netto,
         RekNetto,
+        Kund,
         None
     }
 }

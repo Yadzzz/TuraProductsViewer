@@ -102,7 +102,7 @@ namespace DataRetriever.Models
         }
 
         /// <summary>
-        /// Gets the product name based on given language
+        /// Gets the product name based on given language.
         /// </summary>
         /// <param name="language">Language</param>
         /// <returns>The product name in given language</returns>
@@ -134,6 +134,11 @@ namespace DataRetriever.Models
             }
         }
 
+        /// <summary>
+        /// Sets the Item name based on the given language
+        /// </summary>
+        /// <param name="language">Language</param>
+        /// <param name="itemName">Item Name</param>
         public void SetItemName(string language, string itemName)
         {
             if (language == string.Empty || language.ToLower().Contains("swedish"))
@@ -162,6 +167,11 @@ namespace DataRetriever.Models
             }
         }
 
+        /// <summary>
+        /// Sets the Item text based on given language
+        /// </summary>
+        /// <param name="language">Language</param>
+        /// <param name="text">Item Text</param>
         public void SetItemText(string language, string text)
         {
             if (language == string.Empty || language.ToLower().Contains("swedish"))
@@ -190,6 +200,10 @@ namespace DataRetriever.Models
             }
         }
 
+        /// <summary>
+        /// Sets the unit Price
+        /// </summary>
+        /// <param name="price">Price</param>
         public void SetUnitPrice(string price)
         {
             if (price == string.Empty || price == null)

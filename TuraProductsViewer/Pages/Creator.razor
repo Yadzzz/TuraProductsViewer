@@ -7,6 +7,7 @@
 @inject FileCreatorService FileService
 @inject ImageService ImageService
 @inject PdfCreator PDFCreatorService
+@inject NavisionDataRetriever.NavisionRetriever Navision
 
 <div class="page-header">
     <div class="page-title">
@@ -244,11 +245,20 @@
                             <a class="dropdown-item" data-value="Rek" @onclick="(() => this.CreatorService.PriceType = PriceType.Rek)">Rek</a>
                             <a class="dropdown-item" data-value="Netto" @onclick="(() => this.CreatorService.PriceType = PriceType.Netto)">Netto</a>
                             <a class="dropdown-item" data-value="Rek & Netto" @onclick="(() => this.CreatorService.PriceType = PriceType.RekNetto)">Rek & Netto</a>
+                            <a class="dropdown-item" data-value="Rek & Netto" @onclick="(() => this.CreatorService.PriceType = PriceType.Kund)">Kund</a>
                             <a class="dropdown-item" data-value="None" @onclick="(() => this.CreatorService.PriceType = PriceType.None)">None</a>
                         </div>
                     </div>
 
                     <br />
+
+                    if (this.CreatorService.PriceType == PriceType.Kund)
+                    {
+                        <div class="col-lg-8">
+                            <p>Customer Id</p>
+                            <input type="text" @bind-value=@this.CreatorService.CustomerId class="w-100 form-control product-search br-30" id="input-search" placeholder="Customer Id">
+                        </div>
+                    }
 
                     <hr />
 
@@ -295,6 +305,11 @@
 
     private async void initializePDFCreation()
     {
+        if(this.CreatorService.PriceType == PriceType.Kund)
+        {
+            this.getCustomerPrices();
+        }
+
         this.inCreationProcess = true;
         await Task.Run(() => this.createPDF());
         this.inCreationProcess = false;
@@ -342,6 +357,11 @@
     /// </summary>
     private void createHTML()
     {
+        if(this.CreatorService.PriceType == PriceType.Kund)
+        {
+            this.getCustomerPrices();
+        }
+
         this.DownloadHTMLFile();
     }
 
@@ -360,5 +380,29 @@
             "saveAsFile",
             filename,
             Convert.ToBase64String(data));
+    }
+
+    private async void getCustomerPrices()
+    {
+        List<string> ids = new List<string>();
+
+        foreach (var product in this.CreatorService.GetProducts())
+        {
+            ids.Add(product.VariantId);
+        }
+
+        if (this.CreatorService.CustomerId != null)
+        {
+            Navision.PrepareRequest(ids.ToArray(), this.CreatorService.CustomerId, this.CreatorService.CurrencyCode);
+            var data = Navision.GetPrices();
+
+            if (data != null)
+            {
+                if (data.Count == ids.Count)
+                {
+                    this.CreatorService.SpecialCustomerPrices = data;
+                }
+            }
+        }
     }
 }

@@ -15,6 +15,12 @@ namespace NavisionDataRetriever
         private string _customerId { get; set; }
         private string _currencyCode { get; set; }
 
+        /// <summary>
+        /// Prepares the required fields and SOAP request
+        /// </summary>
+        /// <param name="productIds"></param>
+        /// <param name="customerId"></param>
+        /// <param name="currencyCode"></param>
         public void PrepareRequest(string[] productIds, string customerId, string currencyCode)
         {
             this._soap = string.Empty;
@@ -25,6 +31,9 @@ namespace NavisionDataRetriever
             this.prepareSoap();
         }
 
+        /// <summary>
+        /// Prepares SOAP data
+        /// </summary>
         private void prepareSoap()
         {
             this._soap += @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:wsm=""urn:microsoft-dynamics-schemas/codeunit/WSMiscFunctions"" xmlns:wsit=""urn:microsoft-dynamics-nav/xmlports/WSItemSalesPrice"">
@@ -63,6 +72,10 @@ namespace NavisionDataRetriever
             this._soap += "</soapenv:Envelope>";
         }
 
+        /// <summary>
+        /// Gets the prices
+        /// </summary>
+        /// <returns>XML String containing related data</returns>
         private string loadPrices()
         {
             //try
@@ -103,6 +116,10 @@ namespace NavisionDataRetriever
             //}
         }
 
+        /// <summary>
+        /// Reads the XML string and reads the data
+        /// </summary>
+        /// <returns>Dictionary<ProductId, CustomerPrice></returns>
         public Dictionary<string, string> GetPrices()
         {
             Dictionary<string, string> itemPrices = new Dictionary<string, string>(); //Id / Price
@@ -111,8 +128,18 @@ namespace NavisionDataRetriever
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(pricesXml);
 
+            if(xmlDocument == null)
+            {
+                return null;
+            }
+
             XmlNamespaceManager manager = new XmlNamespaceManager(xmlDocument.NameTable);
             manager.AddNamespace("bhr", "urn:microsoft-dynamics-nav/xmlports/WSItemSalesPrice");
+
+            if(manager == null)
+            {
+                return null;
+            }
 
             XmlNodeList xnList = xmlDocument.SelectNodes("//bhr:ItemPriceBulk", manager);
             XmlNodeList xnPrices = xmlDocument.SelectNodes("//bhr:Prices", manager);
@@ -134,11 +161,6 @@ namespace NavisionDataRetriever
                     i++;
                 }
             }
-
-            //foreach(XmlNode xn in xnPrices)
-            //{
-            //    Console.WriteLine(xn["Price"].InnerText);
-            //}
 
             return itemPrices;
         }

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Microsoft.VisualBasic;
+using System.Text;
 using TuraProductsViewer.Services;
 
 namespace TuraProductsViewer.HtmlDesigner.Layouts
@@ -10,6 +11,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
         private ImageService imageService { get; set; }
         private bool isHTML { get; set; }
         private string title { get; set; }
+        private string language { get; set; }
         private Dictionary<string, string> languageVariables { get; set; }
 
         public TenPerPageLayout(CreatorService crtService, ImageService imgService, bool isHtml, string pageTitle, string language, Dictionary<string, string> languageVariables)

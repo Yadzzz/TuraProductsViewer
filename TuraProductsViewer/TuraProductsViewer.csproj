@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataRetriever\DataRetriever.csproj" />
+    <ProjectReference Include="..\NavisionDataRetriever\NavisionDataRetriever.csproj" />
   </ItemGroup>
 
   <ItemGroup>

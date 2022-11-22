@@ -10,9 +10,10 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
         private ImageService imageService { get; set; }
         private bool isHTML { get; set; }
         private string title { get; set; }
+        private string language { get; set; }
         private Dictionary<string, string> languageVariables { get; set; }
 
-        public SixPerPageLayout(CreatorService crtService, ImageService imgService, bool isHtml, string pageTitle, Dictionary<string, string> languageVariables)
+        public SixPerPageLayout(CreatorService crtService, ImageService imgService, bool isHtml, string pageTitle, string language, Dictionary<string, string> languageVariables)
         {
             this.stringBuilder = new();
             this.creatorService = crtService;

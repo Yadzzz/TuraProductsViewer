@@ -20,6 +20,7 @@ builder.Services.AddTransient<ReadFileService>();
 builder.Services.AddScoped<FileCreatorService>();
 builder.Services.AddScoped<ImageService>();
 builder.Services.AddTransient<PdfCreator>();
+builder.Services.AddTransient<NavisionDataRetriever.NavisionRetriever>();
 
 var app = builder.Build();
 

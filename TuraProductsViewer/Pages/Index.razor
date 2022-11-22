@@ -2,6 +2,8 @@
 
 <PageTitle>Tura Sales Management</PageTitle>
 
+@inject NavisionDataRetriever.NavisionRetriever Navision
+
 <div class="page-header">
     <div class="page-title">
         <h3>Tura Sales Management</h3>
@@ -22,5 +24,22 @@
 
 @code
 {
+    protected override void OnInitialized()
+    {
+        this.getprices();
+    }
 
+    private void getprices()
+    {
+        string[] ids = new string[] { "280006", "1030", "780032" };
+
+        Navision.PrepareRequest(ids, "2090", "NOK");
+
+        var dict = Navision.GetPrices();
+
+        foreach (var d in dict)
+        {
+            Console.WriteLine(d.Key + " : " + d.Value);
+        }
+    }
 }

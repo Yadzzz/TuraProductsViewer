@@ -22,6 +22,13 @@ builder.Services.AddScoped<ImageService>();
 builder.Services.AddTransient<PdfCreator>();
 builder.Services.AddTransient<NavisionDataRetriever.NavisionRetriever>();
 
+builder.Services.AddHsts(options =>
+{
+    options.Preload = true;
+    options.IncludeSubDomains = true;
+    options.MaxAge = TimeSpan.FromDays(365);
+});
+
 var app = builder.Build();
 
 //WebHost.CreateDefaultBuilder(args)

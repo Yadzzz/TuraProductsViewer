@@ -55,7 +55,7 @@ namespace DataRetriever.Models
         public decimal QtyPerUnitOfMeasure { get; set; }
 
         //Price withtout vat
-        public decimal UnitPriceWithoutVat { get; set; }
+        public double UnitPriceWithoutVat { get; set; }
 
         /// <summary>
         /// Sets all the variables Data
@@ -215,6 +215,20 @@ namespace DataRetriever.Models
             if (double.TryParse(price, out decimalPrice))
             {
                 this.UnitPrice = decimalPrice;
+            }
+        }
+
+        public void SetUnitPriceWithoutVat(string price)
+        {
+            if (price == string.Empty || price == null)
+            {
+                return;
+            }
+
+            double decimalPrice;
+            if (double.TryParse(price, out decimalPrice))
+            {
+                this.UnitPriceWithoutVat = decimalPrice;
             }
         }
 

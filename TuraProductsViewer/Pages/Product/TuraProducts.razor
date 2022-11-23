@@ -66,7 +66,7 @@
             </div>
 
             <div class="col-lg-4 col-md-2 col-sm-2" style="float:left">
-                <button class="btn btn-outline-primary btn-rounded mb-2" @onclick=@searchProductFromAPI>Search</button>
+                <button class="btn btn-outline-primary btn-rounded mb-2" @onclick=@searchProductFromAPIAsync>Search</button>
             </div>
 
             <br /><br />
@@ -149,6 +149,18 @@
     //    //await Task.Run(() => this.productData = ApiService.GetProductsDataAsync("100001", "DKK"));
     //}
 
+    protected override async Task OnInitializedAsync()
+    {
+        //try
+        //{
+        //    await Task.Run(async () => this.productData = await ApiService.GetProductsDataAsync("96411", "SEK"));
+        //}
+        //catch (Exception e)
+        //{
+            
+        //}
+    }
+
     public void Enter(KeyboardEventArgs e)
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
@@ -158,12 +170,48 @@
     }
 
     /// <summary>
+    /// Searches for given Product Id from the through the API Async
+    /// </summary>
+    public async Task searchProductFromAPIAsync()
+    {
+        //Task.Run(() => this.productData = ApiService.GetProductsDataAsync(this.searchText, this.FinalizeCurrencyCode
+        this.productData = null;
+
+        try
+        {
+            await Task.Run(async () => this.productData = await ApiService.GetProductsDataAsync(this.searchText, this.PDFCreatorService.CurrencyCode));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+
+        if (this.productData == null || productData.VariantId == null || this.productData.VariantId.Equals(string.Empty))
+        {
+            this.productNotFound = true;
+        }
+        else
+        {
+            this.productNotFound = false;
+        }
+    }
+
+    /// <summary>
     /// Searches for given Product Id from the through the API
     /// </summary>
     public void searchProductFromAPI()
     {
         //Task.Run(() => this.productData = ApiService.GetProductsDataAsync(this.searchText, this.FinalizeCurrencyCode
-        this.productData = ApiService.GetProductsData(this.searchText, this.PDFCreatorService.CurrencyCode);
+        this.productData = null;
+
+        try
+        {
+            this.productData = ApiService.GetProductsData(this.searchText, this.PDFCreatorService.CurrencyCode);
+        }
+        catch (Exception e)
+        {
+
+        }
 
         if (this.productData == null || productData.VariantId == null || this.productData.VariantId.Equals(string.Empty))
         {

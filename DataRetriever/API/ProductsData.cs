@@ -47,7 +47,10 @@ namespace DataRetriever.API
                     request.AddHeader("ApiKey", "ba932ec7-3d66-487c-bcd0-4e17c8a2dfb3");
                     RestResponse response = client.Execute(request);
 
-                    productsData = JsonConvert.DeserializeObject<ProductsDataModel>(response.Content);
+                    if (response.Content != null)
+                    {
+                        productsData = JsonConvert.DeserializeObject<ProductsDataModel>(response.Content);
+                    }
 
                     //if (client != null)
                     //{

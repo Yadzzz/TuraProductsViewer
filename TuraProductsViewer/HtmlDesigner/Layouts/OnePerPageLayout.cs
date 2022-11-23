@@ -12,8 +12,9 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
         private string title { get; set; }
         private string language { get; set; }
         private Dictionary<string, string> languageVariables { get; set; }
+        private string clickImageLink { get; set; }
 
-        public OnePerPageLayout(CreatorService crtService, ImageService imgService, bool isHtml, string pageTitle, string language, Dictionary<string, string> languageVariables)
+        public OnePerPageLayout(CreatorService crtService, ImageService imgService, bool isHtml, string pageTitle, string language, Dictionary<string, string> languageVariables, string clickImgLink)
         {
             this.stringBuilder = new();
             this.creatorService = crtService;
@@ -21,6 +22,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
             this.isHTML = isHtml;
             this.title = pageTitle;
             this.languageVariables = languageVariables;
+            this.clickImageLink = clickImgLink;
 
             this.Initialize();
         }
@@ -49,7 +51,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
 
                 //html += "<div style=\"page-break-after: always\">\r\n\".\r\n</div>";
 
-                html += "<div class=\"col-xs-12 col-md-3\" style=\"width:100%\">\r\n\t<!-- First product box start here-->\r\n\t<div class=\"prod-info-main prod-wrap clearfix\">\r\n\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t\t<div class=\"product-image\"> \r\n\t\t\t\t\t\t<img src=\"{@image@}\" class=\"img-responsive\"> \r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t</div>\r\n        <div class=\"row\">\r\n            <div class=\"col-md-12 col-sm-12 col-xs-12\" style=\"margin-left:300px;\">\r\n\t\t\t\t<div class=\"product-detail\">\r\n                    <h3 class=\"name\"  style=\"height:50px; margin-left: 100px; width:280px;\">\r\n                        <b>{@productname@} </b>\r\n                        <small><p>{@artnr@}</p></small>  \r\n                    </h3>\r\n\t\t\t\t</div>\r\n                    <br />";
+                html += "<div class=\"col-xs-12 col-md-3\" style=\"width:100%\">\r\n\t<!-- First product box start here-->\r\n\t<div class=\"prod-info-main prod-wrap clearfix\">\r\n\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-12 col-sm-12 col-xs-12\">\r\n\t\t\t\t\t<div class=\"product-image\"> \r\n\t\t\t\t\t\t<img src=\"{@image@}\" class=\"img-responsive\"> \r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t</div>\r\n        <div class=\"row\">\r\n            <div class=\"col-md-12 col-sm-12 col-xs-12\" style=\"margin-left:300px;\">\r\n\t\t\t\t<div class=\"product-detail\">\r\n                    <h3 class=\"name\"  style=\"height:50px; margin-left: 100px; width:280px;\">\r\n                        <b><a href=\"{@imageclicklink@}\" style=\"color: black;\">{@productname@}</a></b>\r\n                                          </h3>\r\n\t\t\t\t</div>\r\n                    <br />";
 
                 if (this.isHTML)
                 {
@@ -60,10 +62,11 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                     html += "<br /><div class=\"description\" style=\"font-size:21px;\">";
                 }
 
+                html = html.Replace("{@imageclicklink@}", this.clickImageLink + product.VariantId);
                 html = html.Replace("{@productname@}", product.GetItemName(creatorService.Language));
-                html = html.Replace("{@artnr@}", product.VariantId);
 
-                html += this.AddDataRow(this.languageVariables["artnrvariable"], product.VariantId);
+                //html += this.AddDataRow(this.languageVariables["artnrvariable"], product.VariantId);
+                html += this.AddDataRowWithLink(this.languageVariables["artnrvariable"], product.VariantId, this.clickImageLink + product.VariantId);
                 html += this.AddDataRow(this.languageVariables["varumarkevariable"], product.Brand != null ? product.Brand : "N/A");
 
                 if (this.creatorService.PriceType == PriceType.Rek)
@@ -149,6 +152,19 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
             htmlData += "</div><br />";
 
             return htmlData;
+        }
+
+        private string AddDataRowWithLink(string variable, string data, string link)
+        {
+            string htmlData = string.Empty;
+            htmlData += "<div style='float:left; width:30%;'>";
+            htmlData += "<b>" + variable + "</b>:";
+            htmlData += "</div>";
+            htmlData += "<div style='float:left; width:40%; margin-left:10px'>";
+            htmlData += "<a href=\"{@link@}\" style=\"color: black;\">" + data + "</a>";
+            htmlData += "</div><br />";
+
+            return htmlData.Replace("{@link@}", link);
         }
 
         public string GetHTML()

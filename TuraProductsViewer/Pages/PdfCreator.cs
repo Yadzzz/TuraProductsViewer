@@ -94,7 +94,9 @@ namespace TuraProductsViewer.Pages
             //converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.AutoFit;
             //converter.Options.WebPageWidth = 992;
 
-            //converter.Options.PdfCompressionLevel = PdfCompressionLevel.Best;
+            //converter.Options.PdfCompressionLevel = PdfCompressionLevel.NoCompression;
+
+
 
             //Header settings
             converter.Options.DisplayHeader = true;
@@ -114,11 +116,6 @@ namespace TuraProductsViewer.Pages
             converter.Footer.DisplayOnEvenPages = true;
             converter.Footer.Height = 40;
 
-            // page numbers can be added using a PdfTextSection object
-            //PdfTextSection text = new PdfTextSection(0, 8, "Page: {page_number} of {total_pages}  ", new System.Drawing.Font("Arial", 8));
-            //text.HorizontalAlign = PdfTextHorizontalAlign.Right;
-            //converter.Footer.Add(text);
-
             PdfTextSection text2 = new PdfTextSection(0, 0, "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com", new System.Drawing.Font("Arial", 8));
             text2.HorizontalAlign = PdfTextHorizontalAlign.Center;
             converter.Footer.Add(text2);
@@ -126,10 +123,16 @@ namespace TuraProductsViewer.Pages
             // create a new pdf document converting an url
             PdfDocument doc = converter.ConvertHtmlString(htmlString);
 
+            doc.CompressionLevel = PdfCompressionLevel.Best;
+            //doc.Save("wwwroot/pdf/sample.pdf");
+
             using (MemoryStream stream = new MemoryStream())
             {
                 //Saving the PDF document into the stream
                 doc.Save(stream);
+
+                Console.WriteLine(stream.Length);
+
                 //Closing the PDF document
                 doc.Close();
                 return stream;

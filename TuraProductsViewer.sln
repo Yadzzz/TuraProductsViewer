@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TuraProductsViewer", "TuraP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataRetriever", "DataRetriever\DataRetriever.csproj", "{CD38EA70-AEFB-47E4-971B-4B0BD3CC3692}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavisionDataRetriever", "NavisionDataRetriever\NavisionDataRetriever.csproj", "{6BFFA04A-926D-4608-B6A5-E3A1140D1A3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NavisionDataRetriever", "NavisionDataRetriever\NavisionDataRetriever.csproj", "{6BFFA04A-926D-4608-B6A5-E3A1140D1A3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

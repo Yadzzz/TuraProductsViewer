@@ -24,25 +24,38 @@ namespace TuraProductsViewer.HtmlDesigner
             if (this.Layout == HtmlLayout.SixPerPage)
             {
                 Layouts.SixPerPageLayout sixPerPageLayout = new Layouts.SixPerPageLayout(this.creatorService, this.imageService, this.isHTML, this.Title, this.creatorService.Language,
-                                                                                         this.GetLanguageVariables());
+                                                                                         this.GetLanguageVariables(), this.GetImageClickLink());
                 return sixPerPageLayout.GetHTML();
             }
             else if(this.Layout == HtmlLayout.OnePerPage)
             {
                 Layouts.OnePerPageLayout onePerPageLayout = new Layouts.OnePerPageLayout(this.creatorService, this.imageService, this.isHTML, this.Title, this.creatorService.Language, 
-                                                                                         this.GetLanguageVariables());
+                                                                                         this.GetLanguageVariables(), this.GetImageClickLink());
 
                 return onePerPageLayout.GetHTML();
             }
             else if(this.Layout == HtmlLayout.TenPerPage)
             {
                 Layouts.TenPerPageLayout tenPerPageLayout = new Layouts.TenPerPageLayout(this.creatorService, this.imageService, this.isHTML, this.Title, this.creatorService.Language,
-                                                                                         this.GetLanguageVariables());
+                                                                                         this.GetLanguageVariables(), this.GetImageClickLink());
 
                 return tenPerPageLayout.GetHTML();
             }
 
             return string.Empty;
+        }
+
+        public MemoryStream GenerateMemoryStream()
+        {
+            if (this.Layout == HtmlLayout.OnePerPage)
+            {
+                Layouts.OnePerPageAdaptiveLayout onePerPageLayout = new Layouts.OnePerPageAdaptiveLayout(this.creatorService, this.imageService, this.isHTML, this.Title, this.creatorService.Language,
+                                                                                         this.GetLanguageVariables(), this.GetImageClickLink());
+
+                return onePerPageLayout.InitializePDF();
+            }
+
+            return null;
         }
 
         public Dictionary<string,string> GetLanguageVariables()
@@ -59,6 +72,22 @@ namespace TuraProductsViewer.HtmlDesigner
                 return this.GetEnglishVariables();
             else 
                 return this.GetSwedishVariables();
+        }
+
+        public string GetImageClickLink()
+        {
+            if (this.creatorService.Language.ToLower() == "swedish")
+                return "https://www.turascandinavia.com/sv/produkter/";
+            else if (this.creatorService.Language.ToLower() == "norwegian")
+                return "https://www.turascandinavia.com/nb/produkter/";
+            else if (this.creatorService.Language.ToLower() == "finnish")
+                return "https://www.turascandinavia.com/fi/tuotteet/";
+            else if (this.creatorService.Language.ToLower() == "danish")
+                return "https://www.turascandinavia.com/da/produkter/";
+            else if (this.creatorService.Language.ToLower() == "english")
+                return "https://www.turascandinavia.com/en/products/";
+            else
+                return "https://www.turascandinavia.com/sv/produkter/";
         }
 
         private Dictionary<string,string> GetSwedishVariables()

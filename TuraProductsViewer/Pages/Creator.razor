@@ -4,9 +4,8 @@
 @using System.Text
 @inject CreatorService CreatorService
 @inject IJSRuntime JSRuntime
-@inject FileCreatorService FileService
 @inject ImageService ImageService
-@inject PdfCreator PDFCreatorService
+@inject PdfCreatorService PDFCreatorService
 @inject NavisionDataRetriever.NavisionRetriever Navision
 
 <div class="page-header">
@@ -14,93 +13,6 @@
         <h3>Creator Service</h3>
     </div>
 </div>
-
-@*<div class="row layout-top-spacing" id="cancel-row">
-    <div class="col-xl-8 col-lg-8 col-sm-8  layout-spacing">
-        <div class="widget-content widget-content-area br-6">
-            <div class="table-responsive mb-4 mt-4">
-
-                @if (CreatorService.GetProductsCount() == 0)
-                {
-                    <p>No products in creator.</p>
-                }
-                else
-                {
-                    <table id="multi-column-ordering" class="table table-hover" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            @foreach (var product in CreatorService.GetProducts())
-                            {
-
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <div class="usr-img-frame mr-2 rounded-circle">
-                                                <img alt="avatar" class="img-fluid rounded-circle" src="assets/img/90x90.jpg">
-                                            </div>
-                                            <p class="align-self-center mb-0 admin-name"> </p>
-                                        </div>
-                                    </td>
-                                    <td>@product.VariantId</td>
-                                    <td>@product.GetItemName(CreatorService.Language)</td>
-                                    <button class="btn btn-primary mb-2" @onclick=@(() => removeProduct(product))>Remove</button>
-                                </tr>
-                            }
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Action</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                }
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-4 col-lg-4 col-sm-4  layout-spacing">
-        <div class="widget-content widget-content-area br-4">
-            <div class="widget-content">
-
-                <div class="media">
-                    <div class="media-body">
-                        <h6>Creator Summary</h6>
-                        <p class="meta-date-time">Total products: @CreatorService.GetProductsCount()</p>
-                    </div>
-                </div>
-                <hr />
-                <form>
-                    <p>Page Layout</p>
-
-                    <div class="dropdown filter custom-dropdown-icon">
-                        <a class="dropdown-toggle btn" href="#" role="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text">Standard</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
-
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="filterDropdown">
-                            <a class="dropdown-item" data-value="Standard">Standard</a>
-                            <a class="dropdown-item" data-value="Detailed">Detailed</a>
-                            <a class="dropdown-item" data-value="Detailed">Fully Detailed</a>
-                        </div>
-                    </div>
-                </form>
-                <br />
-                <button class="btn btn-primary mb-2" @onclick=@createPDF>Create PDF</button>
-            </div>
-        </div>
-    </div>
-
-</div>*@
-
-
-
 
 <div class="row layout-top-spacing" id="cancel-row">
     <div class="col-xl-8 col-lg-8 col-sm-8  layout-spacing">
@@ -143,7 +55,7 @@
                                         </td>
                                         <td>@product.VariantId</td>
                                         <td><input type="text" id="row-1-position" class="form-control" name="row-1-position" value="@product.GetItemName(CreatorService.Language)" @oninput="@((e) => { product.SetItemName(CreatorService.Language, (string)e.Value); })"></td>
-                                        <td><input type="text" id="row-1-position" class="form-control" name="row-1-position" value="@product.UnitPriceWithoutVat" @oninput="@((e) => { product.SetUnitPriceWithoutVat((string)e.Value); })"></td>
+                                        <td><input type="text" id="row-1-position" class="form-control" name="row-1-position" value="@this.CreatorService.GetPrice(product)" @oninput="@((e) => { product.SetSpecialCustomerEditedPrice((string)e.Value); })"></td>
                                         <td><button class="btn btn-primary mb-2" @onclick=@(() => removeProduct(product))>Remove</button></td>
                                     </tr>
                                 }
@@ -190,9 +102,9 @@
                                 <a class="dropdown-toggle btn" href="#" role="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text">@this.htmlLayout</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="filterDropdown">
-                                    <a class="dropdown-item" data-value="sixperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.SixPerPage)>6 / Sida</a>
-                                    <a class="dropdown-item" data-value="oneperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.OnePerPage)>1 / Sida</a>
-                                    <a class="dropdown-item" data-value="tenperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.TenPerPage)>10 / Sida</a>
+                                    <a class="dropdown-item" data-value="sixperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.SixPerPage)>6 / Page</a>
+                                    <a class="dropdown-item" data-value="oneperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.OnePerPage)>1 / Page</a>
+                                    <a class="dropdown-item" data-value="tenperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.TenPerPage)>10 / Page</a>
                                 </div>
                             </div>
                         </form>
@@ -211,13 +123,13 @@
                         <div class="col-lg-12">
                             <input class="form-check-input" type="checkbox" id="gridCheck1" checked="@this.CreatorService.UsePackagingImage" @oninput="@((e) => { this.CreatorService.UsePackagingImage = (bool)e.Value; })">
                             <label class="form-check-label" for="gridCheck1">
-                                Använd förpackningsbild
+                                Use Packaging Image
                             </label>
                         </div>
                         <div class="col-lg-12">
                             <input class="form-check-input" type="checkbox" id="gridCheck1" checked="@this.CreatorService.ShowInStock" @oninput="@((e) => { this.CreatorService.ShowInStock = (bool)e.Value; })">
                             <label class="form-check-label" for="gridCheck1">
-                                Visa lagersaldo
+                                Show In-stock Balanace
                             </label>
                         </div>
                         @if (this.CreatorService.ShowInStock)
@@ -225,17 +137,18 @@
                             <div class="col-lg-12">
                                 <input class="form-check-input" type="checkbox" id="gridCheck1" checked="@this.CreatorService.ShowInStockCount" @oninput="@((e) => { this.CreatorService.ShowInStockCount = (bool)e.Value; })">
                                 <label class="form-check-label" for="gridCheck1">
-                                    Visa antal
+                                    Show Amount In-stock
                                 </label>
                             </div>
                         }
                         <div class="col-lg-12">
                             <input class="form-check-input" type="checkbox" id="gridCheck1" checked="@this.CreatorService.ShowPackagingMeasurment" @oninput="@((e) => { this.CreatorService.ShowPackagingMeasurment = (bool)e.Value; })">
                             <label class="form-check-label" for="gridCheck1">
-                                Visa förpackningsstorlek
+                                Show Packaging Size
                             </label>
                         </div>
                     </div>
+
                     <hr />
 
                     <div class="dropdown filter custom-dropdown-icon">
@@ -245,14 +158,15 @@
                             <a class="dropdown-item" data-value="Rek" @onclick="(() => this.CreatorService.PriceType = PriceType.Rek)">Rek</a>
                             <a class="dropdown-item" data-value="Netto" @onclick="(() => this.CreatorService.PriceType = PriceType.Netto)">Netto</a>
                             <a class="dropdown-item" data-value="Rek & Netto" @onclick="(() => this.CreatorService.PriceType = PriceType.RekNetto)">Rek & Netto</a>
-                            <a class="dropdown-item" data-value="Rek & Netto" @onclick="(() => this.CreatorService.PriceType = PriceType.Kund)">Kund</a>
+                            <a class="dropdown-item" data-value="Kund" @onclick="(() => this.CreatorService.PriceType = PriceType.Kund)">Kund</a>
+                            <a class="dropdown-item" data-value="Kund & Rek" @onclick="(() => this.CreatorService.PriceType = PriceType.KundRek)">Kund & Rek</a>
                             <a class="dropdown-item" data-value="None" @onclick="(() => this.CreatorService.PriceType = PriceType.None)">None</a>
                         </div>
                     </div>
 
                     <br />
 
-                    if (this.CreatorService.PriceType == PriceType.Kund)
+                    if (this.CreatorService.PriceType == PriceType.Kund || this.CreatorService.PriceType == PriceType.KundRek)
                     {
                         <div class="col-lg-8">
                             <p>Customer Id</p>
@@ -262,9 +176,6 @@
 
                     <hr />
 
-                    @*<button class="btn btn-primary mb-2" type="button" @onclick=@createHTML>Create HTML</button>*@
-                    @*<button class="btn btn-primary mb-2" type="button" @onclick=@initializePDFCreation>Create PDF</button>*@
-                    @*<button type="button" @onclick="DownloadPdf">Generate</button>*@
                     @if (CreatorService.GetProductsCount() > 0)
                     {
                         <button class="btn btn-primary mb-2" type="button" @onclick=@createHTML>Create HTML</button>
@@ -305,7 +216,7 @@
 
     private async void initializePDFCreation()
     {
-        if(this.CreatorService.PriceType == PriceType.Kund)
+        if(this.CreatorService.PriceType == PriceType.Kund || this.CreatorService.PriceType == PriceType.KundRek)
         {
             this.getCustomerPrices();
         }
@@ -318,13 +229,7 @@
 
     private async Task createPDF()
     {
-        //PdfCreator.CreateHtml(FileService.HTML(CreatorService, ImageService, false)); //LATEST
-
         HtmlDesigner.HtmlBuilder htmlBuilder = new HtmlDesigner.HtmlBuilder(this.title, this.htmlLayout, this.CreatorService, this.ImageService, false);
-
-        //using (MemoryStream excelStream = PdfCreator.GetHTMLStream(FileService.HTML(CreatorService, ImageService, false)))
-
-        //using (MemoryStream excelStream = PDFCreatorService.GetPDFStream(htmlBuilder.GenerateHTML(), this.title))
 
         if (this.htmlLayout == HtmlDesigner.HtmlLayout.OnePerPage && this.CreatorService.GetProductsCount() > 5)
         {
@@ -332,17 +237,17 @@
             {
                 await JSRuntime.InvokeAsync<object>(
                            "saveAsFileee",
-                           "Products.pdf",
+                           (this.title + ".pdf"),
                            Convert.ToBase64String(excelStream.ToArray()));
             }
         }
         else
         {
-            using (MemoryStream excelStream = PDFCreatorService.GetPDFStream(htmlBuilder.GenerateHTML(), this.title))
+            using (MemoryStream excelStream = PDFCreatorService.GetPDFStream(htmlBuilder.GenerateHTML(), this.title, this.CreatorService.Language))
             {
                 await JSRuntime.InvokeAsync<object>(
                            "saveAsFileee",
-                           "Products.pdf",
+                           (this.title + ".pdf"),
                            Convert.ToBase64String(excelStream.ToArray()));
             }
         }
@@ -356,23 +261,12 @@
             "generatePDFFF", d);
     }
 
-    async Task DownloadPdf()
-    {
-        await using var module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "../HtmlToPdf.js");
-
-        // Generate and download the PDF
-        await module.InvokeVoidAsync("generateAndDownloadPdf", FileService.HTML(CreatorService, ImageService, false), "sample.pdf");
-
-        // Generate the PDF and get its content as byte[] (need .NET 6 to support Uint8Array)
-        var bytes = await module.InvokeAsync<byte[]>("generatePdf", FileService.HTML(CreatorService, ImageService, false));
-    }
-
     /// <summary>
     /// Creates PDF file with given product in the Creator Service
     /// </summary>
     private void createHTML()
     {
-        if(this.CreatorService.PriceType == PriceType.Kund)
+        if (this.CreatorService.PriceType == PriceType.Kund || this.CreatorService.PriceType == PriceType.KundRek)
         {
             this.getCustomerPrices();
         }
@@ -386,7 +280,7 @@
         var bytes = System.Text.Encoding.UTF8.GetBytes(htmlBuilder.GenerateHTML());
 
         //var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.HTML(CreatorService, ImageService, true));
-        Task.Run(() => this.SaveAs(JSRuntime, "Offer.html", bytes));
+        Task.Run(() => this.SaveAs(JSRuntime, (this.title + ".html"), bytes));
     }
 
     public async Task SaveAs(IJSRuntime js, string filename, byte[] data)
@@ -403,20 +297,27 @@
 
         foreach (var product in this.CreatorService.GetProducts())
         {
+            if(ids.Contains(product.VariantId))
+            {
+                continue;
+            }
+
             ids.Add(product.VariantId);
         }
 
-        if (this.CreatorService.CustomerId != null)
+        if (this.CreatorService.CustomerId != null || this.CreatorService.CustomerId == string.Empty)
         {
             Navision.PrepareRequest(ids.ToArray(), this.CreatorService.CustomerId, this.CreatorService.CurrencyCode);
             var data = Navision.GetPrices();
 
             if (data != null)
             {
-                if (data.Count == ids.Count)
+                //if (data.Count == ids.Count)
                 {
                     this.CreatorService.SpecialCustomerPrices = data;
                 }
+
+                this.StateHasChanged();
             }
         }
     }

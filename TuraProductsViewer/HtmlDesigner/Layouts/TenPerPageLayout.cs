@@ -80,13 +80,14 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 }
                 else if (this.creatorService.PriceType == PriceType.Netto)
                 {
-                    html += this.AddDataRow(this.languageVariables["prisvariable"], product.UnitPriceWithoutVat.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
+                    //html += this.AddDataRow(this.languageVariables["prisvariable"], product.UnitPriceWithoutVat.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.GetPrice(product) + " " + creatorService.CurrencyCode.ToUpper());
                 }
                 else if (this.creatorService.PriceType == PriceType.RekNetto)
                 {
                     string htmlData = string.Empty;
                     htmlData += "<div class=\"col-md-4 col-sm-12 col-xs-12\">";
-                    htmlData += "<p><b>" + this.languageVariables["prisvariable"] + "</b>:" + product.UnitPriceWithoutVat.ToString("F2") + ", <b>" +
+                    htmlData += "<p><b>" + this.languageVariables["prisvariable"] + "</b>:" + this.creatorService.GetPrice(product) + ", <b>" +
                                         this.languageVariables["rekprisvariabletenperpage"] + "</b>:" + product.UnitPrice.ToString("F2") + "</p>";
                     htmlData += "</div>";
 
@@ -97,14 +98,26 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 }
                 else if (this.creatorService.PriceType == PriceType.Kund)
                 {
-                    if (this.creatorService.SpecialCustomerPrices != null)
-                    {
-                        string price;
-                        if (this.creatorService.SpecialCustomerPrices.TryGetValue(product.VariantId, out price))
-                        {
-                            html += this.AddDataRow(this.languageVariables["prisvariable"], price + " " + creatorService.CurrencyCode.ToUpper());
-                        }
-                    }
+                    //if (this.creatorService.SpecialCustomerPrices != null)
+                    //{
+                    //    string price;
+                    //    if (this.creatorService.SpecialCustomerPrices.TryGetValue(product.VariantId, out price))
+                    //    {
+                    //        html += this.AddDataRow(this.languageVariables["prisvariable"], price + " " + creatorService.CurrencyCode.ToUpper());
+                    //    }
+                    //}
+
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.GetPrice(product) + " " + creatorService.CurrencyCode.ToUpper());
+                }
+                else if (this.creatorService.PriceType == PriceType.KundRek)
+                {
+                    string htmlData = string.Empty;
+                    htmlData += "<div class=\"col-md-4 col-sm-12 col-xs-12\">";
+                    htmlData += "<p><b>" + this.languageVariables["prisvariable"] + "</b>:" + this.creatorService.GetPrice(product) + ", <b>" +
+                                        this.languageVariables["rekprisvariabletenperpage"] + "</b>:" + product.UnitPrice.ToString("F2") + "</p>";
+                    htmlData += "</div>";
+
+                    html += htmlData;
                 }
                 else if (this.creatorService.PriceType == PriceType.None)
                 {

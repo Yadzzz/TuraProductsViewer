@@ -77,23 +77,31 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 }
                 else if (this.creatorService.PriceType == PriceType.Netto)
                 {
-                    html += this.AddDataRow(this.languageVariables["prisvariable"], product.UnitPriceWithoutVat.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
+                    //html += this.AddDataRow(this.languageVariables["prisvariable"], product.UnitPriceWithoutVat.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.GetPrice(product) + " " + creatorService.CurrencyCode.ToUpper());
                 }
                 else if (this.creatorService.PriceType == PriceType.RekNetto)
                 {
-                    html += this.AddDataRow(this.languageVariables["prisvariable"], product.UnitPriceWithoutVat.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.GetPrice(product) + " " + creatorService.CurrencyCode.ToUpper());
                     html += this.AddDataRow(this.languageVariables["rekprisvariable"], product.UnitPrice.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
                 }
                 else if (this.creatorService.PriceType == PriceType.Kund)
                 {
-                    if (this.creatorService.SpecialCustomerPrices != null)
-                    {
-                        string price;
-                        if (this.creatorService.SpecialCustomerPrices.TryGetValue(product.VariantId, out price))
-                        {
-                            html += this.AddDataRow(this.languageVariables["prisvariable"], price + " " + creatorService.CurrencyCode.ToUpper());
-                        }
-                    }
+                    //if (this.creatorService.SpecialCustomerPrices != null)
+                    //{
+                    //    string price;
+                    //    if (this.creatorService.SpecialCustomerPrices.TryGetValue(product.VariantId, out price))
+                    //    {
+                    //        html += this.AddDataRow(this.languageVariables["prisvariable"], price + " " + creatorService.CurrencyCode.ToUpper());
+                    //    }
+                    //}
+
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.GetPrice(product) + " " + creatorService.CurrencyCode.ToUpper());
+                }
+                else if (this.creatorService.PriceType == PriceType.KundRek)
+                {
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.GetPrice(product) + " " + creatorService.CurrencyCode.ToUpper());
+                    html += this.AddDataRow(this.languageVariables["rekprisvariable"], product.UnitPrice.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
                 }
                 else if (this.creatorService.PriceType == PriceType.None)
                 {
@@ -158,9 +166,10 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 converter.Footer.DisplayOnOddPages = true;
                 converter.Footer.DisplayOnEvenPages = true;
                 converter.Footer.Height = 40;
-                PdfTextSection text2 = new PdfTextSection(0, 0, "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com", new System.Drawing.Font("Arial", 8));
-                text2.HorizontalAlign = PdfTextHorizontalAlign.Center;
+                PdfTextSection text2 = new PdfTextSection(170, 0, "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com", new System.Drawing.Font("Arial", 8));
                 converter.Footer.Add(text2);
+                PdfTextSection dateText = new PdfTextSection(460, 30, "PDF Created [" + DateTime.Now + "]", new System.Drawing.Font("Arial", 8));
+                converter.Footer.Add(dateText);
 
                 this.pdfDocuments.Add(converter.ConvertHtmlString(this.stringBuilder.ToString()));
 
@@ -215,6 +224,34 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
             htmlData += "</div><br />";
 
             return htmlData.Replace("{@link@}", link);
+        }
+
+        public string GetFooterContactInformation(string language)
+        {
+            if (language.ToLower().Contains("swedish"))
+            {
+                return "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("norwegian"))
+            {
+                return "Tura Scandinavia AB - Tura +47 22 62 74 80 ordre@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("finnish"))
+            {
+                return "Tura Scandinavia AB - Tura +358 (0)207 600 950 finland@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("danish"))
+            {
+                return "Tura Scandinavia AB - Tura +45 48 18 78 81 dk@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("english"))
+            {
+                return "Tura Scandinavia AB - Tura +46 (0)300 56 89 20 info@turascandinavia.com";
+            }
+            else
+            {
+                return "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com";
+            }
         }
     }
 }

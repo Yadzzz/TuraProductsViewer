@@ -57,6 +57,8 @@ namespace DataRetriever.Models
         //Price withtout vat
         public double UnitPriceWithoutVat { get; set; }
 
+        public double SpecialCustomerEditedPrice { get; private set; }
+
         /// <summary>
         /// Sets all the variables Data
         /// </summary>
@@ -98,7 +100,6 @@ namespace DataRetriever.Models
             this.VatBusPostingGrPrice = vatBusPostingGrPrice;
             this.EndingDate = endingDate;
             this.AllowLineDisc = allowLineDisc;
-            //Set the rest variables
         }
 
         /// <summary>
@@ -230,6 +231,25 @@ namespace DataRetriever.Models
             {
                 this.UnitPriceWithoutVat = decimalPrice;
             }
+        }
+
+        public void SetSpecialCustomerEditedPrice(string price)
+        {
+            if (price == string.Empty || price == null)
+            {
+                return;
+            }
+
+            double decimalPrice;
+            if (double.TryParse(price, out decimalPrice))
+            {
+                this.SpecialCustomerEditedPrice = decimalPrice;
+            }
+        }
+
+        public void SetSpecialCustomerEditedPrice(double price)
+        {
+            this.SpecialCustomerEditedPrice = price;
         }
 
         /// <summary>

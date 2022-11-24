@@ -157,7 +157,7 @@
         //}
         //catch (Exception e)
         //{
-            
+
         //}
     }
 
@@ -313,36 +313,13 @@
 
                 if (product.Value != string.Empty && product.Value != null)
                 {
-                    int price;
-                    if (int.TryParse(product.Value, out price))
+                    double price;
+                    if (double.TryParse(product.Value, out price))
                     {
-                        productDataFromFile.UnitPrice = price;
+                        //productDataFromFile.UnitPrice = price;
+                        productDataFromFile.SetSpecialCustomerEditedPrice(price);
                     }
                 }
-
-                if (productDataFromFile == null || productDataFromFile.VariantId == null || productDataFromFile.VariantId.Equals(string.Empty))
-                {
-
-                }
-                else
-                {
-                    this.addToPdfCreator(productDataFromFile);
-                }
-            }
-
-            this.productData = null;
-        }
-    }
-
-    private async Task onFileUpload(InputFileChangeEventArgs e)
-    {
-        var productIds = await FileService.ReadFromUploadedFile(e);
-
-        if (productIds != null && productIds.Count > 0)
-        {
-            foreach (string productId in productIds)
-            {
-                var productDataFromFile = ApiService.GetProductsData(productId, this.PDFCreatorService.CurrencyCode);
 
                 if (productDataFromFile == null || productDataFromFile.VariantId == null || productDataFromFile.VariantId.Equals(string.Empty))
                 {

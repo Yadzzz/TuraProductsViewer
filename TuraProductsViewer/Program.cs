@@ -17,9 +17,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<CreatorService>();
 builder.Services.AddTransient<APIService>();
 builder.Services.AddTransient<ReadFileService>();
-builder.Services.AddScoped<FileCreatorService>();
 builder.Services.AddScoped<ImageService>();
-builder.Services.AddTransient<PdfCreator>();
+builder.Services.AddTransient<PdfCreatorService>();
 builder.Services.AddTransient<NavisionDataRetriever.NavisionRetriever>();
 
 builder.Services.AddHsts(options =>

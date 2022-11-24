@@ -1,4 +1,6 @@
-﻿namespace TuraProductsViewer.Services
+﻿using DataRetriever.Models;
+
+namespace TuraProductsViewer.Services
 {
     public class CreatorService
     {
@@ -6,9 +8,9 @@
         public string CurrencyCode { get; set; } = "SEK";
         public string Language { get; set; } = "Swedish";
         public bool UsePackagingImage { get; set; } = false;
-        public bool ShowInStock { get; set; } = true;
-        public bool ShowInStockCount { get; set; } = true;
-        public bool ShowPackagingMeasurment { get; set; } = true;
+        public bool ShowInStock { get; set; } = false;
+        public bool ShowInStockCount { get; set; } = false;
+        public bool ShowPackagingMeasurment { get; set; } = false;
         public PriceType PriceType { get; set; } = PriceType.Rek;
         public string CustomerId { get; set; } = string.Empty;
         public Dictionary<string,string> SpecialCustomerPrices { get; set; }
@@ -82,6 +84,21 @@
         {
             this.products.Clear();
         }
+
+        public string GetPrice(ProductsDataModel productsData)
+        {
+            if(productsData.SpecialCustomerEditedPrice > 0)
+            {
+                return productsData.SpecialCustomerEditedPrice.ToString();
+            }
+            
+            if(this.SpecialCustomerPrices.TryGetValue(productsData.VariantId, out string value))
+            {
+                return value;
+            }
+
+            return productsData.UnitPriceWithoutVat.ToString("F2");
+        }
     }
 
     public enum PriceType
@@ -90,6 +107,7 @@
         Netto,
         RekNetto,
         Kund,
+        KundRek,
         None
     }
 }

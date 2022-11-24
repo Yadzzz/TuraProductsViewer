@@ -5,9 +5,9 @@ using System.Linq;
 using System.Web;
 using SelectPdf;
 
-namespace TuraProductsViewer.Pages
+namespace TuraProductsViewer.Services
 {
-    public class PdfCreator
+    public class PdfCreatorService
     {
         public void CreateHtml(string html)
         {
@@ -19,7 +19,7 @@ namespace TuraProductsViewer.Pages
             HtmlToPdf converter = new HtmlToPdf();
 
             //set converter options
-            converter.Options.PdfPageSize  = PdfPageSize.A4;
+            converter.Options.PdfPageSize = PdfPageSize.A4;
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
             converter.Options.WebPageWidth = 1024;
             converter.Options.WebPageHeight = 0;
@@ -74,7 +74,7 @@ namespace TuraProductsViewer.Pages
             }
         }
 
-        public MemoryStream GetPDFStream(string html, string headerTitle)
+        public MemoryStream GetPDFStream(string html, string headerTitle, string language)
         {
             // read parameters from the webpage
             string htmlString = html;
@@ -116,9 +116,13 @@ namespace TuraProductsViewer.Pages
             converter.Footer.DisplayOnEvenPages = true;
             converter.Footer.Height = 40;
 
-            PdfTextSection text2 = new PdfTextSection(0, 0, "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com", new System.Drawing.Font("Arial", 8));
-            text2.HorizontalAlign = PdfTextHorizontalAlign.Center;
+            PdfTextSection text2 = new PdfTextSection(170, 0, GetFooterContactInformation(language), new Font("Arial", 8));
+            //text2.HorizontalAlign = PdfTextHorizontalAlign.Center;
             converter.Footer.Add(text2);
+
+            PdfTextSection dateText = new PdfTextSection(460, 30, "PDF Created [" + DateTime.Now + "]", new Font("Arial", 8));
+            //text2.HorizontalAlign = PdfTextHorizontalAlign.Right;
+            converter.Footer.Add(dateText);
 
             // create a new pdf document converting an url
             PdfDocument doc = converter.ConvertHtmlString(htmlString);
@@ -136,6 +140,34 @@ namespace TuraProductsViewer.Pages
                 //Closing the PDF document
                 doc.Close();
                 return stream;
+            }
+        }
+
+        public string GetFooterContactInformation(string language)
+        {
+            if (language.ToLower().Contains("swedish"))
+            {
+                return "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("norwegian"))
+            {
+                return "Tura Scandinavia AB - Tura +47 22 62 74 80 ordre@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("finnish"))
+            {
+                return "Tura Scandinavia AB - Tura +358 (0)207 600 950 finland@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("danish"))
+            {
+                return "Tura Scandinavia AB - Tura +45 48 18 78 81 dk@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("english"))
+            {
+                return "Tura Scandinavia AB - Tura +46 (0)300 56 89 20 info@turascandinavia.com";
+            }
+            else
+            {
+                return "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com";
             }
         }
     }

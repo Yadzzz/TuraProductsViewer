@@ -56,7 +56,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
 
                 if (pageInterval == 6 && !this.isHTML)
                 {
-                    html += "<div style=\"page-break-after: always\">\r\n\".\r\n</div>";
+                    html += "<div style=\"page-break-after: always\">\r\n\"\r\n</div>";
                     pageInterval = 0;
                 }
 

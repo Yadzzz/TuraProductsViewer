@@ -28,7 +28,7 @@
 
             <hr />
 
-            <InputFile OnChange="@onFileUploadWithPrices" class="btn btn-outline-primary mb-2" style="float:right" />
+            <InputFile OnChange="@onReadExcelFile" class="btn btn-outline-primary mb-2" style="float:right" />
 
             <div class="col-lg-4 col-md-2 col-sm-2">
 
@@ -299,6 +299,11 @@
     {
         await JSRuntime.InvokeAsync<object>(
             "alertUser", text);
+    }
+
+    private async Task onReadExcelFile(InputFileChangeEventArgs e)
+    {
+        await FileService.ReadFromUploadedExcelFileFileWithPrices(e);
     }
 
     private async Task onFileUploadWithPrices(InputFileChangeEventArgs e)

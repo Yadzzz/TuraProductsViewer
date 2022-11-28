@@ -4,6 +4,13 @@ namespace TuraProductsViewer.Services
 {
     public class APIService
     {
+        private readonly ILogger<APIService> logger;
+
+        public APIService(ILogger<APIService> _logger)
+        {
+            this.logger = _logger;
+        }
+
         /// <summary>
         /// Fetches data from the ProductsData data from the API
         /// </summary>

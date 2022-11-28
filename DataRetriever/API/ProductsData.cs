@@ -36,38 +36,34 @@ namespace DataRetriever.API
         /// <returns>Returns selected data from API if product id exists otherwise empty object</returns>
         public ProductsDataModel Fetch(string id, string currencyCode)
         {
-            try
+            ProductsDataModel productsData = null;
+
+            //var client = new RestClient("https://localhost:5001/api/ProductsData/" + id + "/" + currencyCode);
+            using (var client = new RestClient(this._apiUrl + id + "/" + currencyCode))
             {
-                ProductsDataModel productsData = null;
+                var request = new RestRequest();
+                request.AddHeader("ApiKey", "ba932ec7-3d66-487c-bcd0-4e17c8a2dfb3");
+                RestResponse response = client.Execute(request);
 
-                //var client = new RestClient("https://localhost:5001/api/ProductsData/" + id + "/" + currencyCode);
-                using (var client = new RestClient(this._apiUrl + id + "/" + currencyCode))
+                if (response.Content != null)
                 {
-                    var request = new RestRequest();
-                    request.AddHeader("ApiKey", "ba932ec7-3d66-487c-bcd0-4e17c8a2dfb3");
-                    RestResponse response = client.Execute(request);
-
-                    if (response.Content != null)
+                    try
                     {
                         productsData = JsonConvert.DeserializeObject<ProductsDataModel>(response.Content);
                     }
-
-                    //if (client != null)
-                    //{
-                    //    client.Dispose();
-                    //}
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
                 }
 
-                return productsData;
-            }
-            catch (Exception e)
-            {
-                //Cannot connect to API, offline?
-                //log e.ToString()
-                Console.WriteLine(e.ToString());
+                //if (client != null)
+                //{
+                //    client.Dispose();
+                //}
             }
 
-            return null;
+            return productsData;
         }
 
         /// <summary>

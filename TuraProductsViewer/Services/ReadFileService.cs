@@ -3,11 +3,19 @@ using System.Security.Policy;
 using Sylvan.Data.Excel;
 using System.Data;
 using System.Reflection.PortableExecutable;
+using System.Reflection.Metadata.Ecma335;
 
 namespace TuraProductsViewer.Services
 {
     public class ReadFileService
     {
+        private readonly ILogger<CreatorService> logger;
+
+        public ReadFileService(ILogger<CreatorService> _logger)
+        {
+            this.logger = _logger;
+        }
+
         /// <summary>
         /// Reads from given text file
         /// </summary>
@@ -17,59 +25,110 @@ namespace TuraProductsViewer.Services
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 
-            using (var reader = new StreamReader(e.File.OpenReadStream()))
+            try
             {
-                string? line;
-                while ((line = await reader.ReadLineAsync()) != null)
+                using (var reader = new StreamReader(e.File.OpenReadStream()))
                 {
-                    if (line.Contains(" "))
+                    string? line;
+                    while ((line = await reader.ReadLineAsync()) != null)
                     {
-                        string[] manipulatedLine = line.Split(" ");
-                        data.Add(manipulatedLine[0], manipulatedLine[1]);
+                        if (line.Contains("\t"))
+                        {
+                            string[] manipulatedLine = line.Split("\t");
+                            data.Add(manipulatedLine[0], manipulatedLine[1]);
+                        }
+                        else
+                        {
+                            data.Add(line, "");
+                        }
                     }
-                    else
-                    {
-                        data.Add(line, "");
-                    }
-                }
 
-                e.File.OpenReadStream().Close(); //Necessary?
-                //reader.Close();
-                //reader.Dispose();
+                    e.File.OpenReadStream().Close(); //Necessary?
+                                                     //reader.Close();
+                                                     //reader.Dispose();
+                }
+            }
+            catch(Exception exception)
+            {
+                this.logger.LogError(exception.ToString());
             }
 
             return data;
         }
 
-        public async Task ReadFromUploadedExcelFileFileWithPrices(InputFileChangeEventArgs e)
+        /// <summary>
+        /// Reads from given excel file
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns>Dicitonary filled with data [key:productId] [value:price]</returns>
+        public async Task<Dictionary<string,string>> ReadFromUploadedExcelFileFileWithPrices(InputFileChangeEventArgs e)
         {
-            Stream stream = new MemoryStream();
-            await e.File.OpenReadStream().CopyToAsync(stream);
+            Dictionary<string, string> data = new Dictionary<string, string>();
 
-            var edr = ExcelDataReader.Create(stream, ExcelWorkbookType.ExcelXml);
-
-            var dt = new DataTable();
-            dt.Load(edr);
-
-            //if (double.TryParse(dt.Columns[0].ColumnName, out double productId))
-            //{
-            //    Console.WriteLine(productId);
-            //}
-
-            //if (double.TryParse(dt.Columns[1].ColumnName, out double productPrice))
-            //{
-            //    Console.WriteLine(productId);
-            //}
-
-            //Console.WriteLine(dt.Columns[0].ColumnName);
-            //Console.WriteLine(dt.Columns[1].ColumnName);
-
-            foreach (DataRow row in dt.Rows)
+            try
             {
-                Console.WriteLine(row[0]);
-                Console.WriteLine(row[1]);
+                using (Stream stream = new MemoryStream())
+                {
+                    await e.File.OpenReadStream().CopyToAsync(stream);
+
+                    using (var edr = ExcelDataReader.Create(stream, ExcelWorkbookType.ExcelXml))
+                    {
+                        var dt = new DataTable();
+
+                        if (dt == null)
+                        {
+                            return null;
+                        }
+
+                        dt.Load(edr);
+
+                        if (dt.Columns.Count == 0)
+                        {
+                            return null;
+                        }
+
+                        if (double.TryParse(dt.Columns[0].ColumnName, out double productId))
+                        {
+
+                            if (double.TryParse(dt.Columns[1].ColumnName, out double productPrice))
+                            {
+                                data.Add(dt.Columns[0].ColumnName, dt.Columns[1].ColumnName);
+                            }
+                            else
+                            {
+                                data.Add(dt.Columns[0].ColumnName, string.Empty);
+                            }
+                        }
+
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            if (double.TryParse((string)row[0], out double id))
+                            {
+                                if (row.IsNull(1))
+                                {
+                                    data.Add(id.ToString(), string.Empty);
+                                    continue;
+                                }
+
+                                if (double.TryParse((string)row[1], out double price))
+                                {
+                                    data.Add(id.ToString(), price.ToString());
+                                }
+                                else
+                                {
+                                    data.Add(id.ToString(), string.Empty);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception exception)
+            {
+                this.logger.LogError(exception.ToString());
             }
 
+            return data;
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
+using Serilog;
 using System.Net;
 using System.Runtime.CompilerServices;
 using TuraProductsViewer;
@@ -28,10 +29,15 @@ builder.Services.AddHsts(options =>
     options.MaxAge = TimeSpan.FromDays(365);
 });
 
-var app = builder.Build();
+Log.Logger = new LoggerConfiguration()
+.Enrich.FromLogContext()
+.WriteTo.File(@"logs/log.txt")
+.CreateLogger();
 
-//WebHost.CreateDefaultBuilder(args)
-//.UseStartup<Program>();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog();
+
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

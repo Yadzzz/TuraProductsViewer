@@ -1,15 +1,16 @@
-﻿@*@layout CorkLayout*@
-@page "/products"
+﻿@page "/products"
 
 <PageTitle>Products</PageTitle>
 
 @using TuraProductsViewer.Shared;
+@*@using Serilog;*@
 
 @inject CreatorService PDFCreatorService
 @inject APIService ApiService
 @inject ReadFileService FileService
 @inject ImageService ImageService
 @inject IJSRuntime JSRuntime
+@inject ILogger<TuraProducts> logger;
 
 <div class="page-header">
     <div class="page-title">
@@ -28,7 +29,7 @@
 
             <hr />
 
-            <InputFile OnChange="@onReadExcelFile" class="btn btn-outline-primary mb-2" style="float:right" />
+            <InputFile OnChange="@onReadFile" class="btn btn-outline-primary mb-2" style="float:right" />
 
             <div class="col-lg-4 col-md-2 col-sm-2">
 
@@ -144,21 +145,10 @@
     private DataRetriever.Models.ProductsDataModel? productData;
     private bool productNotFound = false;
 
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    //await Task.Run(() => this.productData = ApiService.GetProductsDataAsync("100001", "DKK"));
-    //}
-
     protected override async Task OnInitializedAsync()
     {
-        //try
-        //{
-        //    await Task.Run(async () => this.productData = await ApiService.GetProductsDataAsync("96411", "SEK"));
-        //}
-        //catch (Exception e)
-        //{
-
-        //}
+        //Log.Information("OnInitializedAsync");
+        logger.LogInformation("OnInitializedAsync");
     }
 
     public void Enter(KeyboardEventArgs e)
@@ -183,7 +173,7 @@
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.ToString());
+            logger.LogError(e.ToString());
         }
 
         if (this.productData == null || productData.VariantId == null || this.productData.VariantId.Equals(string.Empty))
@@ -210,7 +200,7 @@
         }
         catch (Exception e)
         {
-
+            logger.LogError(e.ToString());
         }
 
         if (this.productData == null || productData.VariantId == null || this.productData.VariantId.Equals(string.Empty))
@@ -301,12 +291,58 @@
             "alertUser", text);
     }
 
-    private async Task onReadExcelFile(InputFileChangeEventArgs e)
+    private async Task onReadFile(InputFileChangeEventArgs e)
     {
-        await FileService.ReadFromUploadedExcelFileFileWithPrices(e);
+        if (e.File.ContentType == "text/plain")
+        {
+            await this.onTextFileUploadWithPrices(e);
+        }
+        else if (e.File.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        {
+            await this.onExcelFileUploadWithPrices(e);
+        }
     }
 
-    private async Task onFileUploadWithPrices(InputFileChangeEventArgs e)
+    private async Task onExcelFileUploadWithPrices(InputFileChangeEventArgs e)
+    {
+        var products = await FileService.ReadFromUploadedExcelFileFileWithPrices(e);
+
+        if (products != null && products.Count > 0)
+        {
+            foreach (var product in products)
+            {
+                //var productDataFromFile = ApiService.GetProductsData(product.Key, PDFCreatorService.CurrencyCode);
+
+                DataRetriever.Models.ProductsDataModel productDataFromFile = null;
+                await Task.Run(async () => productDataFromFile = await ApiService.GetProductsDataAsync(product.Key, PDFCreatorService.CurrencyCode));
+
+                if (productDataFromFile != null)
+                {
+                    if (product.Value != string.Empty && product.Value != null)
+                    {
+                        double price;
+                        if (double.TryParse(product.Value, out price))
+                        {
+                            productDataFromFile.SetSpecialCustomerEditedPrice(price);
+                        }
+                    }
+
+                    if (productDataFromFile == null || productDataFromFile.VariantId == null || productDataFromFile.VariantId.Equals(string.Empty))
+                    {
+
+                    }
+                    else
+                    {
+                        this.addToPdfCreator(productDataFromFile);
+                    }
+                }
+            }
+
+            this.productData = null;
+        }
+    }
+
+    private async Task onTextFileUploadWithPrices(InputFileChangeEventArgs e)
     {
         var products = await FileService.ReadFromUploadedFileWithPrices(e);
 
@@ -314,25 +350,30 @@
         {
             foreach (var product in products)
             {
-                var productDataFromFile = ApiService.GetProductsData(product.Key, PDFCreatorService.CurrencyCode);
+                //var productDataFromFile = ApiService.GetProductsData(product.Key, PDFCreatorService.CurrencyCode);
 
-                if (product.Value != string.Empty && product.Value != null)
+                DataRetriever.Models.ProductsDataModel productDataFromFile = null;
+                await Task.Run(async () => productDataFromFile = await ApiService.GetProductsDataAsync(product.Key, PDFCreatorService.CurrencyCode));
+
+                if (productDataFromFile != null)
                 {
-                    double price;
-                    if (double.TryParse(product.Value, out price))
+                    if (product.Value != string.Empty && product.Value != null)
                     {
-                        //productDataFromFile.UnitPrice = price;
-                        productDataFromFile.SetSpecialCustomerEditedPrice(price);
+                        double price;
+                        if (double.TryParse(product.Value, out price))
+                        {
+                            productDataFromFile.SetSpecialCustomerEditedPrice(price);
+                        }
                     }
-                }
 
-                if (productDataFromFile == null || productDataFromFile.VariantId == null || productDataFromFile.VariantId.Equals(string.Empty))
-                {
+                    if (productDataFromFile == null || productDataFromFile.VariantId == null || productDataFromFile.VariantId.Equals(string.Empty))
+                    {
 
-                }
-                else
-                {
-                    this.addToPdfCreator(productDataFromFile);
+                    }
+                    else
+                    {
+                        this.addToPdfCreator(productDataFromFile);
+                    }
                 }
             }
 

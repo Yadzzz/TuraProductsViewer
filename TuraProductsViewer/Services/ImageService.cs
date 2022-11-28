@@ -1,14 +1,17 @@
 ﻿using System.Net;
+using System.Security.Policy;
 
 namespace TuraProductsViewer.Services
 {
     public class ImageService
     {
+        private readonly ILogger<CreatorService> logger;
         private string rootProductsImageFolder;
         private string webProductsImagePath;
 
-        public ImageService()
+        public ImageService(ILogger<CreatorService> _logger)
         {
+            this.logger = _logger;
             this.rootProductsImageFolder = "/Produktbilder/";
             this.webProductsImagePath = "https://www.turascandinavia.com/image/";
         }
@@ -38,16 +41,22 @@ namespace TuraProductsViewer.Services
             imagePath += productId;
             imagePath += "ver.jpg";
 
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(imagePath);
-            request.Method = "HEAD";
+            //HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(imagePath);
+            //request.Method = "HEAD";
 
             try
             {
+                HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(imagePath);
                 request.GetResponse();
             }
             catch
             {
-                return "https://vendev.pro/pictures/missing.jpg";
+                //return "https://vendev.pro/pictures/missing.jpg";
+                //return "../pictures/missing.jpg";
+                
+                this.logger.LogWarning("Packaging Picture [" + productId + "] missing.");
+
+                return "https://pdftest.turascandinavia.com/pictures/missing.jpg";
             }
 
             return imagePath;

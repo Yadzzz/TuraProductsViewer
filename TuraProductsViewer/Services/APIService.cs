@@ -17,7 +17,7 @@ namespace TuraProductsViewer.Services
         /// <param name="id">Product Id</param>
         /// <param name="currencyCode">Currency Code</param>
         /// <returns>ProductsDataModel with all data related to product Id {<paramref name="id"/>}</returns>
-        public ProductsDataModel GetProductsData(string id, string currencyCode)
+        public ProductsDataModel? GetProductsData(string id, string currencyCode)
         {
             DataRetriever.API.ProductsData productsData = new DataRetriever.API.ProductsData();
 
@@ -30,11 +30,11 @@ namespace TuraProductsViewer.Services
         /// <param name="id">Product Id</param>
         /// <param name="currencyCode">Currency Code</param>
         /// <returns>ProductsDataModel with all data related to product Id {<paramref name="id"/>}</returns>
-        public async Task<ProductsDataModel> GetProductsDataAsync(string id, string currencyCode)
+        public async Task<ProductsDataModel?> GetProductsDataAsync(string id, string currencyCode)
         {
             DataRetriever.API.ProductsData productsData = new DataRetriever.API.ProductsData();
 
-            return productsData.Fetch(id, currencyCode);
+            return await productsData.FetchAsync(id, currencyCode);
         }
     }
 }

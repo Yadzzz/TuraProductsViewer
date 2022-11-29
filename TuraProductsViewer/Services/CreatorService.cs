@@ -99,7 +99,7 @@ namespace TuraProductsViewer.Services
                 return productsData.SpecialCustomerEditedPrice.ToString();
             }
             
-            if(this.SpecialCustomerPrices.TryGetValue(productsData.VariantId, out string value))
+            if(this.SpecialCustomerPrices.TryGetValue(productsData.VariantId, out string? value))
             {
                 return value;
             }

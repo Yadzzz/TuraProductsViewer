@@ -45,7 +45,7 @@ namespace TuraProductsViewer.HtmlDesigner
             return string.Empty;
         }
 
-        public MemoryStream GenerateMemoryStream()
+        public MemoryStream? GenerateMemoryStream()
         {
             if (this.Layout == HtmlLayout.OnePerPage)
             {

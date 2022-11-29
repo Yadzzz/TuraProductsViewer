@@ -151,11 +151,11 @@
         logger.LogInformation("OnInitializedAsync");
     }
 
-    public void Enter(KeyboardEventArgs e)
+    public async Task Enter(KeyboardEventArgs e)
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
-            this.searchProductFromAPI();
+            await this.searchProductFromAPIAsync();
         }
     }
 
@@ -313,7 +313,7 @@
             {
                 //var productDataFromFile = ApiService.GetProductsData(product.Key, PDFCreatorService.CurrencyCode);
 
-                DataRetriever.Models.ProductsDataModel productDataFromFile = null;
+                DataRetriever.Models.ProductsDataModel? productDataFromFile = null;
                 await Task.Run(async () => productDataFromFile = await ApiService.GetProductsDataAsync(product.Key, PDFCreatorService.CurrencyCode));
 
                 if (productDataFromFile != null)
@@ -352,7 +352,7 @@
             {
                 //var productDataFromFile = ApiService.GetProductsData(product.Key, PDFCreatorService.CurrencyCode);
 
-                DataRetriever.Models.ProductsDataModel productDataFromFile = null;
+                DataRetriever.Models.ProductsDataModel? productDataFromFile = null;
                 await Task.Run(async () => productDataFromFile = await ApiService.GetProductsDataAsync(product.Key, PDFCreatorService.CurrencyCode));
 
                 if (productDataFromFile != null)

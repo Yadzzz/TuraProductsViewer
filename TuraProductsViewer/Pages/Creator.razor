@@ -7,6 +7,8 @@
 @inject ImageService ImageService
 @inject PdfCreatorService PDFCreatorService
 @inject NavisionDataRetriever.NavisionRetriever Navision
+@inject ILogger<Creator> logger;
+
 
 <div class="page-header">
     <div class="page-title">
@@ -233,12 +235,15 @@
 
         if (this.htmlLayout == HtmlDesigner.HtmlLayout.OnePerPage && this.CreatorService.GetProductsCount() > 5)
         {
-            using (MemoryStream excelStream = htmlBuilder.GenerateMemoryStream())
+            using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
             {
-                await JSRuntime.InvokeAsync<object>(
+                if(excelStream != null)
+                {
+                    await JSRuntime.InvokeAsync<object>(
                            "saveAsFileee",
                            (this.title + ".pdf"),
                            Convert.ToBase64String(excelStream.ToArray()));
+                }
             }
         }
         else

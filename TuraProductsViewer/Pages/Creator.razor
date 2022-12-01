@@ -170,10 +170,23 @@
 
                     if (this.CreatorService.PriceType == PriceType.Kund || this.CreatorService.PriceType == PriceType.KundRek)
                     {
-                        <div class="col-lg-8">
+                        @*<div class="col-lg-8">
                             <p>Customer Id</p>
                             <input type="text" @bind-value=@this.CreatorService.CustomerId class="w-100 form-control product-search br-30" id="input-search" placeholder="Customer Id">
                         </div>
+                        <br />
+                        <div class="col-lg-12">
+                            <button class="btn btn-primary mb-2" type="button" @onclick=@getCustomerPrices>Get Prices</button>
+                        </div>*@
+
+                        <div class="col-lg-6" style="float:left">
+                            <input type="text" @bind-value=@this.CreatorService.CustomerId class="w-100 form-control product-search br-30" id="input-search" placeholder="Customer Id">
+                        </div>
+
+                        <div class="col-lg-4 col-md-2 col-sm-2" style="float:left">
+                            <button class="btn btn-outline-primary btn-rounded mb-2" type="button" @onclick=@getCustomerPrices>Get Prices</button>
+                        </div>
+                        <br /><br />
                     }
 
                     <hr />
@@ -218,10 +231,10 @@
 
     private async void initializePDFCreation()
     {
-        if(this.CreatorService.PriceType == PriceType.Kund || this.CreatorService.PriceType == PriceType.KundRek)
-        {
-            this.getCustomerPrices();
-        }
+        //if (this.CreatorService.PriceType == PriceType.Kund || this.CreatorService.PriceType == PriceType.KundRek)
+        //{
+        //    this.getCustomerPrices();
+        //}
 
         this.inCreationProcess = true;
         await Task.Run(() => this.createPDF());
@@ -237,23 +250,34 @@
         {
             using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
             {
-                if(excelStream != null)
+                if (excelStream != null)
                 {
                     await JSRuntime.InvokeAsync<object>(
                            "saveAsFileee",
                            (this.title + ".pdf"),
                            Convert.ToBase64String(excelStream.ToArray()));
                 }
+                else
+                {
+                    this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
+                }
             }
         }
         else
         {
-            using (MemoryStream excelStream = PDFCreatorService.GetPDFStream(htmlBuilder.GenerateHTML(), this.title, this.CreatorService.Language))
+            using (MemoryStream? excelStream = PDFCreatorService.GetPDFStream(htmlBuilder.GenerateHTML(), this.title, this.CreatorService.Language))
             {
-                await JSRuntime.InvokeAsync<object>(
-                           "saveAsFileee",
-                           (this.title + ".pdf"),
-                           Convert.ToBase64String(excelStream.ToArray()));
+                if (excelStream != null)
+                {
+                    await JSRuntime.InvokeAsync<object>(
+                               "saveAsFileee",
+                               (this.title + ".pdf"),
+                               Convert.ToBase64String(excelStream.ToArray()));
+                }
+                else
+                {
+                    this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
+                }
             }
         }
         //var bytes = System.Text.Encoding.UTF8.GetBytes("test");
@@ -271,10 +295,10 @@
     /// </summary>
     private void createHTML()
     {
-        if (this.CreatorService.PriceType == PriceType.Kund || this.CreatorService.PriceType == PriceType.KundRek)
-        {
-            this.getCustomerPrices();
-        }
+        //if (this.CreatorService.PriceType == PriceType.Kund || this.CreatorService.PriceType == PriceType.KundRek)
+        //{
+        //    this.getCustomerPrices();
+        //}
 
         this.DownloadHTMLFile();
     }
@@ -296,13 +320,16 @@
             Convert.ToBase64String(data));
     }
 
-    private async void getCustomerPrices()
+    private void getCustomerPrices()
     {
+        if (CreatorService.SpecialCustomerPrices != null && CreatorService.SpecialCustomerPrices.Count > 0)
+            this.CreatorService.SpecialCustomerPrices.Clear();
+
         List<string> ids = new List<string>();
 
         foreach (var product in this.CreatorService.GetProducts())
         {
-            if(ids.Contains(product.VariantId))
+            if (ids.Contains(product.VariantId))
             {
                 continue;
             }
@@ -310,7 +337,7 @@
             ids.Add(product.VariantId);
         }
 
-        if (this.CreatorService.CustomerId != null || this.CreatorService.CustomerId == string.Empty)
+        if (this.CreatorService.CustomerId != null || this.CreatorService.CustomerId != string.Empty)
         {
             Navision.PrepareRequest(ids.ToArray(), this.CreatorService.CustomerId, this.CreatorService.CurrencyCode);
             var data = Navision.GetPrices();
@@ -322,7 +349,16 @@
                     this.CreatorService.SpecialCustomerPrices = data;
                 }
 
+                foreach (var v in data)
+                {
+                    Console.WriteLine(v.Key + " : " + v.Value);
+                }
+
                 this.StateHasChanged();
+            }
+            else
+            {
+                //Console.WriteLine("NULL");
             }
         }
     }

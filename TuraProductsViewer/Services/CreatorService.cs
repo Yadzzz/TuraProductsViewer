@@ -1,4 +1,5 @@
 ﻿using DataRetriever.Models;
+using System.Globalization;
 
 namespace TuraProductsViewer.Services
 {
@@ -14,12 +15,12 @@ namespace TuraProductsViewer.Services
         public bool ShowPackagingMeasurment { get; set; } = false;
         public PriceType PriceType { get; set; } = PriceType.Rek;
         public string CustomerId { get; set; } = string.Empty;
-        public Dictionary<string,string> SpecialCustomerPrices { get; set; }
+        public Dictionary<string, string> SpecialCustomerPrices { get; set; }
 
         public CreatorService(ILogger<CreatorService> _logger)
         {
             this.logger = _logger;
-            this.products = new List<DataRetriever.Models.ProductsDataModel>();
+            this.products = new List<ProductsDataModel>();
             this.SpecialCustomerPrices = new Dictionary<string, string>();
         }
 
@@ -27,9 +28,9 @@ namespace TuraProductsViewer.Services
         /// Adds the given products to the list
         /// </summary>
         /// <param name="product">Instance of the product</param>
-        public void AddProduct(DataRetriever.Models.ProductsDataModel product)
+        public void AddProduct(ProductsDataModel product)
         {
-            if(this.products.Contains(product))
+            if (this.products.Contains(product))
             {
                 return;
             }
@@ -41,9 +42,9 @@ namespace TuraProductsViewer.Services
         /// Removes the given product from the list
         /// </summary>
         /// <param name="product">Instance of the product</param>
-        public void RemoveProduct(DataRetriever.Models.ProductsDataModel product)
+        public void RemoveProduct(ProductsDataModel product)
         {
-            if(!this.products.Contains(product))
+            if (!this.products.Contains(product))
             {
                 return;
             }
@@ -56,7 +57,7 @@ namespace TuraProductsViewer.Services
         /// </summary>
         /// <param name="product">Instance of the product</param>
         /// <returns>If product exists</returns>
-        public bool ContainsProduct(DataRetriever.Models.ProductsDataModel product)
+        public bool ContainsProduct(ProductsDataModel product)
         {
             return this.products.Contains(product);
         }
@@ -65,7 +66,7 @@ namespace TuraProductsViewer.Services
         /// Gets all the products
         /// </summary>
         /// <returns>List of products</returns>
-        public List<DataRetriever.Models.ProductsDataModel> GetProducts()
+        public List<ProductsDataModel> GetProducts()
         {
             return this.products;
         }
@@ -85,6 +86,7 @@ namespace TuraProductsViewer.Services
         public void ClearProducts()
         {
             this.products.Clear();
+            this.SpecialCustomerPrices.Clear();
         }
 
         /// <summary>
@@ -94,12 +96,12 @@ namespace TuraProductsViewer.Services
         /// <returns></returns>
         public string GetPrice(ProductsDataModel productsData)
         {
-            if(productsData.SpecialCustomerEditedPrice > 0)
+            if (productsData.SpecialCustomerEditedPrice > 0)
             {
                 return productsData.SpecialCustomerEditedPrice.ToString();
             }
-            
-            if(this.SpecialCustomerPrices.TryGetValue(productsData.VariantId, out string? value))
+
+            if (this.SpecialCustomerPrices.TryGetValue(productsData.VariantId, out string? value))
             {
                 return value;
             }
@@ -116,7 +118,7 @@ namespace TuraProductsViewer.Services
         {
             get
             {
-                foreach(var product in this.products)
+                foreach (var product in this.products)
                 {
                     if (product.VariantId == productId)
                         return product;

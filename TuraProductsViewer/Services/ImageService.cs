@@ -6,8 +6,8 @@ namespace TuraProductsViewer.Services
     public class ImageService
     {
         private readonly ILogger<CreatorService> logger;
-        private string rootProductsImageFolder;
-        private string webProductsImagePath;
+        private readonly string rootProductsImageFolder;
+        private readonly string webProductsImagePath;
 
         public ImageService(ILogger<CreatorService> _logger)
         {

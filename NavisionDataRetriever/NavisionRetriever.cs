@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -10,10 +12,16 @@ namespace NavisionDataRetriever
 {
     public class NavisionRetriever
     {
+        private ILogger<NavisionRetriever> logger;
         private string _soap { get; set; }
         private string[] _productIds { get; set; }
         private string _customerId { get; set; }
         private string _currencyCode { get; set; }
+
+        public NavisionRetriever(ILogger<NavisionRetriever> _logger)
+        {
+            this.logger = _logger;
+        }
 
         /// <summary>
         /// Prepares the required fields and SOAP request
@@ -36,6 +44,10 @@ namespace NavisionDataRetriever
         /// </summary>
         private void prepareSoap()
         {
+            string timeZone = TimeZoneInfo.Local.BaseUtcOffset.ToString();
+            string date = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
+            date += "+" + timeZone.Remove(5, timeZone.Count() - 5);
+
             this._soap += @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:wsm=""urn:microsoft-dynamics-schemas/codeunit/WSMiscFunctions"" xmlns:wsit=""urn:microsoft-dynamics-nav/xmlports/WSItemSalesPrice"">
     <soapenv:Header/>
     <soapenv:Body>
@@ -49,7 +61,7 @@ namespace NavisionDataRetriever
 
             this._soap += "<wsm:customerNo>" + this._customerId + "</wsm:customerNo>";
             this._soap += "<wsm:currencyCode>" + this._currencyCode + "</wsm:currencyCode>";
-            this._soap += "<wsm:date>" + DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "</wsm:date>";
+            this._soap += "<wsm:date>" + date + "</wsm:date>";
 
             this._soap += @"<wsm:itemPriceBulkXML>
                             <!--Zero or more repetitions:-->";
@@ -78,12 +90,17 @@ namespace NavisionDataRetriever
         /// <returns>XML String containing related data</returns>
         private string loadPrices()
         {
-            //try
-            //{
+            if(this._soap == null || this._productIds == null || this._productIds.Length == 0 || this._customerId == null || this._currencyCode == null)
+            {
+                return string.Empty;
+            }
+
+            try
+            {
                 string data = string.Empty;
 
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://NAVSVC1.tura.local:7047/DynamicsNAV110/WS/Tura%20Scandinavia%20AB/Codeunit/WSMiscFunctions");
-                req.ContentType = "application/xml;";
+                req.ContentType = "text/xml;";
                 req.Method = "POST";
                 req.Headers.Add("Accept", "*/*");
                 req.Headers.Add("SOAPAction", @"'#GET'");
@@ -109,11 +126,12 @@ namespace NavisionDataRetriever
                 }
 
                 return data;
-            //}
-            //catch(Exception e)
-            //{
-            //    return e.ToString();
-            //}
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e, e.ToString());
+                return string.Empty;
+            }
         }
 
         /// <summary>
@@ -125,41 +143,64 @@ namespace NavisionDataRetriever
             Dictionary<string, string> itemPrices = new Dictionary<string, string>(); //Id / Price
             string pricesXml = this.loadPrices();
 
-            XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.LoadXml(pricesXml);
-
-            if(xmlDocument == null)
+            try
             {
-                return null;
-            }
-
-            XmlNamespaceManager manager = new XmlNamespaceManager(xmlDocument.NameTable);
-            manager.AddNamespace("bhr", "urn:microsoft-dynamics-nav/xmlports/WSItemSalesPrice");
-
-            if(manager == null)
-            {
-                return null;
-            }
-
-            XmlNodeList xnList = xmlDocument.SelectNodes("//bhr:ItemPriceBulk", manager);
-            XmlNodeList xnPrices = xmlDocument.SelectNodes("//bhr:Prices", manager);
-
-            if(xnList != null && xnPrices != null && (xnList.Count >= xnPrices.Count))
-            {
-                int i = 0;
-                foreach (XmlNode xn in xnList)
+                if (pricesXml == null)
                 {
-                    string id = xn["ItemNo"].InnerText;
-                    string price = xnPrices[i]["Price"].InnerText;
-
-                    if(id != null && price != null)
-                    {
-                        //CustomerItemData customerItemData = new CustomerItemData(id, price);
-                        itemPrices.Add(id, price);
-                    }
-
-                    i++;
+                    return itemPrices;
                 }
+
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(pricesXml);
+
+                if (xmlDocument == null)
+                {
+                    return null;
+                }
+
+                XmlNamespaceManager manager = new XmlNamespaceManager(xmlDocument.NameTable);
+                manager.AddNamespace("bhr", "urn:microsoft-dynamics-nav/xmlports/WSItemSalesPrice");
+
+                if (manager == null)
+                {
+                    return null;
+                }
+
+                XmlNodeList xnList = xmlDocument.SelectNodes("//bhr:ItemPriceBulk", manager);
+                XmlNodeList xnPrices = xmlDocument.SelectNodes("//bhr:Prices", manager);
+
+                if (xnList != null && xnPrices != null && (xnList.Count >= xnPrices.Count))
+                {
+                    int i = 0;
+                    foreach (XmlNode xn in xnList)
+                    {
+                        string id = xn["ItemNo"].InnerText;
+                        string price = xnPrices[i]["Price"].InnerText;
+
+                        if(price.Contains(","))
+                        {
+                            price = price.Replace(",", "");
+                        }
+
+                        if(price.Contains("."))
+                        {
+                            price = price.Replace(".", ",");
+                        }
+
+                        if (id != null && price != null)
+                        {
+                            //CustomerItemData customerItemData = new CustomerItemData(id, price);
+                            itemPrices.Add(id, price);
+                        }
+
+                        i++;
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                this.logger.LogError(e, e.ToString());
+                return null;
             }
 
             return itemPrices;

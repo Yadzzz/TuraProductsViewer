@@ -1,4 +1,6 @@
-﻿using DataRetriever.Models;
+﻿using DataRetriever.API;
+using DataRetriever.Models;
+using Serilog;
 
 namespace TuraProductsViewer.Services
 {
@@ -19,7 +21,7 @@ namespace TuraProductsViewer.Services
         /// <returns>ProductsDataModel with all data related to product Id {<paramref name="id"/>}</returns>
         public ProductsDataModel? GetProductsData(string id, string currencyCode)
         {
-            DataRetriever.API.ProductsData productsData = new DataRetriever.API.ProductsData();
+            ProductsData productsData = new ProductsData(null);
 
             return productsData.Fetch(id, currencyCode);
         }
@@ -32,7 +34,7 @@ namespace TuraProductsViewer.Services
         /// <returns>ProductsDataModel with all data related to product Id {<paramref name="id"/>}</returns>
         public async Task<ProductsDataModel?> GetProductsDataAsync(string id, string currencyCode)
         {
-            DataRetriever.API.ProductsData productsData = new DataRetriever.API.ProductsData();
+            ProductsData productsData = new ProductsData(null);
 
             return await productsData.FetchAsync(id, currencyCode);
         }

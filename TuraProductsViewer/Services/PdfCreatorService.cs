@@ -9,6 +9,13 @@ namespace TuraProductsViewer.Services
 {
     public class PdfCreatorService
     {
+        private readonly ILogger<CreatorService> logger;
+
+        public PdfCreatorService(ILogger<CreatorService> logger)
+        {
+            this.logger = logger;
+        }
+
         public void CreateHtml(string html)
         {
             // read parameters from the webpage
@@ -74,7 +81,7 @@ namespace TuraProductsViewer.Services
             }
         }
 
-        public MemoryStream GetPDFStream(string html, string headerTitle, string language)
+        public MemoryStream? GetPDFStream(string html, string headerTitle, string language)
         {
             // read parameters from the webpage
             string htmlString = html;

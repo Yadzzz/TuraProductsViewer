@@ -21,6 +21,7 @@ builder.Services.AddTransient<ReadFileService>();
 builder.Services.AddScoped<ImageService>();
 builder.Services.AddTransient<PdfCreatorService>();
 builder.Services.AddTransient<NavisionDataRetriever.NavisionRetriever>();
+builder.Services.AddTransient<DataRetriever.API.ProductsData>();
 
 builder.Services.AddHsts(options =>
 {
@@ -31,7 +32,7 @@ builder.Services.AddHsts(options =>
 
 Log.Logger = new LoggerConfiguration()
 .Enrich.FromLogContext()
-.WriteTo.File(@"logs/log.txt")
+.WriteTo.File(@"logs/logs.txt", shared: true)
 .CreateLogger();
 
 builder.Logging.ClearProviders();

@@ -81,13 +81,13 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 else if (this.creatorService.PriceType == PriceType.Netto)
                 {
                     //html += this.AddDataRow(this.languageVariables["prisvariable"], product.UnitPriceWithoutVat.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
-                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.GetPrice(product) + " " + creatorService.CurrencyCode.ToUpper());
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], double.Parse(this.creatorService.GetPrice(product)).ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
                 }
                 else if (this.creatorService.PriceType == PriceType.RekNetto)
                 {
                     string htmlData = string.Empty;
                     htmlData += "<div class=\"col-md-4 col-sm-12 col-xs-12\">";
-                    htmlData += "<p><b>" + this.languageVariables["prisvariable"] + "</b>:" + this.creatorService.GetPrice(product) + ", <b>" +
+                    htmlData += "<p><b>" + this.languageVariables["prisvariable"] + "</b>:" + double.Parse(this.creatorService.GetPrice(product)).ToString("F2") + ", <b>" +
                                         this.languageVariables["rekprisvariabletenperpage"] + "</b>:" + product.UnitPrice.ToString("F2") + "</p>";
                     htmlData += "</div>";
 
@@ -107,13 +107,13 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                     //    }
                     //}
 
-                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.GetPrice(product) + " " + creatorService.CurrencyCode.ToUpper());
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], double.Parse(this.creatorService.GetPrice(product)).ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
                 }
                 else if (this.creatorService.PriceType == PriceType.KundRek)
                 {
                     string htmlData = string.Empty;
                     htmlData += "<div class=\"col-md-4 col-sm-12 col-xs-12\">";
-                    htmlData += "<p><b>" + this.languageVariables["prisvariable"] + "</b>:" + this.creatorService.GetPrice(product) + ", <b>" +
+                    htmlData += "<p><b>" + this.languageVariables["prisvariable"] + "</b>:" + double.Parse(this.creatorService.GetPrice(product)).ToString("F2") + ", <b>" +
                                         this.languageVariables["rekprisvariabletenperpage"] + "</b>:" + product.UnitPrice.ToString("F2") + "</p>";
                     htmlData += "</div>";
 

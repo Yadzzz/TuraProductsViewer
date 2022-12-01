@@ -6,7 +6,7 @@
 @*@using Serilog;*@
 
 @inject CreatorService PDFCreatorService
-@inject APIService ApiService
+@inject DataRetriever.API.ProductsData ApiService
 @inject ReadFileService FileService
 @inject ImageService ImageService
 @inject IJSRuntime JSRuntime
@@ -148,7 +148,7 @@
     protected override async Task OnInitializedAsync()
     {
         //Log.Information("OnInitializedAsync");
-        logger.LogInformation("OnInitializedAsync");
+        //logger.LogInformation("OnInitializedAsync");
     }
 
     public async Task Enter(KeyboardEventArgs e)
@@ -167,14 +167,7 @@
         //Task.Run(() => this.productData = ApiService.GetProductsDataAsync(this.searchText, this.FinalizeCurrencyCode
         this.productData = null;
 
-        try
-        {
-            await Task.Run(async () => this.productData = await ApiService.GetProductsDataAsync(this.searchText, this.PDFCreatorService.CurrencyCode));
-        }
-        catch (Exception e)
-        {
-            logger.LogError(e.ToString());
-        }
+        await Task.Run(async () => this.productData = await ApiService.GetProductsDataAsync(this.searchText, this.PDFCreatorService.CurrencyCode));
 
         if (this.productData == null || productData.VariantId == null || this.productData.VariantId.Equals(string.Empty))
         {
@@ -194,14 +187,9 @@
         //Task.Run(() => this.productData = ApiService.GetProductsDataAsync(this.searchText, this.FinalizeCurrencyCode
         this.productData = null;
 
-        try
-        {
-            this.productData = ApiService.GetProductsData(this.searchText, this.PDFCreatorService.CurrencyCode);
-        }
-        catch (Exception e)
-        {
-            logger.LogError(e.ToString());
-        }
+
+        this.productData = ApiService.GetProductsData(this.searchText, this.PDFCreatorService.CurrencyCode);
+
 
         if (this.productData == null || productData.VariantId == null || this.productData.VariantId.Equals(string.Empty))
         {

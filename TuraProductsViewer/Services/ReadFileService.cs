@@ -48,7 +48,7 @@ namespace TuraProductsViewer.Services
                                                      //reader.Dispose();
                 }
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 this.logger.LogError(exception.ToString());
             }
@@ -61,7 +61,7 @@ namespace TuraProductsViewer.Services
         /// </summary>
         /// <param name="e"></param>
         /// <returns>Dicitonary filled with data [key:productId] [value:price]</returns>
-        public async Task<Dictionary<string,string>> ReadFromUploadedExcelFileFileWithPrices(InputFileChangeEventArgs e)
+        public async Task<Dictionary<string, string>> ReadFromUploadedExcelFileFileWithPrices(InputFileChangeEventArgs e)
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 
@@ -87,32 +87,48 @@ namespace TuraProductsViewer.Services
                             return null;
                         }
 
-                        if (double.TryParse(dt.Columns[0].ColumnName, out double productId))
-                        {
-
-                            if (double.TryParse(dt.Columns[1].ColumnName, out double productPrice))
-                            {
-                                data.Add(dt.Columns[0].ColumnName, dt.Columns[1].ColumnName);
-                            }
-                            else
-                            {
-                                data.Add(dt.Columns[0].ColumnName, string.Empty);
-                            }
-                        }
+                        //if (dt.Columns.Count >= 2)
+                        //{
+                        //    if (double.TryParse(dt.Columns[0].ColumnName, out double productId))
+                        //    {
+                        //        if (double.TryParse(dt.Columns[1].ColumnName, out double productPrice))
+                        //        {
+                        //            data.Add(dt.Columns[0].ColumnName, dt.Columns[1].ColumnName);
+                        //        }
+                        //        else
+                        //        {
+                        //            data.Add(dt.Columns[0].ColumnName, string.Empty);
+                        //        }
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    if (double.TryParse(dt.Columns[0].ColumnName, out double productId))
+                        //    {
+                        //        data.Add(dt.Columns[0].ColumnName, string.Empty);
+                        //    }
+                        //}
 
                         foreach (DataRow row in dt.Rows)
                         {
                             if (double.TryParse((string)row[0], out double id))
                             {
-                                if (row.IsNull(1))
+                                if (dt.Columns.Count >= 2)
                                 {
-                                    data.Add(id.ToString(), string.Empty);
-                                    continue;
-                                }
+                                    if (row.IsNull(1))
+                                    {
+                                        data.Add(id.ToString(), string.Empty);
+                                        continue;
+                                    }
 
-                                if (double.TryParse((string)row[1], out double price))
-                                {
-                                    data.Add(id.ToString(), price.ToString());
+                                    if (double.TryParse((string)row[1], out double price))
+                                    {
+                                        data.Add(id.ToString(), price.ToString());
+                                    }
+                                    else
+                                    {
+                                        data.Add(id.ToString(), string.Empty);
+                                    }
                                 }
                                 else
                                 {
@@ -123,7 +139,7 @@ namespace TuraProductsViewer.Services
                     }
                 }
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 this.logger.LogError(exception.ToString());
             }

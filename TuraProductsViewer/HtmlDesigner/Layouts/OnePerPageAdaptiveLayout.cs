@@ -78,11 +78,11 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 else if (this.creatorService.PriceType == PriceType.Netto)
                 {
                     //html += this.AddDataRow(this.languageVariables["prisvariable"], product.UnitPriceWithoutVat.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
-                    html += this.AddDataRow(this.languageVariables["prisvariable"], double.Parse(this.creatorService.GetPrice(product)).ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.FinalizePrice(product) + " " + creatorService.CurrencyCode.ToUpper());
                 }
                 else if (this.creatorService.PriceType == PriceType.RekNetto)
                 {
-                    html += this.AddDataRow(this.languageVariables["prisvariable"], double.Parse(this.creatorService.GetPrice(product)).ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.FinalizePrice(product) + " " + creatorService.CurrencyCode.ToUpper());
                     html += this.AddDataRow(this.languageVariables["rekprisvariable"], product.UnitPrice.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
                 }
                 else if (this.creatorService.PriceType == PriceType.Kund)
@@ -96,11 +96,11 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                     //    }
                     //}
 
-                    html += this.AddDataRow(this.languageVariables["prisvariable"], double.Parse(this.creatorService.GetPrice(product)).ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.FinalizePrice(product) + " " + creatorService.CurrencyCode.ToUpper());
                 }
                 else if (this.creatorService.PriceType == PriceType.KundRek)
                 {
-                    html += this.AddDataRow(this.languageVariables["prisvariable"], double.Parse(this.creatorService.GetPrice(product)).ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
+                    html += this.AddDataRow(this.languageVariables["prisvariable"], this.creatorService.FinalizePrice(product) + " " + creatorService.CurrencyCode.ToUpper());
                     html += this.AddDataRow(this.languageVariables["rekprisvariable"], product.UnitPrice.ToString("F2") + " " + creatorService.CurrencyCode.ToUpper());
                 }
                 else if (this.creatorService.PriceType == PriceType.None)
@@ -158,7 +158,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 converter.Header.DisplayOnOddPages = true;
                 converter.Header.DisplayOnEvenPages = true;
                 converter.Header.Height = 70;
-                PdfHtmlSection headerHtml = new PdfHtmlSection("<style>.header { padding-top:20px; width: 100%; height:150px; text-align: center; background: #3F3F3F;  color: white;  font-size: 30px;}</style><div class=\"header\"><h3>" + this.title + "</h3></div>", "");
+                PdfHtmlSection headerHtml = new PdfHtmlSection("<style>@import url('https://fonts.googleapis.com/css?family=Open+Sans'); .header { padding-top:20px; width: 100%; height:150px; text-align: center; background: #3F3F3F;  color: white;  font-size: 30px; font-family: \"Open Sans\", sans-serif;}</style><div class=\"header\"><h3>" + this.title + "</h3></div>", "");
                 headerHtml.AutoFitHeight = HtmlToPdfPageFitMode.AutoFit;
                 converter.Header.Add(headerHtml);
                 converter.Options.DisplayFooter = true;

@@ -106,7 +106,19 @@ namespace TuraProductsViewer.Services
                 return value;
             }
 
-            return productsData.UnitPriceWithoutVat.ToString("F2");
+            return productsData.UnitPriceWithoutVat.ToString();
+        }
+
+        public string FinalizePrice(ProductsDataModel productsData)
+        {
+            string price = this.GetPrice(productsData);
+
+            if(price.Contains("."))
+            {
+                price = price.Replace(".", ",");
+            }
+
+            return double.Parse(price).ToString("F2");
         }
 
         /// <summary>

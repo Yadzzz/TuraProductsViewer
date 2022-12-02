@@ -87,28 +87,6 @@ namespace TuraProductsViewer.Services
                             return null;
                         }
 
-                        //if (dt.Columns.Count >= 2)
-                        //{
-                        //    if (double.TryParse(dt.Columns[0].ColumnName, out double productId))
-                        //    {
-                        //        if (double.TryParse(dt.Columns[1].ColumnName, out double productPrice))
-                        //        {
-                        //            data.Add(dt.Columns[0].ColumnName, dt.Columns[1].ColumnName);
-                        //        }
-                        //        else
-                        //        {
-                        //            data.Add(dt.Columns[0].ColumnName, string.Empty);
-                        //        }
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    if (double.TryParse(dt.Columns[0].ColumnName, out double productId))
-                        //    {
-                        //        data.Add(dt.Columns[0].ColumnName, string.Empty);
-                        //    }
-                        //}
-
                         foreach (DataRow row in dt.Rows)
                         {
                             if (double.TryParse((string)row[0], out double id))
@@ -121,7 +99,13 @@ namespace TuraProductsViewer.Services
                                         continue;
                                     }
 
-                                    if (double.TryParse((string)row[1], out double price))
+                                    string unfilteredPrice = (string)row[1];
+                                    if(unfilteredPrice.Contains("."))
+                                    {
+                                        unfilteredPrice = unfilteredPrice.Replace(".", ",");
+                                    }
+
+                                    if (double.TryParse(unfilteredPrice, out double price))
                                     {
                                         data.Add(id.ToString(), price.ToString());
                                     }

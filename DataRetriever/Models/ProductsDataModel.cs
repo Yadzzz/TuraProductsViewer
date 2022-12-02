@@ -240,6 +240,11 @@ namespace DataRetriever.Models
                 return;
             }
 
+            if(price.Contains("."))
+            {
+                price = price.Replace(".", ",");
+            }
+
             double decimalPrice;
             if (double.TryParse(price, out decimalPrice))
             {

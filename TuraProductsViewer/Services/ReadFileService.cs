@@ -73,12 +73,12 @@ namespace TuraProductsViewer.Services
 
                     using (var edr = ExcelDataReader.Create(stream, ExcelWorkbookType.ExcelXml))
                     {
-                        var dt = new DataTable();
-
-                        if (dt == null)
+                        if(edr == null)
                         {
                             return null;
                         }
+
+                        var dt = new DataTable();
 
                         dt.Load(edr);
 

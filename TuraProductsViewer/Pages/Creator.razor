@@ -171,13 +171,13 @@
                     if (this.CreatorService.PriceType == PriceType.Kund || this.CreatorService.PriceType == PriceType.KundRek)
                     {
                         @*<div class="col-lg-8">
-                            <p>Customer Id</p>
-                            <input type="text" @bind-value=@this.CreatorService.CustomerId class="w-100 form-control product-search br-30" id="input-search" placeholder="Customer Id">
-                        </div>
-                        <br />
-                        <div class="col-lg-12">
-                            <button class="btn btn-primary mb-2" type="button" @onclick=@getCustomerPrices>Get Prices</button>
-                        </div>*@
+                <p>Customer Id</p>
+                <input type="text" @bind-value=@this.CreatorService.CustomerId class="w-100 form-control product-search br-30" id="input-search" placeholder="Customer Id">
+                </div>
+                <br />
+                <div class="col-lg-12">
+                <button class="btn btn-primary mb-2" type="button" @onclick=@getCustomerPrices>Get Prices</button>
+                </div>*@
 
                         <div class="col-lg-6" style="float:left">
                             <input type="text" @bind-value=@this.CreatorService.CustomerId class="w-100 form-control product-search br-30" id="input-search" placeholder="Customer Id">
@@ -186,7 +186,13 @@
                         <div class="col-lg-4 col-md-2 col-sm-2" style="float:left">
                             <button class="btn btn-outline-primary btn-rounded mb-2" type="button" @onclick=@getCustomerPrices>Get Prices</button>
                         </div>
-                        <br /><br />
+                        @*<div class="col-lg-4 col-md-2 col-sm-2" style="float:left">
+                            <button class="btn btn-outline-primary btn-rounded mb-2" type="button" @onclick=@clearCustomerPrices>Clear Prices</button>
+                        </div>
+*@
+                        <br />
+
+                        <br />
                     }
 
                     <hr />
@@ -290,9 +296,6 @@
             "generatePDFFF", d);
     }
 
-    /// <summary>
-    /// Creates PDF file with given product in the Creator Service
-    /// </summary>
     private void createHTML()
     {
         //if (this.CreatorService.PriceType == PriceType.Kund || this.CreatorService.PriceType == PriceType.KundRek)
@@ -320,10 +323,15 @@
             Convert.ToBase64String(data));
     }
 
+    /// <summary>
+    /// Gets customer prices from Web Service and adds them to an Dictionary in CreatorService
+    /// </summary>
     private void getCustomerPrices()
     {
         if (CreatorService.SpecialCustomerPrices != null && CreatorService.SpecialCustomerPrices.Count > 0)
+        {
             this.CreatorService.SpecialCustomerPrices.Clear();
+        }
 
         List<string> ids = new List<string>();
 
@@ -344,15 +352,12 @@
 
             if (data != null)
             {
-                //if (data.Count == ids.Count)
-                {
-                    this.CreatorService.SpecialCustomerPrices = data;
-                }
+                this.CreatorService.SpecialCustomerPrices = data;
 
-                foreach (var v in data)
-                {
-                    Console.WriteLine(v.Key + " : " + v.Value);
-                }
+                //foreach (var v in data)
+                //{
+                //    Console.WriteLine(v.Key + " : " + v.Value);
+                //}
 
                 this.StateHasChanged();
             }
@@ -360,6 +365,17 @@
             {
                 //Console.WriteLine("NULL");
             }
+        }
+    }
+
+    /// <summary>
+    /// Clears all customer prices fetched from Web Service
+    /// </summary>
+    private void clearCustomerPrices()
+    {
+        if (CreatorService.SpecialCustomerPrices != null && CreatorService.SpecialCustomerPrices.Count > 0)
+        {
+            this.CreatorService.SpecialCustomerPrices.Clear();
         }
     }
 }

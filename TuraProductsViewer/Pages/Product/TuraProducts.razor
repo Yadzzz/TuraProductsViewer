@@ -151,6 +151,17 @@
         //logger.LogInformation("OnInitializedAsync");
     }
 
+    public async Task Notify()
+    {
+        await JSRuntime.InvokeVoidAsync("alertUser", "Test");
+        await JSRuntime.InvokeAsync<object>("alertUser", "Test");
+    }
+
+    /// <summary>
+    /// Enter Search
+    /// </summary>
+    /// <param name="e"></param>
+    /// <returns></returns>
     public async Task Enter(KeyboardEventArgs e)
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
@@ -202,40 +213,6 @@
     }
 
     /// <summary>
-    /// Gets the Currency Code based on selected language from the end-user
-    /// </summary>
-    public string FinalizeCurrencyCode()
-    {
-        if (PDFCreatorService.Language == string.Empty || PDFCreatorService.Language.ToLower().Contains("swedish"))
-        {
-            return "SEK";
-        }
-        else if (PDFCreatorService.Language.ToLower().Contains("norwegian"))
-        {
-            return "NOK";
-        }
-        else if (PDFCreatorService.Language.ToLower().Contains("danish"))
-        {
-            return "DKK";
-        }
-        else if (PDFCreatorService.Language.ToLower().Contains("finnish"))
-        {
-            return "EUR";
-        }
-        else if (PDFCreatorService.Language.ToLower().Contains("english"))
-        {
-            return "EUR";
-        }
-
-        return "SEK";
-    }
-
-    private void SetPriceType()
-    {
-
-    }
-
-    /// <summary>
     /// Sets Layout & Product language in Creator Service.
     /// </summary>
     public void SetLanguage(string language)
@@ -244,6 +221,10 @@
         this.pdfCreatorBar?.RefreshState();
     }
 
+    /// <summary>
+    /// Sets the Currency
+    /// </summary>
+    /// <param name="currency"></param>
     public void SetCurrency(string currency)
     {
         PDFCreatorService.CurrencyCode = currency;
@@ -273,12 +254,11 @@
         }
     }
 
-    private async Task notifyUser(string text)
-    {
-        await JSRuntime.InvokeAsync<object>(
-            "alertUser", text);
-    }
-
+    /// <summary>
+    /// Read uploaded file
+    /// </summary>
+    /// <param name="e"></param>
+    /// <returns></returns>
     private async Task onReadFile(InputFileChangeEventArgs e)
     {
         if (e.File.ContentType == "text/plain")
@@ -291,6 +271,11 @@
         }
     }
 
+    /// <summary>
+    /// Reads uploaded .xlsx file and adds the products to the Creator Service
+    /// </summary>
+    /// <param name="e"></param>
+    /// <returns></returns>
     private async Task onExcelFileUploadWithPrices(InputFileChangeEventArgs e)
     {
         var products = await FileService.ReadFromUploadedExcelFileFileWithPrices(e);
@@ -330,6 +315,11 @@
         }
     }
 
+    /// <summary>
+    /// Reads uploaded .txt file and adds the products to the Creator Service
+    /// </summary>
+    /// <param name="e"></param>
+    /// <returns></returns>
     private async Task onTextFileUploadWithPrices(InputFileChangeEventArgs e)
     {
         var products = await FileService.ReadFromUploadedFileWithPrices(e);

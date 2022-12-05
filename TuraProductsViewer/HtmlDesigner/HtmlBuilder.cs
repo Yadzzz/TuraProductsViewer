@@ -54,6 +54,20 @@ namespace TuraProductsViewer.HtmlDesigner
 
                 return onePerPageLayout.InitializePDF();
             }
+            else if(this.Layout == HtmlLayout.SixPerPage)
+            {
+                Layouts.SixPerPageAdaptiveLayout sixPerPageLayout = new Layouts.SixPerPageAdaptiveLayout(this.creatorService, this.imageService, this.isHTML, this.Title, this.creatorService.Language,
+                                                                                         this.GetLanguageVariables(), this.GetImageClickLink());
+
+                return sixPerPageLayout.InitializePDF();
+            }
+            else if(this.Layout == HtmlLayout.OnePerPage)
+            {
+                Layouts.TenPerPageAdaptiveLayout tenPerPageLayout = new Layouts.TenPerPageAdaptiveLayout(this.creatorService, this.imageService, this.isHTML, this.Title, this.creatorService.Language,
+                                                                                         this.GetLanguageVariables(), this.GetImageClickLink());
+
+                return tenPerPageLayout.InitializePDF();
+            }
 
             return null;
         }

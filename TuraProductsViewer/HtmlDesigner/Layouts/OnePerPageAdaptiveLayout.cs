@@ -171,6 +171,9 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 PdfTextSection dateText = new PdfTextSection(460, 30, "PDF Created [" + DateTime.Now + "]", new System.Drawing.Font("Arial", 8));
                 converter.Footer.Add(dateText);
 
+                converter.Options.PdfCompressionLevel = PdfCompressionLevel.Best;
+                converter.Options.ScaleImages = true;
+
                 this.pdfDocuments.Add(converter.ConvertHtmlString(this.stringBuilder.ToString()));
 
                 this.stringBuilder.Clear();
@@ -184,17 +187,18 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 {
                     doc.AddPage(page);
                 }
-
-                //for (int i = 0; i < document.Pages.Count; i++)
-                //{
-                //    doc.AddPage(document.Pages[i]);
-                //}
             }
 
             using (MemoryStream stream = new MemoryStream())
             {
                 doc.Save(stream);
                 stream.Close();
+                doc.Close();
+
+                foreach (var document in this.pdfDocuments)
+                {
+                    document.Close();
+                }
 
                 return stream;
             }

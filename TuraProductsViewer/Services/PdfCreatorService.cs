@@ -131,10 +131,15 @@ namespace TuraProductsViewer.Services
             //text2.HorizontalAlign = PdfTextHorizontalAlign.Right;
             converter.Footer.Add(dateText);
 
+            converter.Options.JpegCompressionEnabled = true;
+            converter.Options.JpegCompressionLevel = 50;
+            converter.Options.ScaleImages = true;
+
             // create a new pdf document converting an url
             PdfDocument doc = converter.ConvertHtmlString(htmlString);
 
             doc.CompressionLevel = PdfCompressionLevel.Best;
+
             //doc.Save("wwwroot/pdf/sample.pdf");
 
             using (MemoryStream stream = new MemoryStream())
@@ -142,7 +147,7 @@ namespace TuraProductsViewer.Services
                 //Saving the PDF document into the stream
                 doc.Save(stream);
 
-                Console.WriteLine(stream.Length);
+                Console.WriteLine("STREAM: " + stream.Length);
 
                 //Closing the PDF document
                 doc.Close();

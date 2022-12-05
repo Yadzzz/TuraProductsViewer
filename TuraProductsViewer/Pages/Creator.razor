@@ -187,9 +187,9 @@
                             <button class="btn btn-outline-primary btn-rounded mb-2" type="button" @onclick=@getCustomerPrices>Get Prices</button>
                         </div>
                         @*<div class="col-lg-4 col-md-2 col-sm-2" style="float:left">
-                            <button class="btn btn-outline-primary btn-rounded mb-2" type="button" @onclick=@clearCustomerPrices>Clear Prices</button>
-                        </div>
-*@
+                <button class="btn btn-outline-primary btn-rounded mb-2" type="button" @onclick=@clearCustomerPrices>Clear Prices</button>
+                </div>
+                *@
                         <br />
 
                         <br />
@@ -262,6 +262,40 @@
                            "saveAsFileee",
                            (this.title + ".pdf"),
                            Convert.ToBase64String(excelStream.ToArray()));
+                }
+                else
+                {
+                    this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
+                }
+            }
+        }
+        else if (this.htmlLayout == HtmlDesigner.HtmlLayout.SixPerPage && this.CreatorService.GetProductsCount() > 30)
+        {
+            using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
+            {
+                if (excelStream != null)
+                {
+                    await JSRuntime.InvokeAsync<object>(
+                               "saveAsFileee",
+                               (this.title + ".pdf"),
+                               Convert.ToBase64String(excelStream.ToArray()));
+                }
+                else
+                {
+                    this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
+                }
+            }
+        }
+        else if(this.htmlLayout == HtmlDesigner.HtmlLayout.OnePerPage && this.CreatorService.GetProductsCount() > 50)
+        {
+            using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
+            {
+                if (excelStream != null)
+                {
+                    await JSRuntime.InvokeAsync<object>(
+                               "saveAsFileee",
+                               (this.title + ".pdf"),
+                               Convert.ToBase64String(excelStream.ToArray()));
                 }
                 else
                 {

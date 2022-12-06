@@ -180,7 +180,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                     converter.Footer.DisplayOnOddPages = true;
                     converter.Footer.DisplayOnEvenPages = true;
                     converter.Footer.Height = 40;
-                    PdfTextSection text2 = new PdfTextSection(170, 0, "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com", new System.Drawing.Font("Arial", 8));
+                    PdfTextSection text2 = new PdfTextSection(170, 0, GetFooterContactInformation(this.creatorService.Language), new System.Drawing.Font("Arial", 8));
                     converter.Footer.Add(text2);
                     PdfTextSection dateText = new PdfTextSection(460, 30, "PDF Created [" + DateTime.Now + "]", new System.Drawing.Font("Arial", 8));
                     converter.Footer.Add(dateText);
@@ -265,6 +265,34 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
         public string GetHTML()
         {
             return stringBuilder.ToString();
+        }
+
+        public string GetFooterContactInformation(string language)
+        {
+            if (language.ToLower().Contains("swedish"))
+            {
+                return "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("norwegian"))
+            {
+                return "Tura Scandinavia AB - Tura +47 22 62 74 80 ordre@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("finnish"))
+            {
+                return "Tura Scandinavia AB - Tura +358 (0)207 600 950 finland@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("danish"))
+            {
+                return "Tura Scandinavia AB - Tura +45 48 18 78 81 dk@turascandinavia.com";
+            }
+            else if (language.ToLower().Contains("english"))
+            {
+                return "Tura Scandinavia AB - Tura +46 (0)300 56 89 20 info@turascandinavia.com";
+            }
+            else
+            {
+                return "Tura Scandinavia AB - Tura +46 (0)300 56 89 20  info@turascandinavia.com";
+            }
         }
     }
 }

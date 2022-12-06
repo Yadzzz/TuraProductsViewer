@@ -107,6 +107,7 @@
                                     <a class="dropdown-item" data-value="sixperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.SixPerPage)>6 / Page</a>
                                     <a class="dropdown-item" data-value="oneperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.OnePerPage)>1 / Page</a>
                                     <a class="dropdown-item" data-value="tenperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.TenPerPage)>10 / Page</a>
+                                    <a class="dropdown-item" data-value="pricelabel" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.PrisEtikett)>Price Label</a>
                                 </div>
                             </div>
                         </form>
@@ -287,6 +288,23 @@
             }
         }
         else if(this.htmlLayout == HtmlDesigner.HtmlLayout.OnePerPage && this.CreatorService.GetProductsCount() > 50)
+        {
+            using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
+            {
+                if (excelStream != null)
+                {
+                    await JSRuntime.InvokeAsync<object>(
+                               "saveAsFileee",
+                               (this.title + ".pdf"),
+                               Convert.ToBase64String(excelStream.ToArray()));
+                }
+                else
+                {
+                    this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
+                }
+            }
+        }
+        else if(this.htmlLayout == HtmlDesigner.HtmlLayout.PrisEtikett)
         {
             using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
             {

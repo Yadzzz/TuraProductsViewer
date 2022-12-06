@@ -41,6 +41,12 @@ namespace TuraProductsViewer.HtmlDesigner
 
                 return tenPerPageLayout.GetHTML();
             }
+            else if(this.Layout == HtmlLayout.PrisEtikett)
+            {
+                Barcode.BarcodeLayout barcodeLayout = new Barcode.BarcodeLayout(this.creatorService, this.isHTML);
+
+                return barcodeLayout.GetHTML();
+            }
 
             return string.Empty;
         }
@@ -67,6 +73,12 @@ namespace TuraProductsViewer.HtmlDesigner
                                                                                          this.GetLanguageVariables(), this.GetImageClickLink());
 
                 return tenPerPageLayout.InitializePDF();
+            }
+            else if(this.Layout == HtmlLayout.PrisEtikett)
+            {
+                Barcode.BarcodeLayout barcodeLayout = new Barcode.BarcodeLayout(this.creatorService, this.isHTML);
+
+                return barcodeLayout.GetStream();
             }
 
             return null;

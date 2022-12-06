@@ -18,6 +18,16 @@
 
             <hr />
             
+            @if(this.barcode != null)
+            {
+                <img src="data:image/png;base64, @this.barcode" alt="Red dot" />
+                <p>@barcode</p>
+            }
+            else
+            {
+                <p>NULL</p>
+            }
+
             <p> </p>
         </div>
     </div>
@@ -38,8 +48,11 @@
 
 @code
 {
+    string? barcode = null;
+
     protected override void OnInitialized()
     {
-
+        this.barcode = HtmlDesigner.Barcode.BarcodeGenerator.GetBase64Image("4047443137265");
+        this.StateHasChanged();
     }
 }

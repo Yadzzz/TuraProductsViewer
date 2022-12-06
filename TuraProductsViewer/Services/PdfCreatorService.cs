@@ -95,6 +95,8 @@ namespace TuraProductsViewer.Services
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
             converter.Options.PdfStandard = PdfStandard.PdfA;
 
+            //converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.ShrinkOnly;
+
             //converter.Options.MarginLeft = 0;
             //converter.Options.MarginRight = 0;
             //converter.Options.AutoFitHeight = HtmlToPdfPageFitMode.AutoFit;

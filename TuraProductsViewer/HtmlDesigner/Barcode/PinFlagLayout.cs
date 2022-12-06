@@ -5,14 +5,14 @@ using TuraProductsViewer.Services;
 
 namespace TuraProductsViewer.HtmlDesigner.Barcode
 {
-    public class BarcodeLayout
+    public class PinFlagLayout
     {
         private StringBuilder stringBuilder { get; set; }
         private CreatorService creatorService { get; set; }
         private bool isHTML { get; set; }
         private string clickImageLink { get; set; }
 
-        public BarcodeLayout(CreatorService crtService, bool isHtml)
+        public PinFlagLayout(CreatorService crtService, bool isHtml)
         {
             this.stringBuilder = new();
             this.creatorService = crtService;
@@ -40,20 +40,21 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
 
                 if (interval == 0)
                 {
-                    html += "<div style=\"padding-top: 30px; padding-bottom: 100px;\">";
+                    html += "<div style=\"padding-top: 30px; padding-bottom: 120px;\">";
                 }
 
-                html += "<div style=\"width:135px; height:45px; float:left; text-align: center;\">";
-                html += "<h1 style=\"display:inline\">" + this.creatorService.FinalizePrice(product) + "</h1>";
+                html += "<div style=\"width:170px; height:125px; float:left; text-align: center; padding-right:40px; padding-left:40px; border-bottom: 1px solid #202020;\">";
                 html += "<img style=\"height:45px;\" src=\"data:image/png;base64, {@base64img@}\" alt=\"Red dot\" />"; //width:120px;
-                html += "<p style=\"display:inline\">Tura: " + product.VariantId + "</p>";
+                //html += "<p style=\"display:inline\"><small><b>" + product.PrimaryEANCode + "</b></small></p>";
+                html += "<br /><p style=\"display:inline\"><small>" + product.GetItemName(this.creatorService.Language) + "</small></p>";
+                html += "<br /><h3 style=\"display:inline\">Art.Nr: " + product.VariantId + "</h3>";
                 html += "</div>";
 
-                html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 233, 90, true));
+                html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 230, 60, true));
                 interval++;
                 productsInterval++;
 
-                if (interval == 5 || productsInterval == this.creatorService.GetProductsCount())
+                if (interval == 3 || productsInterval == this.creatorService.GetProductsCount())
                 {
                     html += "</div>";
                     interval = 0;

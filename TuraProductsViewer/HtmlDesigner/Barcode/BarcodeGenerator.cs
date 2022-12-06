@@ -17,9 +17,17 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
 
         public static string GetBase64Image(string data)
         {
-            Console.WriteLine(data);
+            var barcode = new NetBarcode.Barcode(data, NetBarcode.Type.Code128, true, 233, 90);
+            //var barcode = new NetBarcode.Barcode(data, NetBarcode.Type.Code128, true);
+            var value = barcode.GetBase64Image();
 
-            var barcode = new NetBarcode.Barcode(data, NetBarcode.Type.Code128, true);
+            return value;
+        }
+
+        public static string GetBase64Image(string data, int width, int height, bool showEAN)
+        {
+            var barcode = new NetBarcode.Barcode(data, NetBarcode.Type.Code128, showEAN, width, height);
+            //var barcode = new NetBarcode.Barcode(data, NetBarcode.Type.Code128, true);
             var value = barcode.GetBase64Image();
 
             return value;

@@ -47,6 +47,12 @@ namespace TuraProductsViewer.HtmlDesigner
 
                 return barcodeLayout.GetHTML();
             }
+            else if (this.Layout == HtmlLayout.Pinnflaga)
+            {
+                Barcode.PinFlagLayout pinFlagLayout = new Barcode.PinFlagLayout(this.creatorService, this.isHTML);
+
+                return pinFlagLayout.GetHTML();
+            }
 
             return string.Empty;
         }

@@ -192,7 +192,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
             using (MemoryStream stream = new MemoryStream())
             {
                 doc.Save(stream);
-                stream.Close();
+                //stream.Close();
                 doc.Close();
 
                 foreach (var document in this.pdfDocuments)

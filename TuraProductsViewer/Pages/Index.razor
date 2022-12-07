@@ -21,7 +21,7 @@
             @if(this.barcode != null)
             {
                 <div style="width:150px; height:45px; float:left;">
-                <img style="width:120px; height:45px;" src="data:image/png;base64, @this.barcode" alt="Red dot" />
+                    <img style="width:120px; height:45px; transform:rotate(270deg);" src="data:image/png;base64, @this.barcode" alt="Red dot" />
                 <p>@barcode</p>
                 </div>
             }

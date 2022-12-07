@@ -1,5 +1,6 @@
-﻿using SixLabors.ImageSharp;
-using System.Drawing;
+﻿using SelectPdf;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp;
 
 namespace TuraProductsViewer.HtmlDesigner.Barcode
 {
@@ -27,9 +28,20 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
         public static string GetBase64Image(string data, int width, int height, bool showEAN)
         {
             var barcode = new NetBarcode.Barcode(data, NetBarcode.Type.Code128, showEAN, width, height);
-            //var barcode = new NetBarcode.Barcode(data, NetBarcode.Type.Code128, true);
             var value = barcode.GetBase64Image();
 
+            return value;
+        }
+
+        public static string GetBase64Image(string data, int width, int height, bool showEAN, int fontSize)
+        {
+            FontCollection collection = new();
+            FontFamily family = collection.Add(Environment.CurrentDirectory + "/wwwroot/fonts/micross.ttf");
+            Font font = family.CreateFont(fontSize);
+
+            var barcode = new NetBarcode.Barcode(data, NetBarcode.Type.Code128, showEAN, width, height, font);
+            var value = barcode.GetBase64Image();
+            
             return value;
         }
     }

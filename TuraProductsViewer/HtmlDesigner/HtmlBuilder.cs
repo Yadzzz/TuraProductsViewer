@@ -53,10 +53,17 @@ namespace TuraProductsViewer.HtmlDesigner
 
                 return pinFlagLayout.GetHTML();
             }
+            else if (this.Layout == HtmlLayout.HylleEtikett)
+            {
+                Barcode.ShelfLabelLayout shelfLabelLayout = new Barcode.ShelfLabelLayout(this.creatorService, this.isHTML);
+
+                return shelfLabelLayout.GetHTML();
+            }
 
             return string.Empty;
         }
 
+        //Used for Adaptive pages
         public MemoryStream? GenerateMemoryStream()
         {
             if (this.Layout == HtmlLayout.OnePerPage)
@@ -82,9 +89,9 @@ namespace TuraProductsViewer.HtmlDesigner
             }
             else if(this.Layout == HtmlLayout.PrisEtikett)
             {
-                Barcode.BarcodeLayout barcodeLayout = new Barcode.BarcodeLayout(this.creatorService, this.isHTML);
+                Barcode.BarcodeAdaptiveLayout barcodeAdaptiveLayout = new Barcode.BarcodeAdaptiveLayout(this.creatorService, this.isHTML);
 
-                return barcodeLayout.GetStream();
+                return barcodeAdaptiveLayout.GetMemoryStream();
             }
 
             return null;

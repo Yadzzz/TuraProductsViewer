@@ -8,13 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="Data\**" />
+    <Compile Remove="wwwroot\html\**" />
     <Content Remove="Data\**" />
+    <Content Remove="wwwroot\html\**" />
     <EmbeddedResource Remove="Data\**" />
+    <EmbeddedResource Remove="wwwroot\html\**" />
     <None Remove="Data\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="wwwroot\html\Created PDF.pdf" />
+    <None Remove="wwwroot\html\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,7 +51,6 @@
 
   <ItemGroup>
     <Folder Include="Connected Services\" />
-    <Folder Include="wwwroot\html\" />
   </ItemGroup>
 
 </Project>

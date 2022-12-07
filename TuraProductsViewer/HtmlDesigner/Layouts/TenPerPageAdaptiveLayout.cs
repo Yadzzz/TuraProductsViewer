@@ -214,7 +214,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
             {
                 doc.Save(stream);
                 Console.WriteLine("STREAM: " + stream.Length);
-                stream.Close();
+                //stream.Close();
                 doc.Close();
 
                 foreach (var document in this.pdfDocuments)

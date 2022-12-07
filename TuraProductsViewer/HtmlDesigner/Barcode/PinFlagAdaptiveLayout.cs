@@ -1,19 +1,17 @@
-﻿using Microsoft.AspNetCore.Html;
-using SelectPdf;
+﻿using SelectPdf;
 using System.Drawing;
 using System.Text;
 using TuraProductsViewer.Services;
 
 namespace TuraProductsViewer.HtmlDesigner.Barcode
 {
-    public class BarcodeAdaptiveLayout
+    public class PinFlagAdaptiveLayout
     {
         private StringBuilder stringBuilder { get; set; }
         private CreatorService creatorService { get; set; }
         private List<PdfDocument> pdfDocuments { get; set; }
 
-
-        public BarcodeAdaptiveLayout(CreatorService crtService)
+        public PinFlagAdaptiveLayout(CreatorService crtService)
         {
             this.stringBuilder = new();
             this.creatorService = crtService;
@@ -38,9 +36,9 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
                     stringBuilder.AppendLine("<html><body style=\"width:800px; margin-left:25px; margin-right:auto; margin-top:0px; \">");
                 }
 
-                if (newPageInterval == 40)
+                if (newPageInterval == 21)
                 {
-                    html += "<div style=\"page-break-after: always\">\r\n\"\r\n</div>";
+                    html += "<div style=\"page-break-after: always\">.</div>";
                     newPageInterval = 0;
                 }
 
@@ -49,13 +47,14 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
                     html += "<div style=\"padding-top: 30px; padding-bottom: 100px;\">";
                 }
 
-                html += "<div style=\"width:150px; height:35px; float:left; text-align: center; padding-right:5px;\">";
-                html += "<h1 style=\"display:inline\">" + this.creatorService.FinalizePrice(product) + "</h1>";
-                html += "<img style=\"max-width: 100%; max-height:100%;\" src=\"data:image/png;base64, {@base64img@}\" alt=\"Red dot\" />"; //width:120px; height:45px;
-                html += "<p style=\"display:inline\">Tura: " + product.VariantId + "</p>";
+                html += "<div style=\"width:170px; height:120px; float:left; text-align: center; padding-right:40px; padding-left:40px; border-bottom: 1px solid #202020;\">";
+                html += "<img style=\"max-width: 100%; max-height:100%;\" src=\"data:image/png;base64, {@base64img@}\" alt=\"Red dot\" />"; //width:120px; hiehgt:45px;
+                //html += "<p style=\"display:inline\"><b>" + product.PrimaryEANCode + "</b></p>";
+                html += "<br /><p style=\"display:inline\"><small>" + product.GetItemName(this.creatorService.Language) + "</small></p>";
+                html += "<br /><h3 style=\"display:inline\">Art.Nr: " + product.VariantId + "</h3>";
                 html += "</div>";
 
-                html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 150, 40, true, 5));
+                html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 236, 50, true, 5));
 
                 interval++;
                 productsInterval++;
@@ -63,7 +62,7 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
                 pdfProductsPageInterval++;
                 productsAdded++;
 
-                if (interval == 5 || productsInterval == this.creatorService.GetProductsCount())
+                if (interval == 3 || productsInterval == this.creatorService.GetProductsCount())
                 {
                     html += "</div>";
                     interval = 0;
@@ -71,7 +70,7 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
 
                 stringBuilder.AppendLine(html);
 
-                if (pdfProductsPageInterval == 200 || this.creatorService.GetProductsCount() == productsAdded)
+                if (pdfProductsPageInterval == 105 || this.creatorService.GetProductsCount() == productsAdded)
                 {
                     stringBuilder.AppendLine("</body></html>");
                     this.AppendPDFPage(stringBuilder.ToString());

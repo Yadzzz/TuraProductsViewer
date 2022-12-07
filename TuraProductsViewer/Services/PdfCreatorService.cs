@@ -166,17 +166,17 @@ namespace TuraProductsViewer.Services
             converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.NoAdjustment;
 
             //Footer settings
-            converter.Options.DisplayFooter = true;
-            converter.Footer.DisplayOnFirstPage = true;
-            converter.Footer.DisplayOnOddPages = true;
-            converter.Footer.DisplayOnEvenPages = true;
-            converter.Footer.Height = 40;
+            //converter.Options.DisplayFooter = true;
+            //converter.Footer.DisplayOnFirstPage = true;
+            //converter.Footer.DisplayOnOddPages = true;
+            //converter.Footer.DisplayOnEvenPages = true;
+            //converter.Footer.Height = 40;
 
-            PdfTextSection text2 = new PdfTextSection(170, 0, GetFooterContactInformation(language), new System.Drawing.Font("Arial", 8));
-            converter.Footer.Add(text2);
+            //PdfTextSection text2 = new PdfTextSection(170, 0, GetFooterContactInformation(language), new System.Drawing.Font("Arial", 8));
+            //converter.Footer.Add(text2);
 
-            PdfTextSection dateText = new PdfTextSection(460, 30, "PDF Created [" + DateTime.Now + "]", new System.Drawing.Font("Arial", 8));
-            converter.Footer.Add(dateText);
+            //PdfTextSection dateText = new PdfTextSection(460, 30, "PDF Created [" + DateTime.Now + "]", new System.Drawing.Font("Arial", 8));
+            //converter.Footer.Add(dateText);
 
             // create a new pdf document converting an url
             PdfDocument doc = converter.ConvertHtmlString(htmlString);

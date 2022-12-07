@@ -18,7 +18,7 @@
 
             <hr />
             
-            @if(this.barcode != null)
+           @* @if(this.barcode != null)
             {
                 <div style="width:150px; height:45px; float:left;">
                     <img style="width:120px; height:45px; transform:rotate(270deg);" src="data:image/png;base64, @this.barcode" alt="Red dot" />
@@ -29,7 +29,7 @@
             {
                 <p>NULL</p>
             }
-
+*@
             <p> </p>
         </div>
     </div>
@@ -50,11 +50,11 @@
 
 @code
 {
-    string? barcode = null;
+    //string? barcode = null;
 
     protected override void OnInitialized()
     {
-        this.barcode = HtmlDesigner.Barcode.BarcodeGenerator.GetBase64Image("4047443137265");
-        this.StateHasChanged();
+        //this.barcode = HtmlDesigner.Barcode.BarcodeGenerator.GetBase64Image("4047443137265");
+        //this.StateHasChanged();
     }
 }

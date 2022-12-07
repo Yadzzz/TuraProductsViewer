@@ -10,7 +10,6 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
         private StringBuilder stringBuilder { get; set; }
         private CreatorService creatorService { get; set; }
         private bool isHTML { get; set; }
-        private string clickImageLink { get; set; }
 
         public PinFlagLayout(CreatorService crtService, bool isHtml)
         {

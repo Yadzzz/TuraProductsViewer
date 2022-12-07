@@ -89,9 +89,15 @@ namespace TuraProductsViewer.HtmlDesigner
             }
             else if(this.Layout == HtmlLayout.PrisEtikett)
             {
-                Barcode.BarcodeAdaptiveLayout barcodeAdaptiveLayout = new Barcode.BarcodeAdaptiveLayout(this.creatorService, this.isHTML);
+                Barcode.BarcodeAdaptiveLayout barcodeAdaptiveLayout = new Barcode.BarcodeAdaptiveLayout(this.creatorService);
 
                 return barcodeAdaptiveLayout.GetMemoryStream();
+            }
+            else if(this.Layout == HtmlLayout.Pinnflaga)
+            {
+                Barcode.PinFlagAdaptiveLayout pinFlagAdaptiveLayout = new Barcode.PinFlagAdaptiveLayout(this.creatorService);
+
+                return pinFlagAdaptiveLayout.GetMemoryStream();
             }
 
             return null;

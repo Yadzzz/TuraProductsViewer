@@ -41,7 +41,7 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
 
             var barcode = new NetBarcode.Barcode(data, NetBarcode.Type.Code128, showEAN, width, height, font);
             var value = barcode.GetBase64Image();
-            
+
             return value;
         }
     }

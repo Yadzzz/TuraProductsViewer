@@ -10,7 +10,6 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
         private StringBuilder stringBuilder { get; set; }
         private CreatorService creatorService { get; set; }
         private bool isHTML { get; set; }
-        private string clickImageLink { get; set; }
 
         public ShelfLabelLayout(CreatorService crtService, bool isHtml)
         {
@@ -25,11 +24,12 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
         {
             if (this.isHTML)
             {
-                stringBuilder.AppendLine("<html><body style=\"width:800px; margin-left:auto; margin-right:auto; margin-top:0px; \">");
+                stringBuilder.AppendLine("<style>.clearfix:after{\r\n  clear: both;\r\n  content: \".\";\r\n  display: block;\r\n  height: 0;\r\n  visibility: hidden;\r\n  font-size: 0;\r\n}</style>");
+                stringBuilder.AppendLine("<html><body style=\"width:900px; margin-left:auto; margin-right:auto; margin-top:0px; \">");
             }
             else
             {
-                stringBuilder.AppendLine("<html><body style=\"width:800px; margin-left:25px; margin-right:auto; margin-top:0px; \">");
+                stringBuilder.AppendLine("<html><body style=\"width:900px; margin-left:25px; margin-right:auto; margin-top:0px; \">");
             }
 
             int interval = 0;
@@ -40,20 +40,25 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
 
                 if (interval == 0)
                 {
-                    html += "<div style=\"padding-top: 30px; padding-bottom: 100px;\">";
+                    html += "<div style=\"padding-top: 5px; padding-bottom: 0px; \" class=\"clearfix\">";
                 }
 
-                html += "<div style=\"width:150px; height:35px; float:left; text-align: center; padding-right:5px;\">";
-                html += "<h1 style=\"display:inline\">" + this.creatorService.FinalizePrice(product) + "</h1>";
-                html += "<img style=\"max-width: 100%; max-height:100%;\" src=\"data:image/png;base64, {@base64img@}\" alt=\"Red dot\" />"; //width:120px; height:45px;
-                html += "<p style=\"display:inline\">Tura: " + product.VariantId + "</p>";
+                //border-width: 1px 1px 1px 1px; border-color: black; border-style: solid;
+
+                html += "<div class=\"clearfix\" style=\"margin: 0 auto; width:120px; height:300px; overflow: hidden; float:left; text-align: center; padding-right:10px; padding-left;0px; border-width: 1px 1px 1px 1px;  border-style: dotted;\">";
+                //html += "<img style=\"max-width: 100%; max-height:100%; transform:rotate(270deg);\" src=\"data:image/png;base64, {@base64img@}\" alt=\"Red dot\" />";
+                html += "<br /><br /><br /><div class=\"clearfix\"><img style=\"max-width:auto; max-height:auto; transform:rotate(270deg); \" src=\"data:image/png;base64, {@base64img@}\" alt=\"Red dot\" /></div>";
+                //html += "<img style=\"max-width:auto; max-height:auto; transform:rotate(270deg); \" src=\"data:image/png;base64, {@base64img@}\" alt=\"Red dot\" />";
+                html += "<br /><br /><br /><hr style=\"border-top: dotted 1px;\" /><div class=\"clearfix\" style=\"padding-left:3px; height:35px; overflow: hidden; font-size:11px; \">" + product.GetItemName(this.creatorService.Language) + "</div>";
+                html += "<p><small>" + product.VariantId + "</small></p>";
+                html += "<hr style=\"border-top: dotted 1px;\" /><div class=\"clearfix\" style=\" font-size:20px; height 20px; font-weight: bold;\">100,00</div>";
                 html += "</div>";
 
-                html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 150,40, true, 5));
+                html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 120, 50, true, 5));
                 interval++;
                 productsInterval++;
 
-                if (interval == 5 || productsInterval == this.creatorService.GetProductsCount())
+                if (interval == 6 || productsInterval == this.creatorService.GetProductsCount())
                 {
                     html += "</div>";
                     interval = 0;

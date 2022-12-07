@@ -51,7 +51,7 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
                 //html += "<img style=\"max-width:auto; max-height:auto; transform:rotate(270deg); \" src=\"data:image/png;base64, {@base64img@}\" alt=\"Red dot\" />";
                 html += "<br /><br /><br /><hr style=\"border-top: dotted 1px;\" /><div class=\"clearfix\" style=\"padding-left:3px; height:35px; overflow: hidden; font-size:11px; \">" + product.GetItemName(this.creatorService.Language) + "</div>";
                 html += "<p><small>" + product.VariantId + "</small></p>";
-                html += "<hr style=\"border-top: dotted 1px;\" /><div class=\"clearfix\" style=\" font-size:20px; height 20px; font-weight: bold;\">100,00</div>";
+                html += "<hr style=\"border-top: dotted 1px;\" /><div class=\"clearfix\" style=\" font-size:20px; height 20px; font-weight: bold;\">" + this.creatorService.FinalizePrice(product) + "</div>";
                 html += "</div>";
 
                 html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 120, 50, true, 5));

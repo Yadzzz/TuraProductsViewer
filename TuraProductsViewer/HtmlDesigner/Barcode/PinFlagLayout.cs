@@ -38,7 +38,7 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
             {
                 string html = string.Empty;
 
-                if (newPageInterval == 21 && !this.isHTML)
+                if (newPageInterval == 24 && !this.isHTML)
                 {
                     html += "<div style=\"page-break-after: always\">.</div>";
                     newPageInterval = 0;

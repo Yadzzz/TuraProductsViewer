@@ -99,6 +99,12 @@ namespace TuraProductsViewer.HtmlDesigner
 
                 return pinFlagAdaptiveLayout.GetMemoryStream();
             }
+            else if(this.Layout == HtmlLayout.HylleEtikett)
+            {
+                Barcode.ShelfLabelAdaptiveLayout shelfLabelAdaptiveLayout = new Barcode.ShelfLabelAdaptiveLayout(this.creatorService);
+
+                return shelfLabelAdaptiveLayout.GetMemoryStream();
+            }
 
             return null;
         }

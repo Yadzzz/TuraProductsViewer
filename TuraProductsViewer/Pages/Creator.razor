@@ -340,7 +340,24 @@
                 }
             }
         }
-        else if (this.htmlLayout == HtmlDesigner.HtmlLayout.Pinnflaga || this.htmlLayout == HtmlDesigner.HtmlLayout.PrisEtikett)
+        else if(this.htmlLayout == HtmlDesigner.HtmlLayout.HylleEtikett && this.CreatorService.GetProductsCount() > 90)
+        {
+            using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
+            {
+                if (excelStream != null)
+                {
+                    await JSRuntime.InvokeAsync<object>(
+                               "saveAsFileee",
+                               (this.title + ".pdf"),
+                               Convert.ToBase64String(excelStream.ToArray()));
+                }
+                else
+                {
+                    this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
+                }
+            }
+        }
+        else if (this.htmlLayout == HtmlDesigner.HtmlLayout.Pinnflaga || this.htmlLayout == HtmlDesigner.HtmlLayout.PrisEtikett || this.htmlLayout == HtmlDesigner.HtmlLayout.HylleEtikett)
         {
             using (MemoryStream? excelStream = PDFCreatorService.GetPDFStreamBarcodeLayout(htmlBuilder.GenerateHTML(), this.CreatorService.Language))
             {

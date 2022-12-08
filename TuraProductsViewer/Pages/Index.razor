@@ -17,19 +17,19 @@
             <center><h5>Info</h5></center>
 
             <hr />
-            
-           @* @if(this.barcode != null)
+
+            @* @if(this.barcode != null)
             {
-                <div style="width:150px; height:45px; float:left;">
-                    <img style="width:120px; height:45px; transform:rotate(270deg);" src="data:image/png;base64, @this.barcode" alt="Red dot" />
-                <p>@barcode</p>
-                </div>
+            <div style="width:150px; height:45px; float:left;">
+            <img style="width:120px; height:45px; transform:rotate(270deg);" src="data:image/png;base64, @this.barcode" alt="Red dot" />
+            <p>@barcode</p>
+            </div>
             }
             else
             {
-                <p>NULL</p>
+            <p>NULL</p>
             }
-*@
+            *@
             <p> </p>
         </div>
     </div>
@@ -41,8 +41,28 @@
             <center><h5>Patchnotes</h5></center>
 
             <hr />
-
-            <p> </p>
+            <b>2022-12-08</b>
+            <p>
+                <b>-</b> Price Tag Layout added.
+            </p>
+            <p>
+                <b>-</b> Shelf Label Layout added.
+            </p>
+            <p>
+                <b>-</b> Pin Flag Layout added.
+            </p>
+            <p>
+                <b>-</b> Product Images are scaled down in size to optimze the speed of PDF creation.
+            </p>
+            <p>
+                <b>-</b> Page stuck on loading screen while creating PDF's bug fixed.
+            </p>
+            <p>
+                <b>-</b> The application now ignores duplicated Product IDs when uploading files (.txt, .xlxs) and only adds the product once. 
+            </p>
+            <p>
+                <b>-</b> Creator Page speed optimization.
+            </p>
 
         </div>
     </div>

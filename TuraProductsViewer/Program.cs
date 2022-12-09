@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using TuraProductsViewer;
 using TuraProductsViewer.Pages;
 using TuraProductsViewer.Services;
+using TuraProductsViewer.Services.FileCreator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddScoped<ImageService>();
 builder.Services.AddTransient<PdfCreatorService>();
 builder.Services.AddTransient<NavisionDataRetriever.NavisionRetriever>();
 builder.Services.AddTransient<DataRetriever.API.ProductsData>();
+builder.Services.AddTransient<ConcreteExcelCreator>();
 
 builder.Services.AddHsts(options =>
 {

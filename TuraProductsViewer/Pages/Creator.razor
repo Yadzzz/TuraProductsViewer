@@ -7,6 +7,7 @@
 @inject ImageService ImageService
 @inject PdfCreatorService PDFCreatorService
 @inject NavisionDataRetriever.NavisionRetriever Navision
+@inject TuraProductsViewer.Services.FileCreator.ConcreteExcelCreator ExcelCreator
 @inject ILogger<Creator> logger;
 
 
@@ -204,6 +205,7 @@
                     {
                         <button class="btn btn-primary mb-2" type="button" @onclick=@createHTML>Create HTML</button>
                         <button class="btn btn-primary mb-2" type="button" @onclick=@initializePDFCreation>Create PDF</button>
+                        <button class="btn btn-primary mb-2" type="button" @onclick=@DownloadExcelFile>Create Excel</button>
                         <hr />
                         <button class="btn btn-secondary mb-2 col-12" type="button" @onclick=@this.onClearProducts>Clear Products</button>
                     }
@@ -211,6 +213,7 @@
                     {
                         <button class="btn btn-primary mb-2" type="button" disabled>Create HTML</button>
                         <button class="btn btn-primary mb-2" type="button" disabled>Create PDF</button>
+                        <button class="btn btn-primary mb-2" type="button" disabled>Create Excel</button>
                         <hr />
                         <button class="btn btn-secondary mb-2 col-12" type="button" disabled>Clear Products</button>
                     }
@@ -409,6 +412,16 @@
         //}
 
         this.DownloadHTMLFile();
+    }
+
+    private void DownloadExcelFile()
+    {
+        var excel = this.ExcelCreator.CreateExcelFile(this.CreatorService);
+
+        using (MemoryStream stream = excel.GetStreamData())
+        {
+            Task.Run(() => this.SaveAs(JSRuntime, (this.title + ".xlsx"), stream.ToArray()));
+        }
     }
 
     private void DownloadHTMLFile()

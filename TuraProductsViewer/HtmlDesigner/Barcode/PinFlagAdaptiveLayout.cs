@@ -33,25 +33,27 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
 
                 if (pdfProductsPageInterval == 0)
                 {
-                    stringBuilder.AppendLine("<html><body style=\"width:800px; margin-left:25px; margin-right:auto; margin-top:0px; \">");
+                    stringBuilder.AppendLine("<html><body style=\"width:800px; margin-left:27px; margin-right:auto; margin-top:57px; \">");
                 }
 
                 if (newPageInterval == 24)
                 {
                     html += "<div style=\"page-break-after: always\">.</div>";
+                    html += "<div style=\"padding-top:57px;\"></div>";
                     newPageInterval = 0;
                 }
 
                 if (interval == 0)
                 {
-                    html += "<div style=\"padding-top: 30px; padding-bottom: 100px;\">";
+                    html += "<div style=\"padding-bottom: 128px;\">";
                 }
 
-                html += "<div style=\"width:170px; height:120px; float:left; text-align: center; padding-right:40px; padding-left:40px; border-bottom: 1px solid #202020;\">";
+                html += "<div style=\"width:170px; height:100px; float:left; text-align: center; padding-right:40px; padding-left:40px; padding-bottom:8px; \">";
                 html += "<img style=\"max-width: 100%; max-height:100%;\" src=\"data:image/png;base64, {@base64img@}\" alt=\"Red dot\" />"; //width:120px; hiehgt:45px;
                 //html += "<p style=\"display:inline\"><b>" + product.PrimaryEANCode + "</b></p>";
-                html += "<br /><p style=\"display:inline\"><small>" + product.GetItemName(this.creatorService.Language) + "</small></p>";
-                html += "<br /><h3 style=\"display:inline\">Art.Nr: " + product.VariantId + "</h3>";
+                html += "<br /><div style=\"padding-left:0px; height:22px; overflow: hidden; font-size:10px; \">" + product.GetItemName(this.creatorService.Language) + "</div>";
+                html += "<p style=\" font: bold 13px verdana;\">Art.Nr: " + product.VariantId + "</p>";
+                html += "<p style=\" display:inline; font: 8px verdana;\">........................................................</p>";
                 html += "</div>";
 
                 html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 236, 50, true, 5));

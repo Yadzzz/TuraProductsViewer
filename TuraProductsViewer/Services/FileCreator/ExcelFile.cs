@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
+using System.Security.Policy;
 
 namespace TuraProductsViewer.Services.FileCreator
 {
@@ -80,9 +81,14 @@ namespace TuraProductsViewer.Services.FileCreator
                 dataTable.Columns.Add(languageVariables["ilagervariable"]);
             }
 
-            //dataTable.Columns.Add("Img");
+            //DataColumn imageColumn = new DataColumn("MyImage"); //Create the column.
+            //imageColumn.DataType = System.Type.GetType("System.Byte[]"); //Type byte[] to store image bytes.
+            //imageColumn.AllowDBNull = true;
+            //imageColumn.Caption = "My Image";
 
-            foreach(var product in this.CreatorService.GetProducts())
+            //dataTable.Columns.Add(imageColumn);
+
+            foreach (var product in this.CreatorService.GetProducts())
             {
                 Queue<string> rowData = new Queue<string>();
                 rowData.Enqueue(product.VariantId);
@@ -138,8 +144,26 @@ namespace TuraProductsViewer.Services.FileCreator
                     }
                 }
 
-                dataTable.Rows.Add(rowData.ToArray());
 
+                //https://www.turascandinavia.com/image/280006.jpg
+
+                //byte[] imageBytes = new byte[1024];
+
+                //Task.Run(async () =>
+                //{
+                //    using (var client = new HttpClient())
+                //    {
+                //        using (var response = await client.GetAsync("https://www.turascandinavia.com/image/280006.jpg"))
+                //        {
+                //            imageBytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                //        }
+                //    }
+                //});
+
+                //var row = dataTable.Rows.Add(rowData.ToArray());
+                //row["MyImage"] = imageBytes;
+
+                dataTable.Rows.Add(rowData.ToArray());
             }
 
             return dataTable;

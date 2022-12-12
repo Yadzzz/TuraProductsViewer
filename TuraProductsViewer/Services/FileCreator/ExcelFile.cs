@@ -6,7 +6,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace TuraProductsViewer.Services.FileCreator
 {

@@ -60,6 +60,7 @@
     private void removeProduct(DataRetriever.Models.ProductsDataModel product)
     {
         CreatorService.RemoveProduct(product);
+        Task.Run(() => NotificationService.AlertSuccess("Product [" + product.VariantId + "] Removed."));
     }
 
     /// <summary>

@@ -58,7 +58,14 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
                 html += "<p style=\" display:inline; font: 8px verdana;\">........................................................</p>";
                 html += "</div>";
 
-                html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 236, 50, true, 5));
+                if (this.creatorService.ShowEANCode)
+                {
+                    html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 236, 50, true, 5));
+                }
+                else
+                {
+                    html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 236, 35, false, 5));
+                }
 
                 interval++;
                 productsInterval++;

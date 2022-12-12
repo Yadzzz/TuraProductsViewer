@@ -1,5 +1,8 @@
-﻿using SelectPdf;
+﻿using Microsoft.AspNetCore.Components;
+using SelectPdf;
+using Serilog;
 using System;
+using System.Reflection;
 using System.Text;
 using TuraProductsViewer.Services;
 
@@ -7,6 +10,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
 {
     public class SixPerPageAdaptiveLayout
     {
+        private Microsoft.Extensions.Logging.ILogger logger { get; set; }
         private StringBuilder stringBuilder { get; set; }
         private CreatorService creatorService { get; set; }
         private ImageService imageService { get; set; }
@@ -28,6 +32,11 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
             this.clickImageLink = clickImgLink;
 
             this.pdfDocuments = new List<PdfDocument>();
+
+            //Temporary logger
+            var loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog());
+            var logger = loggerFactory.CreateLogger(string.Empty);
+            this.logger = logger;
         }
 
         public MemoryStream InitializePDF()
@@ -41,7 +50,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
             {
                 string html = string.Empty;
 
-                if(productsInterval == 0)
+                if (productsInterval == 0)
                 {
                     stringBuilder.AppendLine(this.GetStartDesign());
                 }
@@ -177,14 +186,22 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                     converter.Footer.Add(text2);
                     PdfTextSection dateText = new PdfTextSection(460, 30, "PDF Created [" + DateTime.Now + "]", new System.Drawing.Font("Arial", 8));
                     converter.Footer.Add(dateText);
-                    
+
                     converter.Options.JpegCompressionEnabled = true;
                     converter.Options.JpegCompressionLevel = 50;
                     converter.Options.PdfCompressionLevel = PdfCompressionLevel.Best;
                     converter.Options.ScaleImages = true;
 
-                    PdfDocument pdfDocument = converter.ConvertHtmlString(this.stringBuilder.ToString());
-                    this.pdfDocuments.Add(pdfDocument);
+                    try
+                    {
+                        PdfDocument pdfDocument = converter.ConvertHtmlString(this.stringBuilder.ToString());
+                        this.pdfDocuments.Add(pdfDocument);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.logger.LogError(ex.ToString());
+                        return null;
+                    }
 
                     this.stringBuilder.Clear();
                     productsInterval = 0;
@@ -192,30 +209,37 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 }
             }
 
-            PdfDocument doc = new PdfDocument();
-
-            foreach (var document in this.pdfDocuments)
+            try
             {
-                doc.Append(document);
-            }
-
-            doc.JpegCompressionEnabled = true;
-            doc.JpegCompressionLevel = 50;
-            doc.CompressionLevel = PdfCompressionLevel.Best;
-
-            using (MemoryStream stream = new MemoryStream())
-            {
-                doc.Save(stream);
-                Console.WriteLine("STREAM: " + stream.Length);
-                //stream.Close();
-                doc.Close();
+                PdfDocument doc = new PdfDocument();
 
                 foreach (var document in this.pdfDocuments)
                 {
-                    document.Close();
+                    doc.Append(document);
                 }
 
-                return stream;
+                doc.JpegCompressionEnabled = true;
+                doc.JpegCompressionLevel = 50;
+                doc.CompressionLevel = PdfCompressionLevel.Best;
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    doc.Save(stream);
+                    //stream.Close();
+                    doc.Close();
+
+                    foreach (var document in this.pdfDocuments)
+                    {
+                        document.Close();
+                    }
+
+                    return stream;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex.ToString());
+                return null;
             }
         }
 

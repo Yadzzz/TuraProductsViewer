@@ -1,4 +1,5 @@
 ﻿using SelectPdf;
+using Serilog;
 using System.Text;
 using TuraProductsViewer.Services;
 
@@ -6,6 +7,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
 {
     public class OnePerPageAdaptiveLayout
     {
+        private Microsoft.Extensions.Logging.ILogger logger { get; set; }
         private StringBuilder stringBuilder { get; set; }
         private CreatorService creatorService { get; set; }
         private ImageService imageService { get; set; }
@@ -27,6 +29,11 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
             this.clickImageLink = clickImgLink;
 
             this.pdfDocuments = new List<PdfDocument>();
+
+            //Temporary logger
+            var loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog());
+            var logger = loggerFactory.CreateLogger(string.Empty);
+            this.logger = logger;
         }
 
         public MemoryStream InitializePDF()
@@ -174,33 +181,49 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 converter.Options.PdfCompressionLevel = PdfCompressionLevel.Best;
                 converter.Options.ScaleImages = true;
 
-                this.pdfDocuments.Add(converter.ConvertHtmlString(this.stringBuilder.ToString()));
+                try
+                {
+                    this.pdfDocuments.Add(converter.ConvertHtmlString(this.stringBuilder.ToString()));
+                }
+                catch (Exception ex)
+                {
+                    this.logger.LogError(ex.ToString());
+                    return null;
+                }
 
                 this.stringBuilder.Clear();
             }
 
-            PdfDocument doc = new PdfDocument();
-
-            foreach (var document in this.pdfDocuments)
+            try
             {
-                foreach (PdfPage page in document.Pages)
-                {
-                    doc.AddPage(page);
-                }
-            }
-
-            using (MemoryStream stream = new MemoryStream())
-            {
-                doc.Save(stream);
-                //stream.Close();
-                doc.Close();
+                PdfDocument doc = new PdfDocument();
 
                 foreach (var document in this.pdfDocuments)
                 {
-                    document.Close();
+                    foreach (PdfPage page in document.Pages)
+                    {
+                        doc.AddPage(page);
+                    }
                 }
 
-                return stream;
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    doc.Save(stream);
+                    //stream.Close();
+                    doc.Close();
+
+                    foreach (var document in this.pdfDocuments)
+                    {
+                        document.Close();
+                    }
+
+                    return stream;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex.ToString());
+                return null;
             }
         }
 

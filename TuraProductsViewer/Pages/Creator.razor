@@ -9,7 +9,7 @@
 @inject NavisionDataRetriever.NavisionRetriever Navision
 @inject TuraProductsViewer.Services.FileCreator.ConcreteExcelCreator ExcelCreator
 @inject ILogger<Creator> logger;
-
+@inject NotificationService notificationService
 
 <div class="page-header">
     <div class="page-title">
@@ -110,7 +110,7 @@
                                     <a class="dropdown-item" data-value="tenperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.TenPerPage)>10 / Page</a>
                                     <a class="dropdown-item" data-value="pricelabel" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.PrisEtikett)>Price Label</a>
                                     <a class="dropdown-item" data-value="pinflag" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.Pinnflaga)>Pin Flag</a>
-                                    <a class="dropdown-item" data-value="shelflabel" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.HylleEtikett)>Shelf Label</a>
+                                    @*<a class="dropdown-item" data-value="shelflabel" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.HylleEtikett)>Shelf Label</a>*@
                                 </div>
                             </div>
                         </form>
@@ -126,6 +126,15 @@
                     <hr />
 
                     <div class="col-lg-12">
+                        @if (this.isBarcodeLayout())
+                        {
+                            <div class="col-lg-12">
+                                <input class="form-check-input" type="checkbox" id="gridCheck1" checked="@this.CreatorService.UsePackagingImage" @oninput="@((e) => { this.CreatorService.ShowEANCode = (bool)e.Value; })">
+                                <label class="form-check-label" for="gridCheck1">
+                                    Show EAN with Barcodes
+                                </label>
+                            </div>
+                        }
                         <div class="col-lg-12">
                             <input class="form-check-input" type="checkbox" id="gridCheck1" checked="@this.CreatorService.UsePackagingImage" @oninput="@((e) => { this.CreatorService.UsePackagingImage = (bool)e.Value; })">
                             <label class="form-check-label" for="gridCheck1">
@@ -234,11 +243,13 @@
     private void removeProduct(DataRetriever.Models.ProductsDataModel product)
     {
         CreatorService.RemoveProduct(product);
+        Task.Run(() => notificationService.AlertSuccess("Product " + product.VariantId + " removed."));
     }
 
     private void onClearProducts()
     {
         CreatorService.ClearProducts();
+        Task.Run(() => notificationService.AlertSuccess("Products Cleared."));
     }
 
     private async void initializePDFCreation()
@@ -249,6 +260,7 @@
         //}
 
         this.inCreationProcess = true;
+        await notificationService.AlertSuccess("PDF Creation process started...");
         await Task.Run(() => this.createPDF());
         this.inCreationProcess = false;
         this.StateHasChanged();
@@ -264,13 +276,24 @@
             {
                 if (excelStream != null)
                 {
-                    await JSRuntime.InvokeAsync<object>(
-                           "saveAsFileee",
-                           (this.title + ".pdf"),
-                           Convert.ToBase64String(excelStream.ToArray()));
+                    try
+                    {
+                        await JSRuntime.InvokeAsync<object>(
+                               "saveAsFileee",
+                               (this.title + ".pdf"),
+                               Convert.ToBase64String(excelStream.ToArray()));
+
+                        await notificationService.AlertSuccess("PDF Created successfully!");
+                    }
+                    catch (Exception e)
+                    {
+                        //User disconnected?
+                        this.logger.LogWarning(e.ToString());
+                    }
                 }
                 else
                 {
+                    await notificationService.AlertError("An Error occured during PDF Creating. Error [20039]");
                     this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
                 }
             }
@@ -281,81 +304,136 @@
             {
                 if (excelStream != null)
                 {
-                    await JSRuntime.InvokeAsync<object>(
-                               "saveAsFileee",
-                               (this.title + ".pdf"),
-                               Convert.ToBase64String(excelStream.ToArray()));
+                    try
+                    {
+                        await JSRuntime.InvokeAsync<object>(
+                                   "saveAsFileee",
+                                   (this.title + ".pdf"),
+                                   Convert.ToBase64String(excelStream.ToArray()));
+
+                        await notificationService.AlertSuccess("PDF Created successfully!");
+                    }
+                    catch (Exception e)
+                    {
+                        //User disconnected?
+                        this.logger.LogWarning(e.ToString());
+                    }
                 }
                 else
                 {
+                    await notificationService.AlertError("Error 20039. An Error occured during PDF Creation.");
                     this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
                 }
             }
         }
-        else if(this.htmlLayout == HtmlDesigner.HtmlLayout.OnePerPage && this.CreatorService.GetProductsCount() > 50)
+        else if (this.htmlLayout == HtmlDesigner.HtmlLayout.OnePerPage && this.CreatorService.GetProductsCount() > 50)
         {
             using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
             {
                 if (excelStream != null)
                 {
-                    await JSRuntime.InvokeAsync<object>(
-                               "saveAsFileee",
-                               (this.title + ".pdf"),
-                               Convert.ToBase64String(excelStream.ToArray()));
+                    try
+                    {
+                        await JSRuntime.InvokeAsync<object>(
+                                   "saveAsFileee",
+                                   (this.title + ".pdf"),
+                                   Convert.ToBase64String(excelStream.ToArray()));
+
+                        await notificationService.AlertSuccess("PDF Created successfully!");
+                    }
+                    catch (Exception e)
+                    {
+                        //User disconnected?
+                        this.logger.LogWarning(e.ToString());
+                    }
                 }
                 else
                 {
+                    await notificationService.AlertError("Error 20039. An Error occured during PDF Creation.");
                     this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
                 }
             }
         }
-        else if(this.htmlLayout == HtmlDesigner.HtmlLayout.PrisEtikett && this.CreatorService.GetProductsCount() > 330)
+        else if (this.htmlLayout == HtmlDesigner.HtmlLayout.PrisEtikett && this.CreatorService.GetProductsCount() > 330)
         {
             using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
             {
                 if (excelStream != null)
                 {
-                    await JSRuntime.InvokeAsync<object>(
-                               "saveAsFileee",
-                               (this.title + ".pdf"),
-                               Convert.ToBase64String(excelStream.ToArray()));
+                    try
+                    {
+                        await JSRuntime.InvokeAsync<object>(
+                                   "saveAsFileee",
+                                   (this.title + ".pdf"),
+                                   Convert.ToBase64String(excelStream.ToArray()));
+
+                        await notificationService.AlertSuccess("PDF Created successfully!");
+                    }
+                    catch (Exception e)
+                    {
+                        //User disconnected?
+                        this.logger.LogWarning(e.ToString());
+                    }
                 }
                 else
                 {
+                    await notificationService.AlertError("Error 20039. An Error occured during PDF Creation.");
                     this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
                 }
             }
         }
-        else if(this.htmlLayout == HtmlDesigner.HtmlLayout.Pinnflaga && this.CreatorService.GetProductsCount() > 105)
+        else if (this.htmlLayout == HtmlDesigner.HtmlLayout.Pinnflaga && this.CreatorService.GetProductsCount() > 105)
         {
             using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
             {
                 if (excelStream != null)
                 {
-                    await JSRuntime.InvokeAsync<object>(
-                               "saveAsFileee",
-                               (this.title + ".pdf"),
-                               Convert.ToBase64String(excelStream.ToArray()));
+                    try
+                    {
+                        await JSRuntime.InvokeAsync<object>(
+                                   "saveAsFileee",
+                                   (this.title + ".pdf"),
+                                   Convert.ToBase64String(excelStream.ToArray()));
+
+                        await notificationService.AlertSuccess("PDF Created successfully!");
+                    }
+                    catch (Exception e)
+                    {
+                        //User disconnected?
+                        this.logger.LogWarning(e.ToString());
+                    }
                 }
                 else
                 {
+                    await notificationService.AlertError("Error 20039. An Error occured during PDF Creation.");
                     this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
                 }
             }
         }
-        else if(this.htmlLayout == HtmlDesigner.HtmlLayout.HylleEtikett && this.CreatorService.GetProductsCount() > 120)
+        else if (this.htmlLayout == HtmlDesigner.HtmlLayout.HylleEtikett && this.CreatorService.GetProductsCount() > 120)
         {
             using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
             {
                 if (excelStream != null)
                 {
-                    await JSRuntime.InvokeAsync<object>(
-                               "saveAsFileee",
-                               (this.title + ".pdf"),
-                               Convert.ToBase64String(excelStream.ToArray()));
+                    try
+                    {
+                        await JSRuntime.InvokeAsync<object>(
+                                   "saveAsFileee",
+                                   (this.title + ".pdf"),
+                                   Convert.ToBase64String(excelStream.ToArray()));
+
+                        await notificationService.AlertSuccess("PDF Created successfully!");
+                    }
+                    catch (Exception e)
+                    {
+                        //User disconnected?
+                        this.logger.LogWarning(e.ToString());
+                    }
                 }
                 else
                 {
+                    await notificationService.AlertError("Error 20039. An Error occured during PDF Creation.");
                     this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
                 }
             }
@@ -366,13 +444,24 @@
             {
                 if (excelStream != null)
                 {
-                    await JSRuntime.InvokeAsync<object>(
-                               "saveAsFileee",
-                               (this.title + ".pdf"),
-                               Convert.ToBase64String(excelStream.ToArray()));
+                    try
+                    {
+                        await JSRuntime.InvokeAsync<object>(
+                                   "saveAsFileee",
+                                   (this.title + ".pdf"),
+                                   Convert.ToBase64String(excelStream.ToArray()));
+
+                        await notificationService.AlertSuccess("PDF Created successfully!");
+                    }
+                    catch (Exception e)
+                    {
+                        //User disconnected?
+                        this.logger.LogWarning(e.ToString());
+                    }
                 }
                 else
                 {
+                    await notificationService.AlertError("Error 20039. An Error occured during PDF Creation.");
                     this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
                 }
             }
@@ -383,13 +472,24 @@
             {
                 if (excelStream != null)
                 {
-                    await JSRuntime.InvokeAsync<object>(
-                               "saveAsFileee",
-                               (this.title + ".pdf"),
-                               Convert.ToBase64String(excelStream.ToArray()));
+                    try
+                    {
+                        await JSRuntime.InvokeAsync<object>(
+                                   "saveAsFileee",
+                                   (this.title + ".pdf"),
+                                   Convert.ToBase64String(excelStream.ToArray()));
+
+                        await notificationService.AlertSuccess("PDF Created successfully!");
+                    }
+                    catch (Exception e)
+                    {
+                        //User disconnected?
+                        this.logger.LogWarning(e.ToString());
+                    }
                 }
                 else
                 {
+                    await notificationService.AlertError("Error 20039. An Error occured during PDF Creation.");
                     this.logger.LogError("Could not create PDF [Method: CreatePDF, File:Creator.Razor]");
                 }
             }
@@ -400,8 +500,16 @@
 
     public async Task SaveAsPDF(IJSRuntime js, string filename, byte[] data, string d)
     {
-        await js.InvokeAsync<object>(
-            "generatePDFFF", d);
+        try
+        {
+            await js.InvokeAsync<object>(
+                "generatePDFFF", d);
+        }
+        catch (Exception e)
+        {
+            //User disconnected?
+            this.logger.LogWarning(e.ToString());
+        }
     }
 
     private void createHTML()
@@ -418,9 +526,17 @@
     {
         var excel = this.ExcelCreator.CreateExcelFile(this.CreatorService);
 
-        using (MemoryStream stream = excel.GetStreamData())
+        using (MemoryStream stream = excel.GetStreamData(false))
         {
-            Task.Run(() => this.SaveAs(JSRuntime, (this.title + ".xlsx"), stream.ToArray()));
+            try
+            {
+                Task.Run(() => this.SaveAs(JSRuntime, (this.title + ".xlsx"), stream.ToArray()));
+            }
+            catch (Exception e)
+            {
+                //User disconnected?
+                this.logger.LogWarning(e.ToString());
+            }
         }
     }
 
@@ -430,15 +546,33 @@
         var bytes = System.Text.Encoding.UTF8.GetBytes(htmlBuilder.GenerateHTML());
 
         //var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.HTML(CreatorService, ImageService, true));
-        Task.Run(() => this.SaveAs(JSRuntime, (this.title + ".html"), bytes));
+
+        try
+        {
+            Task.Run(() => this.SaveAs(JSRuntime, (this.title + ".html"), bytes));
+            Task.Run(async () => await notificationService.AlertSuccess("HTML File successfully created. "));
+        }
+        catch (Exception e)
+        {
+            //User disconnected?
+            this.logger.LogWarning(e.ToString());
+        }
     }
 
     public async Task SaveAs(IJSRuntime js, string filename, byte[] data)
     {
-        await js.InvokeAsync<object>(
-            "saveAsFile",
-            filename,
-            Convert.ToBase64String(data));
+        try
+        {
+            await js.InvokeAsync<object>(
+                "saveAsFile",
+                filename,
+                Convert.ToBase64String(data));
+        }
+        catch (Exception e)
+        {
+            //User disconnected?
+            this.logger.LogWarning(e.ToString());
+        }
     }
 
     /// <summary>
@@ -495,5 +629,15 @@
         {
             this.CreatorService.SpecialCustomerPrices.Clear();
         }
+    }
+
+    private bool isBarcodeLayout()
+    {
+        if (this.htmlLayout == HtmlDesigner.HtmlLayout.PrisEtikett || this.htmlLayout == HtmlDesigner.HtmlLayout.HylleEtikett || this.htmlLayout == HtmlDesigner.HtmlLayout.Pinnflaga)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1,8 +1,12 @@
 ﻿using Sylvan.Data.Excel;
 using System.Data;
 using System.Data.Common;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.CompilerServices;
-using System.Security.Policy;
+using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace TuraProductsViewer.Services.FileCreator
 {
@@ -15,16 +19,23 @@ namespace TuraProductsViewer.Services.FileCreator
             this.CreatorService = creatorService;
         }
 
-        public MemoryStream GetStreamData()
+        public MemoryStream GetStreamData(bool includePictures)
         {
-            using (MemoryStream stream = new MemoryStream())
+            if (includePictures)
             {
-                using (var edw = ExcelDataWriter.Create(stream, ExcelWorkbookType.ExcelXml))
+                return this.GetStreamWithPictures();
+            }
+            else
+            {
+                using (MemoryStream stream = new MemoryStream())
                 {
-                    DbDataReader dr = this.GetDataTable().CreateDataReader();
-                    edw.Write(dr);
+                    using (var edw = ExcelDataWriter.Create(stream, ExcelWorkbookType.ExcelXml))
+                    {
+                        DbDataReader dr = this.GetDataTable().CreateDataReader();
+                        edw.Write(dr);
 
-                    return stream;
+                        return stream;
+                    }
                 }
             }
         }
@@ -80,13 +91,6 @@ namespace TuraProductsViewer.Services.FileCreator
             {
                 dataTable.Columns.Add(languageVariables["ilagervariable"]);
             }
-
-            //DataColumn imageColumn = new DataColumn("MyImage"); //Create the column.
-            //imageColumn.DataType = System.Type.GetType("System.Byte[]"); //Type byte[] to store image bytes.
-            //imageColumn.AllowDBNull = true;
-            //imageColumn.Caption = "My Image";
-
-            //dataTable.Columns.Add(imageColumn);
 
             foreach (var product in this.CreatorService.GetProducts())
             {
@@ -144,29 +148,18 @@ namespace TuraProductsViewer.Services.FileCreator
                     }
                 }
 
-
-                //https://www.turascandinavia.com/image/280006.jpg
-
-                //byte[] imageBytes = new byte[1024];
-
-                //Task.Run(async () =>
-                //{
-                //    using (var client = new HttpClient())
-                //    {
-                //        using (var response = await client.GetAsync("https://www.turascandinavia.com/image/280006.jpg"))
-                //        {
-                //            imageBytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-                //        }
-                //    }
-                //});
-
-                //var row = dataTable.Rows.Add(rowData.ToArray());
-                //row["MyImage"] = imageBytes;
-
                 dataTable.Rows.Add(rowData.ToArray());
             }
 
             return dataTable;
+        }
+
+        public MemoryStream GetStreamWithPictures()
+        {
+            MemoryStream stream = new MemoryStream();
+
+            
+            return stream;
         }
 
         public void Dispose()

@@ -16,6 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+//DI
 builder.Services.AddScoped<CreatorService>();
 builder.Services.AddTransient<APIService>();
 builder.Services.AddTransient<ReadFileService>();
@@ -24,6 +26,7 @@ builder.Services.AddTransient<PdfCreatorService>();
 builder.Services.AddTransient<NavisionDataRetriever.NavisionRetriever>();
 builder.Services.AddTransient<DataRetriever.API.ProductsData>();
 builder.Services.AddTransient<ConcreteExcelCreator>();
+builder.Services.AddTransient<NotificationService>();
 
 builder.Services.AddHsts(options =>
 {

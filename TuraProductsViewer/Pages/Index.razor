@@ -18,18 +18,7 @@
 
             <hr />
 
-            @* @if(this.barcode != null)
-            {
-            <div style="width:150px; height:45px; float:left;">
-            <img style="width:120px; height:45px; transform:rotate(270deg);" src="data:image/png;base64, @this.barcode" alt="Red dot" />
-            <p>@barcode</p>
-            </div>
-            }
-            else
-            {
-            <p>NULL</p>
-            }
-            *@
+            
             <p> </p>
         </div>
     </div>
@@ -40,6 +29,24 @@
 
             <center><h5>Patchnotes</h5></center>
 
+            <hr />
+
+            <b>2022-12-12</b>
+            <p>
+                <b>-</b> Price label layout displayed incorrect price bug fixed (choose the price option 'None' to remove prices in the layout).
+            </p>
+            <p>
+                <b>-</b> There is now a option to create Barcodes without displaying EAN.
+            </p>
+            <p>
+                <b>-</b> Notification System implemented. 
+            </p>
+            <p>
+                <b>-</b> The application now notifies the user if an error occurs. 
+            </p>
+            <p>
+                <b>-</b> The application now auto detects wrong file format while uploading files (.txt, .xlsx)
+            </p>
             <hr />
 
             <b>2022-12-09</b>
@@ -83,11 +90,8 @@
 
 @code
 {
-    //string? barcode = null;
-
     protected override void OnInitialized()
     {
-        //this.barcode = HtmlDesigner.Barcode.BarcodeGenerator.GetBase64Image("4047443137265");
-        //this.StateHasChanged();
+        
     }
 }

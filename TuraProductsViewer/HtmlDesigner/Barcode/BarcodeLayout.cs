@@ -51,12 +51,27 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
                 }
 
                 html += "<div style=\"width:115px; height:35px; float:left; text-align: center; padding-right:0px;\">";
-                html += "<p style=\"display:inline; font: bold 26px Arial;\">" + this.creatorService.FinalizePrice(product) + "</p>";
+                if(this.creatorService.PriceType == PriceType.None)
+                {
+                    html += "<div style=\" height:26px;\"></div>";
+                }
+                else
+                {
+                    html += "<p style=\"display:inline; font: bold 26px Arial;\">" + (this.creatorService.PriceType == PriceType.Rek ? this.creatorService.FinalizePrice(product.UnitPrice) : this.creatorService.FinalizePrice(product)) + "</p>";
+                }
                 html += "<img style=\"max-width: 100%; max-height:100%;\" src=\"data:image/png;base64, {@base64img@}\" alt=\"Red dot\" />"; //width:120px; height:45px;
                 html += "<p style=\"display:inline; font: 9px verdana;\">Tura: " + product.VariantId + "</p>";
                 html += "</div>";
 
-                html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 160,45, true, 5));
+                if (this.creatorService.ShowEANCode)
+                {
+                    html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 160, 45, true, 5));
+                }
+                else
+                {
+                    html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 160, 35, false, 5));
+                }
+
                 interval++;
                 productsInterval++;
                 newPageInterval++;

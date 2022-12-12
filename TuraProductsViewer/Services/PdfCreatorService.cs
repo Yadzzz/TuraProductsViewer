@@ -105,8 +105,6 @@ namespace TuraProductsViewer.Services
 
             //converter.Options.PdfCompressionLevel = PdfCompressionLevel.NoCompression;
 
-
-
             //Header settings
             converter.Options.DisplayHeader = true;
             converter.Header.DisplayOnFirstPage = true;
@@ -137,23 +135,31 @@ namespace TuraProductsViewer.Services
             converter.Options.JpegCompressionLevel = 50;
             converter.Options.ScaleImages = true;
 
-            // create a new pdf document converting an url
-            PdfDocument doc = converter.ConvertHtmlString(htmlString);
-
-            doc.CompressionLevel = PdfCompressionLevel.Best;
-
-            //doc.Save("wwwroot/pdf/sample.pdf");
-
-            using (MemoryStream stream = new MemoryStream())
+            try
             {
-                //Saving the PDF document into the stream
-                doc.Save(stream);
+                // create a new pdf document converting an url
+                PdfDocument doc = converter.ConvertHtmlString(htmlString);
 
-                Console.WriteLine("STREAM: " + stream.Length);
+                doc.CompressionLevel = PdfCompressionLevel.Best;
 
-                //Closing the PDF document
-                doc.Close();
-                return stream;
+                //doc.Save("wwwroot/pdf/sample.pdf");
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    //Saving the PDF document into the stream
+                    doc.Save(stream);
+
+                    Console.WriteLine("STREAM: " + stream.Length);
+
+                    //Closing the PDF document
+                    doc.Close();
+                    return stream;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex.ToString());
+                return null;
             }
         }
 
@@ -178,19 +184,25 @@ namespace TuraProductsViewer.Services
             //PdfTextSection dateText = new PdfTextSection(460, 30, "PDF Created [" + DateTime.Now + "]", new System.Drawing.Font("Arial", 8));
             //converter.Footer.Add(dateText);
 
-            // create a new pdf document converting an url
-            PdfDocument doc = converter.ConvertHtmlString(htmlString);
-
-            doc.CompressionLevel = PdfCompressionLevel.Best;
-
-            using (MemoryStream stream = new MemoryStream())
+            try
             {
-                doc.Save(stream);
+                // create a new pdf document converting an url
+                PdfDocument doc = converter.ConvertHtmlString(htmlString);
 
-                Console.WriteLine("STREAM: " + stream.Length);
+                doc.CompressionLevel = PdfCompressionLevel.Best;
 
-                doc.Close();
-                return stream;
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    doc.Save(stream);
+                    doc.Close();
+
+                    return stream;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex.ToString());
+                return null;
             }
         }
 

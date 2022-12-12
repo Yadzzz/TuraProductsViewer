@@ -31,7 +31,7 @@ namespace DataRetriever.API
                     .AddJsonFile("appsettings.json")
                     .Build();
 
-            this._apiUrl = configuration["apiurl"];
+            this._apiUrl = configuration["API:ApiUrl"] ?? string.Empty;
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Html;
 using SelectPdf;
+using Serilog;
 using System.Drawing;
 using System.Text;
 using TuraProductsViewer.Services;
@@ -8,6 +9,7 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
 {
     public class BarcodeAdaptiveLayout
     {
+        private Microsoft.Extensions.Logging.ILogger logger { get; set; }
         private StringBuilder stringBuilder { get; set; }
         private CreatorService creatorService { get; set; }
         private List<PdfDocument> pdfDocuments { get; set; }
@@ -18,6 +20,11 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
             this.stringBuilder = new();
             this.creatorService = crtService;
             this.pdfDocuments = new List<PdfDocument>();
+
+            //Temporary logger
+            var loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog());
+            var logger = loggerFactory.CreateLogger(string.Empty);
+            this.logger = logger;
 
             this.Initialize();
         }
@@ -51,12 +58,26 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
                 }
 
                 html += "<div style=\"width:115px; height:35px; float:left; text-align: center; padding-right:0px;\">";
-                html += "<p style=\"display:inline; font: bold 26px Arial;\">" + this.creatorService.FinalizePrice(product) + "</p>";
+                if (this.creatorService.PriceType == PriceType.None)
+                {
+                    html += "<div style=\" height:26px;\"></div>";
+                }
+                else
+                {
+                    html += "<p style=\"display:inline; font: bold 26px Arial;\">" + (this.creatorService.PriceType == PriceType.Rek ? this.creatorService.FinalizePrice(product.UnitPrice) : this.creatorService.FinalizePrice(product)) + "</p>";
+                }
                 html += "<img style=\"max-width: 100%; max-height:100%;\" src=\"data:image/png;base64, {@base64img@}\" alt=\"Red dot\" />"; //width:120px; height:45px;
                 html += "<p style=\"display:inline; font: 9px verdana;\">Tura: " + product.VariantId + "</p>";
                 html += "</div>";
 
-                html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 150, 40, true, 5));
+                if (this.creatorService.ShowEANCode)
+                {
+                    html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 160, 45, true, 5));
+                }
+                else
+                {
+                    html = html.Replace("{@base64img@}", BarcodeGenerator.GetBase64Image(product.PrimaryEANCode, 160, 35, false, 5));
+                }
 
                 interval++;
                 productsInterval++;
@@ -85,43 +106,55 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
 
         private void AppendPDFPage(string html)
         {
-            HtmlToPdf converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = PdfPageSize.A4;
-            converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
+            try
+            {
+                HtmlToPdf converter = new HtmlToPdf();
+                converter.Options.PdfPageSize = PdfPageSize.A4;
+                converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
+                converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.NoAdjustment;
 
-            converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.NoAdjustment;
+                PdfDocument doc = converter.ConvertHtmlString(html);
+                doc.CompressionLevel = PdfCompressionLevel.Best;
 
-            // create a new pdf document converting an url
-            PdfDocument doc = converter.ConvertHtmlString(html);
-
-            doc.CompressionLevel = PdfCompressionLevel.Best;
-
-            this.pdfDocuments.Add(doc);
+                this.pdfDocuments.Add(doc);
+            }
+            catch(Exception ex)
+            {
+                this.logger.LogError(ex.ToString());
+            }
         }
 
         public MemoryStream GetMemoryStream()
         {
-            PdfDocument doc = new PdfDocument();
-
-            foreach (var document in this.pdfDocuments)
+            try
             {
-                doc.Append(document);
-            }
-
-            doc.CompressionLevel = PdfCompressionLevel.Best;
-
-            using (MemoryStream stream = new MemoryStream())
-            {
-                doc.Save(stream);
-                Console.WriteLine("STREAM: " + stream.Length);
-                doc.Close();
+                PdfDocument doc = new PdfDocument();
 
                 foreach (var document in this.pdfDocuments)
                 {
-                    document.Close();
+                    doc.Append(document);
                 }
 
-                return stream;
+                doc.CompressionLevel = PdfCompressionLevel.Best;
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    doc.Save(stream);
+                    Console.WriteLine("STREAM: " + stream.Length);
+                    doc.Close();
+
+                    foreach (var document in this.pdfDocuments)
+                    {
+                        document.Close();
+                    }
+
+                    return stream;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex.ToString());
+                return null;
             }
         }
     }

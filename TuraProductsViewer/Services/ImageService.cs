@@ -12,8 +12,15 @@ namespace TuraProductsViewer.Services
         public ImageService(ILogger<CreatorService> _logger)
         {
             this.logger = _logger;
-            this.rootProductsImageFolder = "/Produktbilder/";
-            this.webProductsImagePath = "https://www.turascandinavia.com/image/";
+            this.rootProductsImageFolder = "//LOCAL_FOLDER_PATH/";
+            //this.webProductsImagePath = "https://www.turascandinavia.com/image/";
+
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                    .AddJsonFile("appsettings.json")
+                    .Build();
+
+            this.webProductsImagePath = configuration["ImagesBase:ProductImagesBaseUrl"] ?? this.rootProductsImageFolder;
         }
 
         /// <summary>
@@ -56,7 +63,7 @@ namespace TuraProductsViewer.Services
                 
                 this.logger.LogWarning("Packaging Picture [" + productId + "] missing.");
 
-                return "https://pdftest.turascandinavia.com/pictures/missing.jpg";
+                return "https://pdf.turascandinavia.com/pictures/missing.jpg";
             }
 
             return imagePath;

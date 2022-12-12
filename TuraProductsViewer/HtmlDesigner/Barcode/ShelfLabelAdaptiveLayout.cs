@@ -1,4 +1,5 @@
 ﻿using SelectPdf;
+using Serilog;
 using System.Drawing;
 using System.Text;
 using TuraProductsViewer.Services;
@@ -7,6 +8,7 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
 {
     public class ShelfLabelAdaptiveLayout
     {
+        private Microsoft.Extensions.Logging.ILogger logger { get; set; }
         private StringBuilder stringBuilder { get; set; }
         private CreatorService creatorService { get; set; }
         private List<PdfDocument> pdfDocuments { get; set; }
@@ -16,6 +18,11 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
             this.stringBuilder = new();
             this.creatorService = crtService;
             this.pdfDocuments = new List<PdfDocument>();
+
+            //Temporary logger
+            var loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog());
+            var logger = loggerFactory.CreateLogger(string.Empty);
+            this.logger = logger;
 
             this.Initialize();
         }
@@ -85,43 +92,56 @@ namespace TuraProductsViewer.HtmlDesigner.Barcode
 
         private void AppendPDFPage(string html)
         {
-            HtmlToPdf converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = PdfPageSize.A4;
-            converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
+            try
+            {
+                HtmlToPdf converter = new HtmlToPdf();
+                converter.Options.PdfPageSize = PdfPageSize.A4;
+                converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
 
-            converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.NoAdjustment;
+                converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.NoAdjustment;
 
-            // create a new pdf document converting an url
-            PdfDocument doc = converter.ConvertHtmlString(html);
+                PdfDocument doc = converter.ConvertHtmlString(html);
+                doc.CompressionLevel = PdfCompressionLevel.Best;
 
-            doc.CompressionLevel = PdfCompressionLevel.Best;
-
-            this.pdfDocuments.Add(doc);
+                this.pdfDocuments.Add(doc);
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex.ToString());
+            }
         }
 
         public MemoryStream GetMemoryStream()
         {
-            PdfDocument doc = new PdfDocument();
-
-            foreach (var document in this.pdfDocuments)
+            try
             {
-                doc.Append(document);
-            }
-
-            doc.CompressionLevel = PdfCompressionLevel.Best;
-
-            using (MemoryStream stream = new MemoryStream())
-            {
-                doc.Save(stream);
-                Console.WriteLine("STREAM: " + stream.Length);
-                doc.Close();
+                PdfDocument doc = new PdfDocument();
 
                 foreach (var document in this.pdfDocuments)
                 {
-                    document.Close();
+                    doc.Append(document);
                 }
 
-                return stream;
+                doc.CompressionLevel = PdfCompressionLevel.Best;
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    doc.Save(stream);
+                    Console.WriteLine("STREAM: " + stream.Length);
+                    doc.Close();
+
+                    foreach (var document in this.pdfDocuments)
+                    {
+                        document.Close();
+                    }
+
+                    return stream;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex.ToString());
+                return null;
             }
         }
     }

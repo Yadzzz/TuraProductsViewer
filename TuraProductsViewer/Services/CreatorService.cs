@@ -16,6 +16,7 @@ namespace TuraProductsViewer.Services
         public PriceType PriceType { get; set; } = PriceType.Rek;
         public string CustomerId { get; set; } = string.Empty;
         public Dictionary<string, string> SpecialCustomerPrices { get; set; }
+        public bool ShowEANCode { get; set; }
 
         public CreatorService(ILogger<CreatorService> _logger)
         {
@@ -109,6 +110,11 @@ namespace TuraProductsViewer.Services
             return productsData.UnitPriceWithoutVat.ToString();
         }
 
+        /// <summary>
+        /// Returns an filtered price with the right format based on given options from the user
+        /// </summary>
+        /// <param name="productsData"></param>
+        /// <returns></returns>
         public string FinalizePrice(ProductsDataModel productsData)
         {
             string price = this.GetPrice(productsData);
@@ -119,6 +125,38 @@ namespace TuraProductsViewer.Services
             }
 
             return double.Parse(price).ToString("F2");
+        }
+
+        /// <summary>
+        /// Returns the price with the correct price format
+        /// </summary>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public string FinalizePrice(string price)
+        {
+            if (price.Contains("."))
+            {
+                price = price.Replace(".", ",");
+            }
+
+            return double.Parse(price).ToString("F2");
+        }
+
+        /// <summary>
+        /// Returns the price with the correct price format
+        /// </summary>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public string FinalizePrice(double price)
+        {
+            string unfilteredPrice = price.ToString();
+
+            if (unfilteredPrice.Contains("."))
+            {
+                unfilteredPrice = unfilteredPrice.Replace(".", ",");
+            }
+
+            return double.Parse(unfilteredPrice).ToString("F2");
         }
 
         /// <summary>

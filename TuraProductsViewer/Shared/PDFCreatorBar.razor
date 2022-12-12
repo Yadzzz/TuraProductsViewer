@@ -1,6 +1,7 @@
 ﻿@inject NavigationManager NavManager
 @inject CreatorService CreatorService
 @inject ImageService ImageService
+@inject NotificationService NotificationService
 
 <div class="col-xl-4 col-lg-4 col-sm-4  layout-spacing">
     <div class="widget-content widget-content-area br-4">
@@ -72,5 +73,6 @@
     private void onClearProducts()
     {
         CreatorService.ClearProducts();
+        Task.Run(() => NotificationService.AlertSuccess("Products Cleared."));
     }
 }

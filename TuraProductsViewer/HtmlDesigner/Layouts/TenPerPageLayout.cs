@@ -60,7 +60,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
 
                 //html += "<div style=\"page-break-after: always\">\r\n\".\r\n</div>";
 
-                html += "<div class=\"col-xs-12 col-md-12\" style=\"width:100%\">\r\n\t<!-- First product box start here-->\r\n\t<div class=\"prod-info-main prod-wrap clearfix\">\r\n\t\t\t\t<div class=\"col-md-2 col-sm-12 col-xs-12\">\r\n\t\t\t\t\t<div class=\"product-image\"> \r\n\t\t\t\t\t\t<img src=\"{@image@}\" class=\"img-responsive\"> \r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>";
+                html += "<div class=\"col-xs-12 col-md-12\" style=\"width:100%\">\r\n\t<!-- First product box start here-->\r\n\t<div class=\"prod-info-main prod-wrap clearfix\">\r\n\t\t\t\t<div class=\"col-md-2 col-sm-12 col-xs-12\">\r\n\t\t\t\t\t<div class=\"product-image\"> \r\n\t\t\t\t\t\t <a href=\"{@imageclicklink@}\"><img src=\"{@image@}\" class=\"img-responsive\"></a> \r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>";
 
                 html += "<div class=\"col-md-9 col-sm-12 col-xs-12\">";
                 html += "<div class=\"product-detail\">\r\n                    <h5 class=\"name\"  style=\"height:15px; \">\r\n                        <b><a href=\"{@imageclicklink@}\" style=\"color: black;\">{@productname@}</a></b>\r\n                    </h5>\r\n\t\t\t\t</div>";

@@ -2,9 +2,9 @@
 {
     public class ConcreteExcelCreator : FileCreatorFactory
     {
-        public override IFile CreateExcelFile(CreatorService creatorService)
+        public override IFile CreateExcelFile(CreatorService creatorService, ImageService imageService)
         {
-            return new ExcelFile(creatorService);
+            return new ExcelFile(creatorService, imageService);
         }
     }
 }

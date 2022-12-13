@@ -57,18 +57,18 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-//string networkPath = @"\\192.168.1.21\Produktbilder";
-//NetworkCredential credentials = new NetworkCredential(@"tura\svc-pdf", "1234QWer!");
+string networkPath = @"\\192.168.1.21\Produktbilder";
+NetworkCredential credentials = new NetworkCredential(@"tura\svc-pdf", "1234QWer!");
 
-//ConnectToSharedFolder ConnectToSharedFolder = new ConnectToSharedFolder(networkPath, credentials);
+ConnectToSharedFolder ConnectToSharedFolder = new ConnectToSharedFolder(networkPath, credentials);
 
-//app.UseFileServer(new FileServerOptions()
-//{
-//    FileProvider = new PhysicalFileProvider(
-//        Path.Combine("\\\\192.168.1.21\\Produktbilder")),
-//    RequestPath = new PathString("/Produktbilder"),
-//    EnableDirectoryBrowsing = true
-//});
+app.UseFileServer(new FileServerOptions()
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine("\\\\192.168.1.21\\Produktbilder")),
+    RequestPath = new PathString("/Produktbilder"),
+    EnableDirectoryBrowsing = true
+});
 
 app.UseRouting();
 

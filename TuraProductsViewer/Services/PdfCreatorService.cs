@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Web;
 using SelectPdf;
+using TuraProductsViewer.HtmlDesigner;
 
 namespace TuraProductsViewer.Services
 {
@@ -163,11 +164,19 @@ namespace TuraProductsViewer.Services
             }
         }
 
-        public MemoryStream GetPDFStreamBarcodeLayout(string htmlString, string language)
+        public MemoryStream GetPDFStreamBarcodeLayout(string htmlString, string language, HtmlLayout layout)
         {
             HtmlToPdf converter = new HtmlToPdf();
             converter.Options.PdfPageSize = PdfPageSize.A4;
-            converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
+
+            if (layout == HtmlLayout.HylleEtikett)
+            {
+                converter.Options.PdfPageOrientation = PdfPageOrientation.Landscape;
+            }
+            else
+            {
+                converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
+            }
 
             converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.NoAdjustment;
 
@@ -194,6 +203,7 @@ namespace TuraProductsViewer.Services
                 using (MemoryStream stream = new MemoryStream())
                 {
                     doc.Save(stream);
+                    Console.WriteLine(stream.Length);
                     doc.Close();
 
                     return stream;

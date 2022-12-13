@@ -8,12 +8,13 @@ namespace TuraProductsViewer.Services
         private readonly ILogger<CreatorService> logger;
         private readonly string rootProductsImageFolder;
         private readonly string webProductsImagePath;
+        private readonly string networkPath;
 
         public ImageService(ILogger<CreatorService> _logger)
         {
             this.logger = _logger;
-            this.rootProductsImageFolder = "//LOCAL_FOLDER_PATH/";
-            //this.webProductsImagePath = "https://www.turascandinavia.com/image/";
+            this.rootProductsImageFolder = "/Produktbilder/";
+            this.networkPath = "\\\\192.168.1.21\\Produktbilder\\";
 
             IConfigurationRoot configuration = new ConfigurationBuilder()
                     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
@@ -103,6 +104,25 @@ namespace TuraProductsViewer.Services
             imagePath += "/";
             imagePath += productId;
             imagePath += "ver.jpg";
+
+            return imagePath;
+        }
+
+        /// <summary>
+        /// Gets the whole image path, some functions requires the whole path
+        /// </summary>
+        /// <param name="productId">Product Id</param>
+        /// <returns>Path to {productId} image</returns>
+        public string GetObseleteImagePath(string productId)
+        {
+            /// \\192.168.1.21\Produktbilder\2\235204\235204.jpg
+            string imagePath = this.networkPath;
+            imagePath += productId.Substring(0, 1);
+            imagePath += "\\";
+            imagePath += productId;
+            imagePath += "\\";
+            imagePath += productId;
+            imagePath += ".jpg";
 
             return imagePath;
         }

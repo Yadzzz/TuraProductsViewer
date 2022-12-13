@@ -52,7 +52,7 @@
                                             <div class="d-flex">
                                                 <div class="usr-img-frame mr-2 rounded-circle">
                                                     @*<img alt="product" class="img-fluid rounded-circle" src="@ImageService.GetImagePath(product.VariantId)">*@
-                                                    <img alt="product" class="img-fluid rounded-circle" src="@ImageService.GetWebImagePath(product.VariantId)">
+                                                    <img alt="product" class="img-fluid rounded-circle" src="@ImageService.GetImagePath(product.VariantId)">
                                                 </div>
                                             </div>
                                         </td>
@@ -110,7 +110,7 @@
                                     <a class="dropdown-item" data-value="tenperpage" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.TenPerPage)>10 / Page</a>
                                     <a class="dropdown-item" data-value="pricelabel" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.PrisEtikett)>Price Label</a>
                                     <a class="dropdown-item" data-value="pinflag" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.Pinnflaga)>Pin Flag</a>
-                                    @*<a class="dropdown-item" data-value="shelflabel" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.HylleEtikett)>Shelf Label</a>*@
+                                    <a class="dropdown-item" data-value="shelflabel" @onclick=@(() => this.htmlLayout = HtmlDesigner.HtmlLayout.HylleEtikett)>Shelf Label</a>
                                 </div>
                             </div>
                         </form>
@@ -410,7 +410,7 @@
                 }
             }
         }
-        else if (this.htmlLayout == HtmlDesigner.HtmlLayout.HylleEtikett && this.CreatorService.GetProductsCount() > 120)
+        else if (this.htmlLayout == HtmlDesigner.HtmlLayout.HylleEtikett && this.CreatorService.GetProductsCount() > 165)
         {
             using (MemoryStream? excelStream = htmlBuilder.GenerateMemoryStream())
             {
@@ -440,7 +440,7 @@
         }
         else if (this.htmlLayout == HtmlDesigner.HtmlLayout.Pinnflaga || this.htmlLayout == HtmlDesigner.HtmlLayout.PrisEtikett || this.htmlLayout == HtmlDesigner.HtmlLayout.HylleEtikett)
         {
-            using (MemoryStream? excelStream = PDFCreatorService.GetPDFStreamBarcodeLayout(htmlBuilder.GenerateHTML(), this.CreatorService.Language))
+            using (MemoryStream? excelStream = PDFCreatorService.GetPDFStreamBarcodeLayout(htmlBuilder.GenerateHTML(), this.CreatorService.Language, this.htmlLayout))
             {
                 if (excelStream != null)
                 {
@@ -522,15 +522,19 @@
         this.DownloadHTMLFile();
     }
 
-    private void DownloadExcelFile()
+    private async void DownloadExcelFile()
     {
-        var excel = this.ExcelCreator.CreateExcelFile(this.CreatorService);
+        var excel = this.ExcelCreator.CreateExcelFile(this.CreatorService, this.ImageService);
+        await notificationService.AlertSuccess("Excel Creation process started...");
+        this.inCreationProcess = true;
+        this.StateHasChanged();
 
-        using (MemoryStream stream = excel.GetStreamData(false))
+        using (MemoryStream stream = excel.GetStreamData(true))
         {
             try
             {
-                Task.Run(() => this.SaveAs(JSRuntime, (this.title + ".xlsx"), stream.ToArray()));
+                await this.SaveAs(JSRuntime, (this.title + ".xlsx"), stream.ToArray());
+                await this.notificationService.AlertSuccess("Excel File successfully created. ");
             }
             catch (Exception e)
             {
@@ -538,9 +542,12 @@
                 this.logger.LogWarning(e.ToString());
             }
         }
+
+        this.inCreationProcess = false;
+        this.StateHasChanged();
     }
 
-    private void DownloadHTMLFile()
+    private async void DownloadHTMLFile()
     {
         HtmlDesigner.HtmlBuilder htmlBuilder = new HtmlDesigner.HtmlBuilder(this.title, this.htmlLayout, this.CreatorService, this.ImageService, true);
         var bytes = System.Text.Encoding.UTF8.GetBytes(htmlBuilder.GenerateHTML());
@@ -549,8 +556,8 @@
 
         try
         {
-            Task.Run(() => this.SaveAs(JSRuntime, (this.title + ".html"), bytes));
-            Task.Run(async () => await notificationService.AlertSuccess("HTML File successfully created. "));
+            await this.SaveAs(JSRuntime, (this.title + ".html"), bytes);
+            await notificationService.AlertSuccess("HTML File successfully created. ");
         }
         catch (Exception e)
         {

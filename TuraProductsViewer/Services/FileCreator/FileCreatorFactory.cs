@@ -2,6 +2,6 @@
 {
     public abstract class FileCreatorFactory
     {
-        public abstract IFile CreateExcelFile(CreatorService creatorService);
+        public abstract IFile CreateExcelFile(CreatorService creatorService, ImageService imageService);
     }
 }

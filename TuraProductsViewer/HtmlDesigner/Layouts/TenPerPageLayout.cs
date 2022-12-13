@@ -154,11 +154,25 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
 
                 if (creatorService.UsePackagingImage)
                 {
-                    html = html.Replace("{@image@}", imageService.GetWebPackagingImagePath(product.VariantId));
+                    if (this.isHTML)
+                    {
+                        html = html.Replace("{@image@}", imageService.GetWebPackagingImagePath(product.VariantId));
+                    }
+                    else
+                    {
+                        html = html.Replace("{@image@}", imageService.GetObseletePackagingImagePath(product.VariantId));
+                    }
                 }
                 else
                 {
-                    html = html.Replace("{@image@}", imageService.GetWebImagePath(product.VariantId));
+                    if (this.isHTML)
+                    {
+                        html = html.Replace("{@image@}", imageService.GetWebImagePath(product.VariantId));
+                    }
+                    else
+                    {
+                        html = html.Replace("{@image@}", imageService.GetObseleteImagePath(product.VariantId));
+                    }
                 }
 
                 html += "</div>\r\n</div>";

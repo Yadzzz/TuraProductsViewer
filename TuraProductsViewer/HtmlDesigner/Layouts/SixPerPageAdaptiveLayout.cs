@@ -138,11 +138,25 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
 
                 if (creatorService.UsePackagingImage)
                 {
-                    html = html.Replace("{@image@}", imageService.GetWebPackagingImagePath(product.VariantId));
+                    if (this.isHTML)
+                    {
+                        html = html.Replace("{@image@}", imageService.GetWebPackagingImagePath(product.VariantId));
+                    }
+                    else
+                    {
+                        html = html.Replace("{@image@}", imageService.GetObseletePackagingImagePath(product.VariantId));
+                    }
                 }
                 else
                 {
-                    html = html.Replace("{@image@}", imageService.GetWebImagePath(product.VariantId));
+                    if (this.isHTML)
+                    {
+                        html = html.Replace("{@image@}", imageService.GetWebImagePath(product.VariantId));
+                    }
+                    else
+                    {
+                        html = html.Replace("{@image@}", imageService.GetObseleteImagePath(product.VariantId));
+                    }
                 }
 
                 html += "<br /><br /><br /><br /><br /><br />\r\n\r\n                <!--<br /> <br /> <br /> <br /> <br /> <hr />\r\n\r\n\t\t\t\t<div class=\"product-info smart-form\">\r\n\t\t\t\t\t<div class=\"row\">\r\n\t\t\t\t\t\t<div class=\"col-md-12\"> \r\n\t\t\t\t\t\t\t<a href=\"javascript:void(0);\" class=\"btn btn-danger\">Add to cart</a>\r\n                            <a href=\"javascript:void(0);\" class=\"btn btn-info\">More info</a>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>-->\r\n\t\t\t</div>\r\n        </div>\r\n\t</div>\r\n\t<!-- end product -->\r\n    \r\n</div>";
@@ -194,7 +208,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
 
                     try
                     {
-                        PdfDocument pdfDocument = converter.ConvertHtmlString(this.stringBuilder.ToString());
+                        PdfDocument pdfDocument = converter.ConvertHtmlString(this.stringBuilder.ToString(), @"\\192.168.1.21\Produktbilder");
                         this.pdfDocuments.Add(pdfDocument);
                     }
                     catch (Exception ex)
@@ -225,6 +239,7 @@ namespace TuraProductsViewer.HtmlDesigner.Layouts
                 using (MemoryStream stream = new MemoryStream())
                 {
                     doc.Save(stream);
+                    Console.WriteLine(stream.Length);
                     //stream.Close();
                     doc.Close();
 

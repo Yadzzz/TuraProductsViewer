@@ -5,6 +5,7 @@ namespace TuraProductsViewer.Services.FileCreator
     public sealed class FileCreatorUtilities
     {
         private static FileCreatorUtilities _fileCreatorUtilitiesInstance;
+        private static readonly object Lock = new object();
 
         private FileCreatorUtilities()
         {
@@ -13,9 +14,36 @@ namespace TuraProductsViewer.Services.FileCreator
 
         public static FileCreatorUtilities GetCreatorUtilities()
         {
-            _fileCreatorUtilitiesInstance??= new FileCreatorUtilities(); //Null checking
+            //_fileCreatorUtilitiesInstance??= new FileCreatorUtilities(); //Null checking
+
+            if(_fileCreatorUtilitiesInstance == null)
+            {
+                lock(Lock)
+                {
+                    if(_fileCreatorUtilitiesInstance == null)
+                    {
+                        _fileCreatorUtilitiesInstance = new FileCreatorUtilities();
+                    }
+                }
+            }
 
             return _fileCreatorUtilitiesInstance;
+        }
+
+        public string GetImageClickLink(string language)
+        {
+            if (language.ToLower() == "swedish")
+                return "https://www.turascandinavia.com/sv/produkter/";
+            else if (language.ToLower() == "norwegian")
+                return "https://www.turascandinavia.com/nb/produkter/";
+            else if (language.ToLower() == "finnish")
+                return "https://www.turascandinavia.com/fi/tuotteet/";
+            else if (language.ToLower() == "danish")
+                return "https://www.turascandinavia.com/da/produkter/";
+            else if (language.ToLower() == "english")
+                return "https://www.turascandinavia.com/en/products/";
+            else
+                return "https://www.turascandinavia.com/sv/produkter/";
         }
 
         public Dictionary<string, string> GetLanguageVariables(string language)

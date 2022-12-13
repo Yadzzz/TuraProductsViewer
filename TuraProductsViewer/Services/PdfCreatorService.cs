@@ -136,10 +136,14 @@ namespace TuraProductsViewer.Services
             converter.Options.JpegCompressionLevel = 50;
             converter.Options.ScaleImages = true;
 
+            //var auth = converter.Options.Authentication;
+            //auth.Username = @"tura\svc-pdf";
+            //auth.Password = "1234QWer!";
+
             try
             {
                 // create a new pdf document converting an url
-                PdfDocument doc = converter.ConvertHtmlString(htmlString);
+                PdfDocument doc = converter.ConvertHtmlString(htmlString, @"\\192.168.1.21\Produktbilder");
 
                 doc.CompressionLevel = PdfCompressionLevel.Best;
 

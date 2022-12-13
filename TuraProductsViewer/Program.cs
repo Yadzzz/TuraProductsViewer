@@ -70,6 +70,12 @@ app.UseFileServer(new FileServerOptions()
     EnableDirectoryBrowsing = true
 });
 
+//app.UseStaticFiles(new StaticFileOptions
+//{
+//    FileProvider = new PhysicalFileProvider("\\\\192.168.1.21\\Produktbilder"),
+//    RequestPath = "/Produktbilder"
+//});
+
 app.UseRouting();
 
 app.MapBlazorHub();

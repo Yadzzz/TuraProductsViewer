@@ -6,8 +6,6 @@ namespace TuraProductsViewer.Services.FileCreator
     {
         public CreatorService CreatorService { get; set; }
         public ImageService ImageService { get; set; }
-        public MemoryStream GetStreamData(bool includePictures);
-        public DataTable GetDataTable();
         public MemoryStream GetStreamWithPictures();
     }
 }

@@ -126,5 +126,36 @@ namespace TuraProductsViewer.Services
 
             return imagePath;
         }
+
+        /// <summary>
+        /// Gets the whole image path, some functions requires the whole path
+        /// </summary>
+        /// <param name="productId">Product Id</param>
+        /// <returns>Path to {productId} image</returns>
+        public string GetObseletePackagingImagePath(string productId)
+        {
+            /// \\192.168.1.21\Produktbilder\2\235204\235204.jpg
+            string imagePath = this.networkPath;
+            imagePath += productId.Substring(0, 1);
+            imagePath += "\\";
+            imagePath += productId;
+            imagePath += "\\";
+            imagePath += productId;
+            imagePath += "ver.jpg";
+
+            return imagePath;
+        }
+
+        /// <summary>
+        /// Gets image in Base64
+        /// </summary>
+        /// <param name="productId">Product Id</param>
+        /// <returns>Path to {productId} image</returns>
+        public string GetBase64Image(string productId)
+        {
+            byte[] imageBytes = File.ReadAllBytes(this.GetObseleteImagePath(productId));
+
+            return Convert.ToBase64String(imageBytes);
+        }
     }
 }

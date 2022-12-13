@@ -24,7 +24,7 @@
 
                 @if (this.inCreationProcess)
                 {
-                    <p>You cannot edit data when PDF Process is triggered. Please wait for the process to finish.</p>
+                    <p>You cannot edit data when Creator Process is triggered. Please wait for the process to finish.</p>
                 }
                 else
                 {
@@ -529,7 +529,7 @@
         this.inCreationProcess = true;
         this.StateHasChanged();
 
-        using (MemoryStream stream = excel.GetStreamData(true))
+        using (MemoryStream stream = excel.GetStreamWithPictures())
         {
             try
             {
@@ -553,7 +553,7 @@
         var bytes = System.Text.Encoding.UTF8.GetBytes(htmlBuilder.GenerateHTML());
 
         //var bytes = System.Text.Encoding.UTF8.GetBytes(FileService.HTML(CreatorService, ImageService, true));
-
+        Console.WriteLine(bytes.Length);
         try
         {
             await this.SaveAs(JSRuntime, (this.title + ".html"), bytes);

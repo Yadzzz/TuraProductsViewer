@@ -35,12 +35,26 @@ namespace TuraProductsViewer.Services
                         if (line.Contains("\t"))
                         {
                             string[] manipulatedLine = line.Split("\t");
-                            data.Add(manipulatedLine[0], manipulatedLine[1]);
+
+                            if (data.ContainsKey(manipulatedLine[0]))
+                            {
+
+                            }
+                            else
+                            {
+                                data.Add(manipulatedLine[0], manipulatedLine[1]);
+                            }
                         }
                         else
                         {
-                            Console.WriteLine(line);
-                            data.Add(line, "");
+                            if(data.ContainsKey(line))
+                            {
+
+                            }
+                            else
+                            {
+                                data.Add(line, "");
+                            }
                         }
                     }
 
@@ -92,6 +106,11 @@ namespace TuraProductsViewer.Services
                         {
                             if (double.TryParse((string)row[0], out double id))
                             {
+                                if (data.ContainsKey(id.ToString()))
+                                {
+                                    continue;
+                                }
+
                                 if (dt.Columns.Count >= 2)
                                 {
                                     if (row.IsNull(1))
@@ -101,7 +120,7 @@ namespace TuraProductsViewer.Services
                                     }
 
                                     string unfilteredPrice = (string)row[1];
-                                    if(unfilteredPrice.Contains("."))
+                                    if (unfilteredPrice.Contains("."))
                                     {
                                         unfilteredPrice = unfilteredPrice.Replace(".", ",");
                                     }
@@ -117,7 +136,10 @@ namespace TuraProductsViewer.Services
                                 }
                                 else
                                 {
-                                    data.Add(id.ToString(), string.Empty);
+                                    else
+                                    {
+                                        data.Add(id.ToString(), string.Empty);
+                                    }
                                 }
                             }
                         }

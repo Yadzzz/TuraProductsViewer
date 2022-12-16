@@ -39,6 +39,7 @@ namespace TuraProductsViewer.Services
                         }
                         else
                         {
+                            Console.WriteLine(line);
                             data.Add(line, "");
                         }
                     }
